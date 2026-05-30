@@ -43,12 +43,14 @@ fun MainAppScreen(viewModel: AppViewModel) {
     val allAttendance by viewModel.allAttendance.collectAsState()
     val allLeaves by viewModel.allLeaves.collectAsState()
     val allWellness by viewModel.allWellness.collectAsState()
+    val allFees by viewModel.allFees.collectAsState()
+    val allOrganizations by viewModel.allOrganizations.collectAsState()
     val currentStudent by viewModel.currentStudentProfile.collectAsState()
     val isDark by viewModel.isDarkMode.collectAsState()
 
     // Base background with modern dynamic color gradient matching light or dark modes
-    val bgColorStart = if (isDark) Color(0xFF0F172A) else Color(0xFFECF0F1)
-    val bgColorEnd = if (isDark) Color(0xFF020617) else Color(0xFFD1D5DB)
+    val bgColorStart = if (isDark) Color(0xFF0E1428) else Color(0xFFE1EBF7)
+    val bgColorEnd = if (isDark) Color(0xFF0A0F21) else Color(0xFFF3F7FC)
 
     Box(
         modifier = Modifier
@@ -99,7 +101,9 @@ fun MainAppScreen(viewModel: AppViewModel) {
                             students = allStudents,
                             allAttendance = allAttendance,
                             allLeaves = allLeaves,
-                            allWellness = allWellness
+                            allWellness = allWellness,
+                            allFees = allFees,
+                            allOrganizations = allOrganizations
                         )
                     }
                 }
@@ -133,21 +137,11 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Branding Visual
-            Box(
-                modifier = Modifier
-                    .size(76.dp)
-                    .background(Color(0xFF1ABC9C).copy(alpha = 0.15f), CircleShape)
-                    .align(Alignment.CenterHorizontally),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.VerifiedUser,
-                    contentDescription = "Shield Verified",
-                    tint = Color(0xFF1ABC9C),
-                    modifier = Modifier.size(40.dp)
-                )
-            }
+            // Branding Visual - Modern Programmatic Illustration
+            WellnestLogoIllustration(
+                modifier = Modifier,
+                isDark = isDark
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -155,13 +149,13 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
                 text = "Wellnest",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = if (isDark) Color.White else Color(0xFF0F172A),
+                color = if (isDark) Color.White else Color(0xFF180A22),
                 textAlign = TextAlign.Center
             )
             Text(
                 text = "Secure Student Daily Wellness & Attendance Analytics",
                 fontSize = 13.sp,
-                color = if (isDark) Color(0xFF94A3B8) else Color(0xFF475569),
+                color = if (isDark) Color(0xFFFAF9FF).copy(0.7f) else Color(0xFF331B47),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
@@ -171,22 +165,22 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
             // Card Container for login contents
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (isDark) Color(0xFF1E293B).copy(alpha = 0.9f) else Color.White.copy(alpha = 0.9f)
+                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
                 ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(20.dp),
+                    modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = "SELECT PORTAL ROLE",
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1ABC9C),
-                        letterSpacing = 1.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.primary,
+                        letterSpacing = 1.2.sp,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
 
@@ -194,8 +188,8 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color(0xFF0F172A)),
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(if (isDark) Color(0xFF0A0F21) else Color(0xFFEBF1FA)),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     val rolesList = listOf("STUDENT" to Icons.Default.School, "COACH" to Icons.Default.Sports, "ADMIN" to Icons.Default.AdminPanelSettings)
@@ -205,7 +199,7 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable { selectedRole = roleCode }
-                                .background(if (isSel) Color(0xFF3B82F6) else Color.Transparent)
+                                .background(if (isSel) MaterialTheme.colorScheme.primary else Color.Transparent)
                                 .padding(vertical = 12.dp),
                             contentAlignment = Alignment.Center
                         ) {
@@ -213,14 +207,14 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
                                 Icon(
                                     imageVector = icon,
                                     contentDescription = roleCode,
-                                    tint = if (isSel) Color.White else Color(0xFF64748B),
+                                    tint = if (isSel) Color.White else (if (isDark) Color(0xFF64748B) else Color(0xFF4F70FA).copy(0.7f)),
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Text(
                                     text = roleCode,
                                     fontSize = 10.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = if (isSel) Color.White else Color(0xFF94A3B8)
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isSel) Color.White else (if (isDark) Color(0xFF94A3B8) else Color(0xFF1E293B).copy(0.7f))
                                 )
                             }
                         }
@@ -233,7 +227,7 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
                 Text(
                     text = "ENTER REGISTERED MOBILE",
                     fontSize = 11.sp,
-                    color = Color(0xFF94A3B8),
+                    color = if (isDark) Color(0xFF94A3B8) else Color(0xFF1E293B).copy(0.7f),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Start)
                 )
@@ -244,20 +238,20 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
                         mobileNumber = it
                         hasError = false
                     },
-                    placeholder = { Text("e.g. 9876543210", color = Color(0xFF64748B)) },
+                    placeholder = { Text("e.g. 9876543210", color = if (isDark) Color(0xFF64748B) else Color(0xFF94A3B8)) },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(10.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color(0xFF3B82F6),
-                        unfocusedBorderColor = Color(0xFF475569),
-                        focusedContainerColor = Color(0xFF0F172A),
-                        unfocusedContainerColor = Color(0xFF0F172A)
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = if (isDark) Color(0xFF334155) else Color(0xFFCBD5E1),
+                        focusedContainerColor = if (isDark) Color(0xFF0E1428) else Color(0xFFF3F7FC),
+                        unfocusedContainerColor = if (isDark) Color(0xFF0E1428) else Color(0xFFF3F7FC)
                     ),
                     singleLine = true,
                     leadingIcon = {
-                        Icon(Icons.Default.Phone, contentDescription = "", tint = Color(0xFF64748B))
+                        Icon(Icons.Default.Phone, contentDescription = "", tint = MaterialTheme.colorScheme.primary.copy(0.7f))
                     }
                 )
 
@@ -267,7 +261,7 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
                     Text(
                         text = "STUDENT REGISTER NUMBER",
                         fontSize = 11.sp,
-                        color = Color(0xFF94A3B8),
+                        color = if (isDark) Color(0xFF94A3B8) else Color(0xFF1E293B).copy(0.7f),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.align(Alignment.Start)
                     )
@@ -275,20 +269,20 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
                     OutlinedTextField(
                         value = registerNumber,
                         onValueChange = { registerNumber = it },
-                        placeholder = { Text("e.g. 2026CS501", color = Color(0xFF64748B)) },
+                        placeholder = { Text("e.g. 2026CS501", color = if (isDark) Color(0xFF64748B) else Color(0xFF94A3B8)) },
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(10.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
-                            focusedBorderColor = Color(0xFF3B82F6),
-                            unfocusedBorderColor = Color(0xFF475569),
-                            focusedContainerColor = Color(0xFF0F172A),
-                            unfocusedContainerColor = Color(0xFF0F172A)
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = if (isDark) Color(0xFF334155) else Color(0xFFCBD5E1),
+                            focusedContainerColor = if (isDark) Color(0xFF0E1428) else Color(0xFFF3F7FC),
+                            unfocusedContainerColor = if (isDark) Color(0xFF0E1428) else Color(0xFFF3F7FC)
                         ),
                         singleLine = true,
                         leadingIcon = {
-                            Icon(Icons.Default.Badge, contentDescription = "", tint = Color(0xFF64748B))
+                            Icon(Icons.Default.Badge, contentDescription = "", tint = MaterialTheme.colorScheme.primary.copy(0.7f))
                         }
                     )
                 }
@@ -316,10 +310,10 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3B82F6))
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text("Secure OTP Request", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text("Secure OTP Request", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Color.White)
                 }
             }
         }
@@ -512,9 +506,9 @@ fun StudentDashboardLayout(
     var activeTab by remember { mutableStateOf("DASH") } // DASH, ATT, LEAVE, WELL, PROF
     var showEditProfile by remember { mutableStateOf(false) }
     val isDark by viewModel.isDarkMode.collectAsState()
-    val topBarBg = if (isDark) Color(0xFF1E293B) else Color.White
-    val textPrimary = if (isDark) Color.White else Color(0xFF0F172A)
-    val textSecondary = if (isDark) Color(0xFF94A3B8) else Color(0xFF475569)
+    val topBarBg = if (isDark) Color(0xFF16112C) else Color(0xFFFCF5F7)
+    val textPrimary = if (isDark) Color.White else Color(0xFF180A22)
+    val textSecondary = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47)
 
     // Synchronize selected profile manually in case ID changes
     LaunchedEffect(state.registerNumber) {
@@ -545,7 +539,7 @@ fun StudentDashboardLayout(
                             modifier = Modifier
                                 .size(36.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFF1ABC9C)),
+                                .background(Color(0xFFF43F5E)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -576,7 +570,7 @@ fun StudentDashboardLayout(
                             Icon(
                                 imageVector = if (isDark) Icons.Default.LightMode else Icons.Default.DarkMode,
                                 contentDescription = "Toggle Dark/Light Mode",
-                                tint = Color(0xFF1ABC9C)
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                         IconButton(onClick = { viewModel.logout() }) {
@@ -612,11 +606,11 @@ fun StudentDashboardLayout(
                         label = { Text(title, fontSize = 9.sp) },
                         icon = { Icon(icon, contentDescription = title) },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color(0xFF3B82F6),
-                            selectedTextColor = Color(0xFF3B82F6),
-                            unselectedIconColor = Color(0xFF64748B),
-                            unselectedTextColor = Color(0xFF64748B),
-                            indicatorColor = Color(0xFF3B82F6).copy(alpha = 0.15f)
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(0.6f),
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(0.6f),
+                            indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
                         )
                     )
                 }
@@ -699,6 +693,8 @@ fun StudentHomeTab(
     val morningLogged = attendance.any { it.date == todayDateStr && it.shift == "Morning" }
     val eveningLogged = attendance.any { it.date == todayDateStr && it.shift == "Evening" }
 
+    val isDark by viewModel.isDarkMode.collectAsState()
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -711,19 +707,53 @@ fun StudentHomeTab(
                 Text(
                     text = "Welcome back,",
                     fontSize = 14.sp,
-                    color = Color(0xFF94A3B8)
+                    color = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47).copy(0.7f)
                 )
                 Text(
                     text = studentProfile?.name ?: state.name,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = if (isDark) Color.White else Color(0xFF180A22)
                 )
                 Text(
                     text = "Track your attendance status and mental energy level today.",
                     fontSize = 11.sp,
-                    color = Color(0xFF38BDF8)
+                    color = Color(0xFFFF8A65)
                 )
+            }
+        }
+
+        // Mini description card with custom programmatic image artwork
+        item {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isDark) Color(0xFF16112C) else Color.White
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    WellnessZenIllustration()
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "YOUR MINDFUL COMPASS",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color(0xFFF43F5E),
+                        letterSpacing = 1.2.sp
+                    )
+                    Text(
+                        text = "Cultivate consistency. Combining daily mood self-reports with attendance metrics builds an integrated reflection of your campus journey.",
+                        fontSize = 11.sp,
+                        textAlign = TextAlign.Center,
+                        color = if (isDark) Color(0xFFFAF9FF).copy(alpha = 0.8f) else Color(0xFF331B47).copy(alpha = 0.8f),
+                        modifier = Modifier.padding(top = 4.dp, start = 8.dp, end = 8.dp)
+                    )
+                }
             }
         }
 
@@ -731,7 +761,7 @@ fun StudentHomeTab(
         item {
             Card(
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
@@ -745,7 +775,7 @@ fun StudentHomeTab(
                         // Drawing dynamic meter using Compose Canvas
                         Canvas(modifier = Modifier.fillMaxSize()) {
                             drawArc(
-                                color = Color(0xFF334155),
+                                color = if (isDark) Color(0xFF233060) else Color(0xFFE2ECF5),
                                 startAngle = -220f,
                                 sweepAngle = 260f,
                                 useCenter = false,
@@ -764,12 +794,12 @@ fun StudentHomeTab(
                                 text = "$attendancePct%",
                                 fontSize = 19.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = "ATTENDANCE",
                                 fontSize = 7.sp,
-                                color = Color(0xFF94A3B8),
+                                color = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47).copy(0.7f),
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -781,7 +811,7 @@ fun StudentHomeTab(
                         Text(
                             text = "COMPLIANCE STATUS",
                             fontSize = 10.sp,
-                            color = Color(0xFF38BDF8),
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
                         )
                         val criteriaMet = attendancePct >= 75
@@ -794,7 +824,7 @@ fun StudentHomeTab(
                         Text(
                             text = if (criteriaMet) "Maintain 75%+ to qualify for year-end university schedules." else "Action needed: submit leave proof files inside portal immediately.",
                             fontSize = 10.sp,
-                            color = Color(0xFF94A3B8),
+                            color = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47).copy(0.7f),
                             lineHeight = 14.sp
                         )
                     }
@@ -806,13 +836,13 @@ fun StudentHomeTab(
         item {
             Card(
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "🚀 DIRECT SEED ATTENDANCE - TODAY",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 12.dp)
@@ -824,7 +854,7 @@ fun StudentHomeTab(
                             modifier = Modifier
                                 .weight(1f)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(if (morningLogged) Color(0xFF0F172A) else Color(0xFF1E3A8A).copy(0.4f))
+                                .background(if (morningLogged) (if (isDark) Color(0xFF0E1428) else Color(0xFFE2EDFD)) else (MaterialTheme.colorScheme.primary.copy(0.15f)))
                                 .clickable(enabled = !morningLogged) {
                                     viewModel.studentCheckIn(regNo, "Morning", "Present")
                                 }
@@ -834,15 +864,15 @@ fun StudentHomeTab(
                             Icon(
                                 imageVector = if (morningLogged) Icons.Default.CheckCircle else Icons.Default.WbSunny,
                                 contentDescription = "",
-                                tint = if (morningLogged) Color(0xFF10B981) else Color(0xFFF59E0B),
+                                tint = if (morningLogged) Color(0xFF10B981) else Color(0xFFF97316),
                                 modifier = Modifier.size(28.dp)
                             )
                             Spacer(modifier = Modifier.height(6.dp))
-                            Text("Morning", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                            Text("Morning", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             Text(
                                 text = if (morningLogged) "Checked-In" else "Check In",
                                 fontSize = 10.sp,
-                                color = if (morningLogged) Color(0xFF94A3B8) else Color(0xFF38BDF8)
+                                color = if (morningLogged) (if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)) else MaterialTheme.colorScheme.primary
                             )
                         }
 
@@ -851,7 +881,7 @@ fun StudentHomeTab(
                             modifier = Modifier
                                 .weight(1f)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(if (eveningLogged) Color(0xFF0F172A) else Color(0xFF1E3A8A).copy(0.4f))
+                                .background(if (eveningLogged) (if (isDark) Color(0xFF0E1428) else Color(0xFFE2EDFD)) else (MaterialTheme.colorScheme.primary.copy(0.15f)))
                                 .clickable(enabled = !eveningLogged) {
                                     viewModel.studentCheckIn(regNo, "Evening", "Present")
                                 }
@@ -861,15 +891,15 @@ fun StudentHomeTab(
                             Icon(
                                 imageVector = if (eveningLogged) Icons.Default.CheckCircle else Icons.Default.NightsStay,
                                 contentDescription = "",
-                                tint = if (eveningLogged) Color(0xFF10B981) else Color(0xFF818CF8),
+                                tint = if (eveningLogged) Color(0xFF10B981) else MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(28.dp)
                             )
                             Spacer(modifier = Modifier.height(6.dp))
-                            Text("Evening", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                            Text("Evening", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             Text(
                                 text = if (eveningLogged) "Checked-In" else "Check In",
                                 fontSize = 10.sp,
-                                color = if (eveningLogged) Color(0xFF94A3B8) else Color(0xFF818CF8)
+                                color = if (eveningLogged) (if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)) else MaterialTheme.colorScheme.primary
                             )
                         }
                     }
@@ -882,7 +912,7 @@ fun StudentHomeTab(
             val lastWellnessEntry = wellness.firstOrNull()
             Card(
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -918,7 +948,7 @@ fun StudentHomeTab(
                         Text(
                             text = "No wellness entries submitted recently. Press the 'Wellness' tab in bottom bar to record meals, sleep hours, water intake, and build your wellness score.",
                             fontSize = 11.sp,
-                            color = Color(0xFF94A3B8),
+                            color = if (isDark) Color(0xFFFAF9FF).copy(0.7f) else Color(0xFF1E293B).copy(0.7f),
                             lineHeight = 16.sp
                         )
                     } else {
@@ -927,19 +957,19 @@ fun StudentHomeTab(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
-                                Icon(Icons.Default.LocalHotel, contentDescription = "", tint = Color(0xFF38BDF8))
-                                Text("Sleep", fontSize = 11.sp, color = Color(0xFF94A3B8))
-                                Text("${lastWellnessEntry.sleepHours} hrs", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                Icon(Icons.Default.LocalHotel, contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                                Text("Sleep", fontSize = 11.sp, color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B))
+                                Text("${lastWellnessEntry.sleepHours} hrs", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
-                                Icon(Icons.Default.LocalDrink, contentDescription = "", tint = Color(0xFF67E8F9))
-                                Text("Water", fontSize = 11.sp, color = Color(0xFF94A3B8))
-                                Text("${lastWellnessEntry.waterIntakeCups} cups", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                Icon(Icons.Default.LocalDrink, contentDescription = "", tint = Color(0xFF22D3EE))
+                                Text("Water", fontSize = 11.sp, color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B))
+                                Text("${lastWellnessEntry.waterIntakeCups} cups", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
-                                Icon(Icons.Default.FlashOn, contentDescription = "", tint = Color(0xFFF59E0B))
-                                Text("Energy", fontSize = 11.sp, color = Color(0xFF94A3B8))
-                                Text("${lastWellnessEntry.energyLevel}/10", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                Icon(Icons.Default.FlashOn, contentDescription = "", tint = MaterialTheme.colorScheme.tertiary)
+                                Text("Energy", fontSize = 11.sp, color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B))
+                                Text("${lastWellnessEntry.energyLevel}/10", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             }
                         }
 
@@ -948,7 +978,7 @@ fun StudentHomeTab(
                         Text(
                             text = "Daily Meals Taken:",
                             fontSize = 11.sp,
-                            color = Color(0xFF94A3B8),
+                            color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B),
                             fontWeight = FontWeight.SemiBold
                         )
                         Row(
@@ -969,7 +999,7 @@ fun StudentHomeTab(
                                     Text(
                                         text = "$mealName: ${if (didEat) "Yes" else "No"}",
                                         fontSize = 10.sp,
-                                        color = if (didEat) Color(0xFF10B981) else Color(0xFFF87171)
+                                        color = if (didEat) Color(0xFF10B981) else Color(0xFFEF4444)
                                     )
                                 }
                             }
@@ -983,7 +1013,7 @@ fun StudentHomeTab(
         item {
             Card(
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -991,7 +1021,7 @@ fun StudentHomeTab(
                         text = "📬 LEAVE APPLICATION STATUSES",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF38BDF8)
+                        color = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -999,7 +1029,7 @@ fun StudentHomeTab(
                         Text(
                             text = "All leave registers are clear. You can request formal absences inside the Leaves screen.",
                             fontSize = 11.sp,
-                            color = Color(0xFF94A3B8)
+                            color = if (isDark) Color(0xFFFAF9FF).copy(0.7f) else Color(0xFF1E293B).copy(0.7f)
                         )
                     } else {
                         leaves.take(2).forEach { leave ->
@@ -1011,13 +1041,13 @@ fun StudentHomeTab(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
-                                    Text(text = "Reason: ${leave.reason}", fontSize = 12.sp, color = Color.White, fontWeight = FontWeight.Bold)
-                                    Text(text = "${leave.startDate} to ${leave.endDate}", fontSize = 10.sp, color = Color(0xFF94A3B8))
+                                    Text(text = "Reason: ${leave.reason}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                                    Text(text = "${leave.startDate} to ${leave.endDate}", fontSize = 10.sp, color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B))
                                 }
                                 val (bg, textCol) = when(leave.status) {
                                     "Pending" -> Color(0xFFF59E0B).copy(0.15f) to Color(0xFFF59E0B)
                                     "Approved" -> Color(0xFF10B981).copy(0.15f) to Color(0xFF10B981)
-                                    else -> Color(0xFFEF4444).copy(0.15f) to Color(0xFFF87171)
+                                    else -> Color(0xFFEF4444).copy(0.15f) to Color(0xFFEF4444)
                                 }
                                 Box(
                                     modifier = Modifier
@@ -1082,9 +1112,9 @@ fun StudentAttendanceTab(
                                 Text(text = item.date, fontSize = 14.sp, color = Color.White, fontWeight = FontWeight.Bold)
                                 Text(text = "Shift: ${item.shift}", fontSize = 11.sp, color = Color(0xFF38BDF8))
                             }
-                            val (pillBg, pillText) = when (item.status) {
-                                "Present" -> Color(0xFF10B981).copy(0.15f) to Color(0xFF10B981)
-                                "Late" -> Color(0xFFF59E0B).copy(0.15f) to Color(0xFFF59E0B)
+                            val (pillBg, pillText) = when (item.status.uppercase(Locale.US)) {
+                                "PRESENT" -> Color(0xFF10B981).copy(0.15f) to Color(0xFF10B981)
+                                "LATE" -> Color(0xFFF59E0B).copy(0.15f) to Color(0xFFF59E0B)
                                 else -> Color(0xFFEF4444).copy(0.15f) to Color(0xFFEF4444)
                             }
                             Box(
@@ -1523,9 +1553,9 @@ fun StudentLeavesTab(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(text = "${leave.startDate} to ${leave.endDate}", fontSize = 13.sp, color = Color.White, fontWeight = FontWeight.Bold)
-                            val (bg, tCol) = when (leave.status) {
-                                "Pending" -> Color(0xFFF59E0B).copy(0.15f) to Color(0xFFF59E0B)
-                                "Approved" -> Color(0xFF10B981).copy(0.15f) to Color(0xFF10B981)
+                            val (bg, tCol) = when (leave.status.uppercase(Locale.US)) {
+                                "PENDING" -> Color(0xFFF59E0B).copy(0.15f) to Color(0xFFF59E0B)
+                                "APPROVED" -> Color(0xFF10B981).copy(0.15f) to Color(0xFF10B981)
                                 else -> Color(0xFFEF4444).copy(0.15f) to Color(0xFFEF4444)
                             }
                             Box(
@@ -2103,7 +2133,9 @@ fun AdminDashboardLayout(
     students: List<StudentProfile>,
     allAttendance: List<AttendanceRecord>,
     allLeaves: List<LeaveApplication>,
-    allWellness: List<WellnessEntry>
+    allWellness: List<WellnessEntry>,
+    allFees: List<StudentFee>,
+    allOrganizations: List<Organization>
 ) {
     var activeTab by remember { mutableStateOf("ANALYTICS") } // ANALYTICS, MANAGE_STUDENTS
     val isDark by viewModel.isDarkMode.collectAsState()
@@ -2112,7 +2144,7 @@ fun AdminDashboardLayout(
     val textSecondary = if (isDark) Color(0xFF94A3B8) else Color(0xFF475569)
     val cardBg = if (isDark) Color(0xFF1E293B) else Color.White
     val topBarBg = if (isDark) Color(0xFF1E293B) else Color.White
-    val accentColor = Color(0xFF1ABC9C)
+    val accentColor = Color(0xFF14B8A6) // Teal
 
     // Admin Enrollment Forms
     var registerNum by remember { mutableStateOf("") }
@@ -2160,19 +2192,35 @@ fun AdminDashboardLayout(
                 }
 
                 TabRow(
-                    selectedTabIndex = if (activeTab == "ANALYTICS") 0 else 1,
+                    selectedTabIndex = when (activeTab) {
+                        "ANALYTICS" -> 0
+                        "MANAGE_STUDENTS" -> 1
+                        "FEES_MANAGEMENT" -> 2
+                        "SUBSCRIPTION_BILLING" -> 3
+                        else -> 0
+                    },
                     containerColor = topBarBg,
                     contentColor = accentColor
                 ) {
                     Tab(
                         selected = activeTab == "ANALYTICS",
                         onClick = { activeTab = "ANALYTICS" },
-                        text = { Text("Database Analytics", fontSize = 12.sp, color = textPrimary) }
+                        text = { Text("Analytics", fontSize = 10.sp, color = textPrimary, fontWeight = FontWeight.Bold) }
                     )
                     Tab(
                         selected = activeTab == "MANAGE_STUDENTS",
                         onClick = { activeTab = "MANAGE_STUDENTS" },
-                        text = { Text("Enroll Students", fontSize = 12.sp, color = textPrimary) }
+                        text = { Text("Enroll", fontSize = 10.sp, color = textPrimary, fontWeight = FontWeight.Bold) }
+                    )
+                    Tab(
+                        selected = activeTab == "FEES_MANAGEMENT",
+                        onClick = { activeTab = "FEES_MANAGEMENT" },
+                        text = { Text("Fees", fontSize = 10.sp, color = textPrimary, fontWeight = FontWeight.Bold) }
+                    )
+                    Tab(
+                        selected = activeTab == "SUBSCRIPTION_BILLING",
+                        onClick = { activeTab = "SUBSCRIPTION_BILLING" },
+                        text = { Text("Billing", fontSize = 10.sp, color = textPrimary, fontWeight = FontWeight.Bold) }
                     )
                 }
             }
@@ -2312,7 +2360,7 @@ fun AdminDashboardLayout(
                                             } else {
                                                 Column(modifier = Modifier.padding(start = 6.dp, top = 2.dp)) {
                                                     sAtt.take(5).forEach { record ->
-                                                        val colorPill = when (record.status) {
+                                                        val colorPill = when (record.status.uppercase(Locale.US)) {
                                                             "PRESENT" -> Color(0xFF10B981)
                                                             "LATE" -> Color(0xFFF59E0B)
                                                             else -> Color(0xFFEF4444)
@@ -2389,7 +2437,7 @@ fun AdminDashboardLayout(
                                             } else {
                                                 Column(modifier = Modifier.padding(start = 6.dp, top = 2.dp)) {
                                                     sLeaves.forEach { leave ->
-                                                        val statusColor = when (leave.status) {
+                                                        val statusColor = when (leave.status.uppercase(Locale.US)) {
                                                             "APPROVED" -> Color(0xFF10B981)
                                                             "REJECTED" -> Color(0xFFEF4444)
                                                             else -> Color(0xFFF59E0B)
@@ -2418,8 +2466,713 @@ fun AdminDashboardLayout(
                         }
                     }
                 }
+                "FEES_MANAGEMENT" -> {
+                    AdminFeesManagementTab(
+                        viewModel = viewModel,
+                        students = students,
+                        allFees = allFees,
+                        isDark = isDark
+                    )
+                }
+                "SUBSCRIPTION_BILLING" -> {
+                    AdminSubscriptionBillingTab(
+                        viewModel = viewModel,
+                        students = students,
+                        allOrganizations = allOrganizations,
+                        isDark = isDark
+                    )
+                }
             }
         }
+    }
+}
+
+@Composable
+fun AdminFeesManagementTab(
+    viewModel: AppViewModel,
+    students: List<StudentProfile>,
+    allFees: List<StudentFee>,
+    isDark: Boolean
+) {
+    val textPrimary = if (isDark) Color.White else Color(0xFF0F172A)
+    val textSecondary = if (isDark) Color(0xFF94A3B8) else Color(0xFF475569)
+    val cardBg = if (isDark) Color(0xFF1E293B) else Color.White
+    val accentColor = Color(0xFF14B8A6) // Teal
+
+    var selectedStatusFilter by remember { mutableStateOf("All") } // All, Paid, Pending, Overdue
+    var searchQuery by remember { mutableStateOf("") }
+
+    // Forms for assigning/adding fee
+    var showAssignDialog by remember { mutableStateOf(false) }
+    var assignStudentRegister by remember { mutableStateOf("") }
+    var assignMonth by remember { mutableStateOf("May") }
+    var assignYear by remember { mutableStateOf(2026) }
+    var assignAmount by remember { mutableStateOf("1500") }
+    var assignStatus by remember { mutableStateOf("Pending") }
+
+    // Edit state
+    var showEditDialog by remember { mutableStateOf<StudentFee?>(null) }
+    var editStatus by remember { mutableStateOf("Paid") }
+    var editMode by remember { mutableStateOf("UPI") } // UPI, Cash, Bank Transfer
+    var editRef by remember { mutableStateOf("") }
+    var editRemarks by remember { mutableStateOf("") }
+
+    val modeList = listOf("UPI", "Cash", "Bank Transfer")
+
+    // Filter Logic
+    val filteredFees = allFees.filter { fee ->
+        val matchesStatus = selectedStatusFilter == "All" || fee.status.equals(selectedStatusFilter, ignoreCase = true)
+        val studentName = students.find { it.registerNumber == fee.studentRegister }?.name ?: ""
+        val matchesSearch = fee.studentRegister.contains(searchQuery, ignoreCase = true) || 
+                            studentName.contains(searchQuery, ignoreCase = true)
+        matchesStatus && matchesSearch
+    }
+
+    // Calculations for metrics cards
+    val totalStudents = students.size
+    val paidCount = allFees.count { it.status.equals("Paid", ignoreCase = true) }
+    val pendingCount = allFees.count { it.status.equals("Pending", ignoreCase = true) }
+    val overdueCount = allFees.count { it.status.equals("Overdue", ignoreCase = true) }
+    val totalCollection = allFees.filter { it.status.equals("Paid", ignoreCase = true) }.sumOf { it.amount }
+    val totalAmountInvoice = allFees.sumOf { it.amount }.coerceAtLeast(1.0)
+    val collectionPercentage = ((totalCollection / totalAmountInvoice) * 100).toInt()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Fee Collection Dashboard", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+            Button(
+                onClick = {
+                    if (students.isNotEmpty()) {
+                        assignStudentRegister = students.first().registerNumber
+                    }
+                    showAssignDialog = true
+                },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Assign Fee", tint = Color.White, modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("Assign Fee", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            }
+        }
+
+        // Metrics Grid
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                // Metric 1
+                Card(colors = CardDefaults.cardColors(containerColor = cardBg), modifier = Modifier.weight(1f)) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text("Total Studs", fontSize = 10.sp, color = textSecondary)
+                        Text("$totalStudents", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                    }
+                }
+                // Metric 2
+                Card(colors = CardDefaults.cardColors(containerColor = cardBg), modifier = Modifier.weight(1f)) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text("Paid Status", fontSize = 10.sp, color = textSecondary)
+                        Text("$paidCount Paid", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFF22C55E))
+                    }
+                }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                // Metric 3
+                Card(colors = CardDefaults.cardColors(containerColor = cardBg), modifier = Modifier.weight(1f)) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text("Pending / Overdue", fontSize = 10.sp, color = textSecondary)
+                        Text("$pendingCount / $overdueCount", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFFF59E0B))
+                    }
+                }
+                // Metric 4
+                Card(colors = CardDefaults.cardColors(containerColor = cardBg), modifier = Modifier.weight(1f)) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text("Revenue (Collection)", fontSize = 10.sp, color = textSecondary)
+                        Text("₹${totalCollection.toInt()} ($collectionPercentage%)", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                    }
+                }
+            }
+        }
+
+        // Filters UI
+        Card(colors = CardDefaults.cardColors(containerColor = cardBg), modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Search & Filter Payments", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = textSecondary)
+
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = { Text("Search by Reg No or Name...", fontSize = 11.sp, color = textSecondary.copy(0.6f)) },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    textStyle = TextStyle(fontSize = 11.sp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = textPrimary,
+                        unfocusedTextColor = textPrimary,
+                        focusedBorderColor = accentColor,
+                        unfocusedBorderColor = textSecondary.copy(0.3f)
+                    ),
+                    singleLine = true
+                )
+
+                // Row of filter chips
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    listOf("All", "Paid", "Pending", "Overdue").forEach { status ->
+                        val isSelected = selectedStatusFilter == status
+                        val chipBg = if (isSelected) accentColor else textSecondary.copy(0.12f)
+                        val chipText = if (isSelected) Color.White else textPrimary
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(chipBg)
+                                .clickable { selectedStatusFilter = status }
+                                .padding(horizontal = 10.dp, vertical = 6.dp)
+                        ) {
+                            Text(status, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = chipText)
+                        }
+                    }
+                }
+            }
+        }
+
+        // List of invoices
+        Text("Payments History Ledger (${filteredFees.size} records)", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+        if (filteredFees.isEmpty()) {
+            Box(modifier = Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
+                Text("No matching ledger records found", fontSize = 11.sp, color = textSecondary)
+            }
+        } else {
+            filteredFees.forEach { fee ->
+                val sName = students.find { it.registerNumber == fee.studentRegister }?.name ?: "Unknown Student"
+                val statusColor = when (fee.status.uppercase(Locale.US)) {
+                    "PAID" -> Color(0xFF22C55E)
+                    "PENDING" -> Color(0xFFF59E0B)
+                    else -> Color(0xFFEF4444)
+                }
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = cardBg),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text(sName, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                                Text("Reg: ${fee.studentRegister} | Cycle: ${fee.month} ${fee.year}", fontSize = 10.sp, color = textSecondary)
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(statusColor.copy(0.15f))
+                                    .clickable {
+                                        editStatus = fee.status
+                                        editMode = if (fee.paymentMode.isNotEmpty()) fee.paymentMode else "UPI"
+                                        editRef = fee.transactionReference
+                                        editRemarks = fee.remarks
+                                        showEditDialog = fee
+                                    }
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(fee.status, color = statusColor, fontSize = 10.sp, fontWeight = FontWeight.ExtraBold)
+                            }
+                        }
+
+                        HorizontalDivider(color = textSecondary.copy(0.1f), modifier = Modifier.padding(vertical = 4.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text("Amount Assigned: ₹${fee.amount.toInt()}", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                                if (fee.paymentDate.isNotEmpty()) {
+                                    Text("Paid Date: ${fee.paymentDate} via ${fee.paymentMode}", fontSize = 10.sp, color = textSecondary)
+                                    if (fee.transactionReference.isNotEmpty()) {
+                                        Text("Ref No: ${fee.transactionReference}", fontSize = 9.sp, color = textSecondary.copy(0.8f))
+                                    }
+                                } else {
+                                    Text("Unpaid - Pending Settlement", fontSize = 10.sp, color = textSecondary.copy(0.8f))
+                                }
+                                if (fee.remarks.isNotEmpty()) {
+                                    Text("Remarks: ${fee.remarks}", fontSize = 9.sp, color = textSecondary, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic)
+                                }
+                            }
+                            IconButton(
+                                onClick = {
+                                    editStatus = fee.status
+                                    editMode = if (fee.paymentMode.isNotEmpty()) fee.paymentMode else "UPI"
+                                    editRef = fee.transactionReference
+                                    editRemarks = fee.remarks
+                                    showEditDialog = fee
+                                },
+                                modifier = Modifier.size(24.dp)
+                            ) {
+                                Icon(Icons.Default.Edit, contentDescription = "Edit Receipt", tint = accentColor, modifier = Modifier.size(14.dp))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Seeding Assign Fee Alert Dialog
+        if (showAssignDialog) {
+            AlertDialog(
+                onDismissRequest = { showAssignDialog = false },
+                title = { Text("Assign New Student Monthly Fee", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textPrimary) },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("Select Enrolled Student Register Number:", fontSize = 10.sp, color = textSecondary)
+
+                        OutlinedTextField(
+                            value = assignStudentRegister,
+                            onValueChange = { assignStudentRegister = it },
+                            placeholder = { Text("e.g. 2026CS501", fontSize = 11.sp) },
+                            modifier = Modifier.fillMaxWidth().height(48.dp),
+                            textStyle = TextStyle(fontSize = 11.sp)
+                        )
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedTextField(
+                                value = assignMonth,
+                                onValueChange = { assignMonth = it },
+                                placeholder = { Text("Month", fontSize = 11.sp) },
+                                modifier = Modifier.weight(1f).height(48.dp),
+                                textStyle = TextStyle(fontSize = 11.sp)
+                            )
+                            OutlinedTextField(
+                                value = assignYear.toString(),
+                                onValueChange = { assignYear = it.toIntOrNull() ?: 2026 },
+                                placeholder = { Text("Year", fontSize = 11.sp) },
+                                modifier = Modifier.weight(1f).height(48.dp),
+                                textStyle = TextStyle(fontSize = 11.sp)
+                            )
+                        }
+
+                        OutlinedTextField(
+                            value = assignAmount,
+                            onValueChange = { assignAmount = it },
+                            placeholder = { Text("Amount in ₹", fontSize = 11.sp) },
+                            modifier = Modifier.fillMaxWidth().height(48.dp),
+                            textStyle = TextStyle(fontSize = 11.sp)
+                        )
+
+                        Text("Initial State Status:", fontSize = 10.sp, color = textSecondary)
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            listOf("Pending", "Paid", "Overdue").forEach { s ->
+                                val isChosen = assignStatus == s
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(if (isChosen) accentColor else textSecondary.copy(0.1f))
+                                        .clickable { assignStatus = s }
+                                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                                ) {
+                                    Text(s, fontSize = 9.sp, fontWeight = FontWeight.Bold, color = if (isChosen) Color.White else textPrimary)
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                        onClick = {
+                            if (assignStudentRegister.isNotBlank()) {
+                                viewModel.recordFeePayment(
+                                    studentRegister = assignStudentRegister.trim(),
+                                    month = assignMonth,
+                                    year = assignYear,
+                                    amount = assignAmount.toDoubleOrNull() ?: 1500.0,
+                                    status = assignStatus
+                                )
+                                showAssignDialog = false
+                            }
+                        }
+                    ) {
+                        Text("Record Asset", fontSize = 11.sp, color = Color.White)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showAssignDialog = false }) {
+                        Text("Abort", fontSize = 11.sp, color = textSecondary)
+                    }
+                },
+                containerColor = cardBg
+            )
+        }
+
+        // Seeding Edit / Pay Alert Dialog
+        showEditDialog?.let { currentFee ->
+            AlertDialog(
+                onDismissRequest = { showEditDialog = null },
+                title = { Text("Audit / Settle Student Payment", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textPrimary) },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("Settle fee billing receipt for student register ${currentFee.studentRegister}", fontSize = 11.sp, color = textSecondary)
+
+                        Text("Settlement Status:", fontSize = 10.sp, color = textSecondary)
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            listOf("Paid", "Pending", "Overdue").forEach { s ->
+                                val isChosen = editStatus == s
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(if (isChosen) accentColor else textSecondary.copy(0.1f))
+                                        .clickable { editStatus = s }
+                                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                                ) {
+                                    Text(s, fontSize = 9.sp, fontWeight = FontWeight.Bold, color = if (isChosen) Color.White else textPrimary)
+                                }
+                            }
+                        }
+
+                        if (editStatus == "Paid") {
+                            Text("Payment Mode Selection:", fontSize = 10.sp, color = textSecondary)
+                            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                modeList.forEach { m ->
+                                    val isChosen = editMode == m
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(6.dp))
+                                            .background(if (isChosen) accentColor else textSecondary.copy(0.1f))
+                                            .clickable { editMode = m }
+                                            .padding(horizontal = 10.dp, vertical = 5.dp)
+                                    ) {
+                                        Text(m, fontSize = 9.sp, color = if (isChosen) Color.White else textPrimary)
+                                    }
+                                }
+                            }
+
+                            OutlinedTextField(
+                                value = editRef,
+                                onValueChange = { editRef = it },
+                                placeholder = { Text("UPI Txn Ref / Receipt No...", fontSize = 11.sp) },
+                                modifier = Modifier.fillMaxWidth().height(48.dp),
+                                textStyle = TextStyle(fontSize = 11.sp)
+                            )
+                        }
+
+                        OutlinedTextField(
+                            value = editRemarks,
+                            onValueChange = { editRemarks = it },
+                            placeholder = { Text("Admin Audit remarks...", fontSize = 11.sp) },
+                            modifier = Modifier.fillMaxWidth().height(48.dp),
+                            textStyle = TextStyle(fontSize = 11.sp)
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                        onClick = {
+                            val today = if (editStatus == "Paid") {
+                                java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
+                            } else ""
+
+                            viewModel.updateFeeStatus(
+                                currentFee.copy(
+                                    status = editStatus,
+                                    paymentDate = today,
+                                    paymentMode = if (editStatus == "Paid") editMode else "",
+                                    transactionReference = if (editStatus == "Paid") editRef else "",
+                                    remarks = editRemarks
+                                )
+                            )
+                            showEditDialog = null
+                        }
+                    ) {
+                        Text("Commit Changes", fontSize = 11.sp, color = Color.White)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showEditDialog = null }) {
+                        Text("Abort", fontSize = 11.sp, color = textSecondary)
+                    }
+                },
+                containerColor = cardBg
+            )
+        }
+    }
+}
+
+@Composable
+fun AdminSubscriptionBillingTab(
+    viewModel: AppViewModel,
+    students: List<StudentProfile>,
+    allOrganizations: List<Organization>,
+    isDark: Boolean
+) {
+    val textPrimary = if (isDark) Color.White else Color(0xFF180A22)
+    val textSecondary = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47).copy(0.7f)
+    val cardBg = if (isDark) Color(0xFF16112C) else Color.White
+    val accentColor = Color(0xFFF43F5E) // Sunset Rose
+
+    // Form inputs for organization customization
+    var showEditOrgDialog by remember { mutableStateOf<Organization?>(null) }
+    var editOrgName by remember { mutableStateOf("") }
+    var editOrgContact by remember { mutableStateOf("") }
+    var editOrgMobile by remember { mutableStateOf("") }
+    var editOrgEmail by remember { mutableStateOf("") }
+
+    val defaultOrg = allOrganizations.firstOrNull() ?: Organization(
+        organizationName = "Springfield Academy",
+        contactPerson = "Principal Skinner",
+        mobile = "9876543210",
+        email = "skinner@springfield.edu",
+        activeStudentCount = students.size,
+        monthlyAmount = students.size * 100.0,
+        status = "Active"
+    )
+
+    // Compute dynamically: active students count * 100rs monthly charge
+    val currentStudentsCount = students.size
+    val standardChargeRate = 100.0
+    val dynamicMonthlyDue = currentStudentsCount * standardChargeRate
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text("Institution Subscription Billing", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+
+        // Descriptive Card with Custom Programmatic Vector Image
+        Card(
+            colors = CardDefaults.cardColors(containerColor = cardBg),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                FinAndSaaSIllustration()
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = "ENTERPRISE PORTAL LEDGER",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color(0xFF8B5CF6),
+                    letterSpacing = 1.2.sp
+                )
+                Text(
+                    text = "Manage institutional usage fees transparently. Base quotas sync automatically with registered active student enrollment.",
+                    fontSize = 11.sp,
+                    textAlign = TextAlign.Center,
+                    color = textSecondary,
+                    modifier = Modifier.padding(top = 4.dp, start = 8.dp, end = 8.dp)
+                )
+            }
+        }
+
+        // Subscription Summary Cards
+        Card(
+            colors = CardDefaults.cardColors(containerColor = cardBg),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(defaultOrg.organizationName, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                        Text("Contact: ${defaultOrg.contactPerson} | ${defaultOrg.email}", fontSize = 11.sp, color = textSecondary)
+                    }
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(Color(0xFF22C55E).copy(0.15f))
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Text(defaultOrg.status, color = Color(0xFF22C55E), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+
+                HorizontalDivider(color = textSecondary.copy(alpha = 0.1f))
+
+                // Billing Calculations
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(horizontalAlignment = Alignment.Start) {
+                        Text("Active Student Base", fontSize = 10.sp, color = textSecondary)
+                        Text("$currentStudentsCount Enrolled", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("SaaS Plan Mode", fontSize = 10.sp, color = textSecondary)
+                        Text("₹100 / Stud / Mo", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                    }
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text("Monthly Amount Due", fontSize = 10.sp, color = textSecondary)
+                        Text("₹${dynamicMonthlyDue.toInt()}", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                    }
+                }
+            }
+        }
+
+        // Live Calculations Card
+        Card(
+            colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF162030) else Color(0xFFE2E8F0)),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(10.dp)
+        ) {
+            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("📊 Monthly Calculation Ledger", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Total Database Enrollers", fontSize = 11.sp, color = textSecondary)
+                    Text("$currentStudentsCount active students", fontSize = 11.sp, color = textPrimary, fontWeight = FontWeight.Bold)
+                }
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Standard Charge Rate", fontSize = 11.sp, color = textSecondary)
+                    Text("₹100 / Student", fontSize = 11.sp, color = textPrimary)
+                }
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Service Class Model", fontSize = 11.sp, color = textSecondary)
+                    Text("Education Enterprise SaaS", fontSize = 11.sp, color = textPrimary)
+                }
+
+                HorizontalDivider(color = textSecondary.copy(0.1f), modifier = Modifier.padding(vertical = 4.dp))
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Total Calculated Invoices Due", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                    Text("₹${dynamicMonthlyDue.toInt()}.00", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                }
+            }
+        }
+
+        // Configuration setup
+        Button(
+            onClick = {
+                editOrgName = defaultOrg.organizationName
+                editOrgContact = defaultOrg.contactPerson
+                editOrgMobile = defaultOrg.mobile
+                editOrgEmail = defaultOrg.email
+                showEditOrgDialog = defaultOrg
+            },
+            modifier = Modifier.fillMaxWidth().height(48.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+        ) {
+            Icon(Icons.Default.Edit, contentDescription = "Edit Configuration", tint = Color.White)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Edit Organization Profile Settings", fontWeight = FontWeight.Bold, color = Color.White)
+        }
+
+        // Historical Ledger Cycles
+        Text("📅 Historical Billing Ledger Cycles", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+
+        listOf(
+            Triple("May 2026", "₹${dynamicMonthlyDue.toInt()}", "Generated - Awaiting Auto-Renewal"),
+            Triple("April 2026", "₹${dynamicMonthlyDue.toInt()}", "Paid & Settled - Ref ID: BIL7982"),
+            Triple("March 2026", "₹${dynamicMonthlyDue.toInt()}", "Paid & Settled - Ref ID: BIL3221")
+        ).forEach { bRecord ->
+            Card(
+                colors = CardDefaults.cardColors(containerColor = cardBg),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(bRecord.first, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                        Text(bRecord.third, fontSize = 10.sp, color = textSecondary)
+                    }
+                    Text(bRecord.second, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                }
+            }
+        }
+    }
+
+    // Edit organization dialog
+    showEditOrgDialog?.let { org ->
+        AlertDialog(
+            onDismissRequest = { showEditOrgDialog = null },
+            title = { Text("Configure SaaS Enterprise Profile", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textPrimary) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = editOrgName,
+                        onValueChange = { editOrgName = it },
+                        placeholder = { Text("Institution Name", fontSize = 11.sp) },
+                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        textStyle = TextStyle(fontSize = 11.sp)
+                    )
+                    OutlinedTextField(
+                        value = editOrgContact,
+                        onValueChange = { editOrgContact = it },
+                        placeholder = { Text("Primary Admin Representative", fontSize = 11.sp) },
+                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        textStyle = TextStyle(fontSize = 11.sp)
+                    )
+                    OutlinedTextField(
+                        value = editOrgMobile,
+                        onValueChange = { editOrgMobile = it },
+                        placeholder = { Text("Representative Phone", fontSize = 11.sp) },
+                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        textStyle = TextStyle(fontSize = 11.sp)
+                    )
+                    OutlinedTextField(
+                        value = editOrgEmail,
+                        onValueChange = { editOrgEmail = it },
+                        placeholder = { Text("Billing Notification Email Address", fontSize = 11.sp) },
+                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        textStyle = TextStyle(fontSize = 11.sp)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                    onClick = {
+                        viewModel.updateOrganizationDetails(
+                            org.copy(
+                                organizationName = editOrgName,
+                                contactPerson = editOrgContact,
+                                mobile = editOrgMobile,
+                                email = editOrgEmail,
+                                activeStudentCount = currentStudentsCount,
+                                monthlyAmount = currentStudentsCount * 100.0
+                            )
+                        )
+                        showEditOrgDialog = null
+                    }
+                ) {
+                    Text("Apply Settings", fontSize = 11.sp, color = Color.White)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEditOrgDialog = null }) {
+                    Text("Dismiss", fontSize = 11.sp, color = textSecondary)
+                }
+            },
+            containerColor = cardBg
+        )
     }
 }
 
@@ -2621,5 +3374,203 @@ fun LegendRow(color: Color, label: String) {
         Box(modifier = Modifier.size(10.dp).background(color, CircleShape))
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = label, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+    }
+}
+
+// ==========================================
+// PROGRAMMATIC ARTWORK / MINI ILLUSTRATIONS
+// ==========================================
+@Composable
+fun WellnestLogoIllustration(modifier: Modifier = Modifier, isDark: Boolean) {
+    val mainIndigo = Color(0xFF4F70FA)
+    val softCyan = Color(0xFF22D3EE)
+    val amberGold = Color(0xFFF97316)
+    val circleBg = if (isDark) Color(0xFF182246) else Color(0xFFEBF2FA)
+
+    Box(
+        modifier = modifier
+            .size(120.dp)
+            .clip(RoundedCornerShape(24.dp))
+            .background(circleBg)
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            // Draw abstract beautiful waves / orbits representing a shield and physical wellness
+            val brush1 = Brush.linearGradient(listOf(mainIndigo, softCyan))
+            val brush2 = Brush.linearGradient(listOf(softCyan, amberGold))
+            
+            // Background blur concentric rings
+            drawCircle(
+                brush = brush1,
+                radius = size.minDimension / 2.5f,
+                center = center.copy(x = center.x - 10f),
+                alpha = 0.4f
+            )
+            drawCircle(
+                brush = brush2,
+                radius = size.minDimension / 3f,
+                center = center.copy(x = center.x + 15f),
+                alpha = 0.5f
+            )
+            
+            // Main glowing central nucleus
+            drawCircle(
+                color = Color.White,
+                radius = size.minDimension / 6f,
+                center = center,
+                alpha = 0.9f
+            )
+
+            // Dynamic diagonal band representing attendance/wellness analytics trends
+            val path = androidx.compose.ui.graphics.Path().apply {
+                moveTo(0f, size.height * 0.7f)
+                quadraticTo(size.width * 0.4f, size.height * 0.2f, size.width, size.height * 0.4f)
+                lineTo(size.width, size.height * 0.5f)
+                quadraticTo(size.width * 0.4f, size.height * 0.3f, 0f, size.height * 0.8f)
+                close()
+            }
+            drawPath(path = path, brush = brush2)
+        }
+    }
+}
+
+@Composable
+fun WellnessZenIllustration(modifier: Modifier = Modifier) {
+    val activeColor = Color(0xFF4F70FA) // Warm Royal Blue
+    val violetColor = Color(0xFF22D3EE) // Soft Cyan
+    val peachColor = Color(0xFFF97316) // Amber Gold
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .background(Color.Transparent),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val width = size.width
+            val height = size.height
+            val centerPoint = center
+
+            // 1. Draw a golden horizon curve
+            drawLine(
+                brush = Brush.linearGradient(listOf(violetColor.copy(0.3f), peachColor.copy(0.3f))),
+                start = Offset(0f, height * 0.8f),
+                end = Offset(width, height * 0.8f),
+                strokeWidth = 3f
+            )
+
+            // 2. Meditating core stack (represented as organic dynamic overlapping zen pebbles)
+            drawCircle(
+                brush = Brush.linearGradient(listOf(violetColor, activeColor)),
+                radius = 18.dp.toPx(),
+                center = Offset(centerPoint.x, height * 0.65f)
+            )
+            drawCircle(
+                brush = Brush.linearGradient(listOf(activeColor, peachColor)),
+                radius = 13.dp.toPx(),
+                center = Offset(centerPoint.x, height * 0.46f)
+            )
+            drawCircle(
+                brush = Brush.linearGradient(listOf(peachColor, Color.White)),
+                radius = 8.dp.toPx(),
+                center = Offset(centerPoint.x, height * 0.31f)
+            )
+
+            // 3. Glowing aura ring around the zen stack
+            drawArc(
+                brush = Brush.linearGradient(listOf(violetColor.copy(0.1f), activeColor, peachColor.copy(0.1f))),
+                startAngle = -210f,
+                sweepAngle = 240f,
+                useCenter = false,
+                style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round),
+                size = Size(70.dp.toPx(), 70.dp.toPx()),
+                topLeft = Offset(centerPoint.x - 35.dp.toPx(), height * 0.28f)
+            )
+
+            // 4. Little floating energy spark dots left and right
+            drawCircle(color = peachColor, radius = 3.dp.toPx(), center = Offset(centerPoint.x - 45.dp.toPx(), height * 0.45f))
+            drawCircle(color = activeColor, radius = 2.dp.toPx(), center = Offset(centerPoint.x + 50.dp.toPx(), height * 0.38f))
+            drawCircle(color = violetColor, radius = 3.dp.toPx(), center = Offset(centerPoint.x + 38.dp.toPx(), height * 0.6f))
+        }
+    }
+}
+
+@Composable
+fun FinAndSaaSIllustration(modifier: Modifier = Modifier) {
+    val mainIndigo = Color(0xFF4F70FA)
+    val softCyan = Color(0xFF22D3EE)
+    val amberGold = Color(0xFFF97316)
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(90.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val w = size.width
+            val h = size.height
+            val cx = w / 2
+
+            // Background abstract glowing radial gradient
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(mainIndigo.copy(0.2f), Color.Transparent),
+                    center = Offset(cx, h * 0.5f),
+                    radius = w * 0.3f
+                )
+            )
+
+            // Programmatic Ledger/Shield composition representing finance billing
+            val rectWidth = 40.dp.toPx()
+            val rectHeight = 50.dp.toPx()
+            val topLeftOffset = Offset(cx - rectWidth / 2, h * 0.2f)
+
+            // Base receipt page (slight tilt)
+            drawRoundRect(
+                brush = Brush.linearGradient(listOf(mainIndigo.copy(0.7f), softCyan.copy(0.7f))),
+                topLeft = topLeftOffset,
+                size = Size(rectWidth, rectHeight),
+                cornerRadius = androidx.compose.foundation.shape.CornerSize(6.dp.toPx()).let { androidx.compose.ui.geometry.CornerRadius(8f) },
+                style = Stroke(width = 2.5.dp.toPx())
+            )
+
+            // Invoice lines programmatically
+            drawLine(
+                color = mainIndigo.copy(0.8f),
+                start = Offset(cx - rectWidth / 3, h * 0.35f),
+                end = Offset(cx + rectWidth / 3, h * 0.35f),
+                strokeWidth = 2.dp.toPx()
+            )
+            drawLine(
+                color = amberGold.copy(0.8f),
+                start = Offset(cx - rectWidth / 3, h * 0.45f),
+                end = Offset(cx + rectWidth / 4, h * 0.45f),
+                strokeWidth = 2.dp.toPx()
+            )
+            drawLine(
+                color = softCyan.copy(0.8f),
+                start = Offset(cx - rectWidth / 3, h * 0.55f),
+                end = Offset(cx + rectWidth / 6, h * 0.55f),
+                strokeWidth = 2.dp.toPx()
+            )
+
+            // Intersecting dynamic crescent ring representing continuous subscriptions
+            drawArc(
+                brush = Brush.linearGradient(listOf(amberGold, mainIndigo)),
+                startAngle = -20f,
+                sweepAngle = 220f,
+                useCenter = false,
+                style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round),
+                size = Size(50.dp.toPx(), 22.dp.toPx()),
+                topLeft = Offset(cx - 25.dp.toPx(), h * 0.58f)
+            )
+
+            // Floating coin/star
+            drawCircle(color = amberGold, radius = 4.dp.toPx(), center = Offset(cx + 32.dp.toPx(), h * 0.25f))
+            drawCircle(color = Color.White, radius = 2.dp.toPx(), center = Offset(cx - 30.dp.toPx(), h * 0.5f))
+        }
     }
 }

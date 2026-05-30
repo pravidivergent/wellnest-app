@@ -56,6 +56,36 @@ data class WellnessEntry(
     val timestamp: Long = System.currentTimeMillis()
 )
 
+@Entity(tableName = "student_fees")
+data class StudentFee(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val studentRegister: String,
+    val month: String, // e.g. "January", "February", etc.
+    val year: Int,
+    val amount: Double,
+    val status: String, // "Paid", "Pending", "Overdue"
+    val paymentDate: String = "", // yyyy-MM-dd
+    val paymentMode: String = "", // "Cash", "UPI", "Bank Transfer"
+    val transactionReference: String = "",
+    val remarks: String = "",
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "organizations")
+data class Organization(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val organizationName: String,
+    val contactPerson: String,
+    val mobile: String,
+    val email: String,
+    val subscriptionPlan: String = "Per Student",
+    val activeStudentCount: Int = 0,
+    val monthlyAmount: Double = 0.0,
+    val subscriptionStartDate: String = "",
+    val subscriptionEndDate: String = "",
+    val status: String = "Active"
+)
+
 // 2. DAOs
 @Dao
 interface StudentDao {
@@ -114,15 +144,47 @@ interface WellnessDao {
     suspend fun insertWellnessEntry(entry: WellnessEntry)
 }
 
+@Dao
+interface StudentFeeDao {
+    @Query("SELECT * FROM student_fees ORDER BY id DESC")
+    fun getAllFeesFlow(): Flow<List<StudentFee>>
+
+    @Query("SELECT * FROM student_fees WHERE studentRegister = :regNo ORDER BY id DESC")
+    fun getStudentFeesFlow(regNo: String): Flow<List<StudentFee>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFee(fee: StudentFee)
+
+    @Update
+    suspend fun updateFee(fee: StudentFee)
+
+    @Delete
+    suspend fun deleteFee(fee: StudentFee)
+}
+
+@Dao
+interface OrganizationDao {
+    @Query("SELECT * FROM organizations ORDER BY id DESC")
+    fun getOrganizationsFlow(): Flow<List<Organization>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrganization(org: Organization)
+
+    @Update
+    suspend fun updateOrganization(org: Organization)
+}
+
 // 3. Database
 @Database(
     entities = [
         StudentProfile::class,
         AttendanceRecord::class,
         LeaveApplication::class,
-        WellnessEntry::class
+        WellnessEntry::class,
+        StudentFee::class,
+        Organization::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -130,4 +192,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun attendanceDao(): AttendanceDao
     abstract fun leaveDao(): LeaveDao
     abstract fun wellnessDao(): WellnessDao
+    abstract fun studentFeeDao(): StudentFeeDao
+    abstract fun organizationDao(): OrganizationDao
 }

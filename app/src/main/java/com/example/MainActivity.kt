@@ -35,7 +35,9 @@ class MainActivity : ComponentActivity() {
             studentDao = database.studentDao(),
             attendanceDao = database.attendanceDao(),
             leaveDao = database.leaveDao(),
-            wellnessDao = database.wellnessDao()
+            wellnessDao = database.wellnessDao(),
+            studentFeeDao = database.studentFeeDao(),
+            organizationDao = database.organizationDao()
         )
     }
 

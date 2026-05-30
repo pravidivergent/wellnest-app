@@ -6,7 +6,9 @@ class AppRepository(
     private val studentDao: StudentDao,
     private val attendanceDao: AttendanceDao,
     private val leaveDao: LeaveDao,
-    private val wellnessDao: WellnessDao
+    private val wellnessDao: WellnessDao,
+    private val studentFeeDao: StudentFeeDao,
+    private val organizationDao: OrganizationDao
 ) {
     // Student Actions
     val allStudentsFlow: Flow<List<StudentProfile>> = studentDao.getAllStudentsFlow()
@@ -62,5 +64,35 @@ class AppRepository(
 
     suspend fun insertWellnessEntry(entry: WellnessEntry) {
         wellnessDao.insertWellnessEntry(entry)
+    }
+
+    // Student Fees Actions
+    val allFeesFlow: Flow<List<StudentFee>> = studentFeeDao.getAllFeesFlow()
+
+    fun getStudentFeesFlow(regNo: String): Flow<List<StudentFee>> {
+        return studentFeeDao.getStudentFeesFlow(regNo)
+    }
+
+    suspend fun insertFee(fee: StudentFee) {
+        studentFeeDao.insertFee(fee)
+    }
+
+    suspend fun updateFee(fee: StudentFee) {
+        studentFeeDao.updateFee(fee)
+    }
+
+    suspend fun deleteFee(fee: StudentFee) {
+        studentFeeDao.deleteFee(fee)
+    }
+
+    // Organization Actions
+    val allOrganizationsFlow: Flow<List<Organization>> = organizationDao.getOrganizationsFlow()
+
+    suspend fun insertOrganization(org: Organization) {
+        organizationDao.insertOrganization(org)
+    }
+
+    suspend fun updateOrganization(org: Organization) {
+        organizationDao.updateOrganization(org)
     }
 }

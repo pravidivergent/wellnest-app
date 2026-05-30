@@ -14,27 +14,27 @@ import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme =
   darkColorScheme(
-    primary = Color(0xFF1ABC9C),
-    secondary = Color(0xFF10B981),
-    tertiary = Color(0xFF38BDF8),
-    background = Color(0xFF0F172A),
-    surface = Color(0xFF1E293B),
-    onPrimary = Color(0xFF0F172A),
-    onSecondary = Color.White,
-    onBackground = Color(0xFFECF0F1),
-    onSurface = Color(0xFFECF0F1)
+    primary = Color(0xFF5A7CF1), // Energetic Royal/Cornflower Blue
+    secondary = Color(0xFF34D399), // Mint Green
+    tertiary = Color(0xFFFB923C), // Accent Orange
+    background = Color(0xFF0E1428), // Deep Ocean Cobalt
+    surface = Color(0xFF182246), // Cobalt Blue Surface
+    onPrimary = Color.White,
+    onSecondary = Color(0xFF0E1428),
+    onBackground = Color(0xFFF8FAFC),
+    onSurface = Color(0xFFF8FAFC)
   )
 
 private val LightColorScheme =
   lightColorScheme(
-    primary = Color(0xFF1ABC9C),
-    secondary = Color(0xFF10B981),
-    tertiary = Color(0xFF3B82F6),
-    background = Color(0xFFECF0F1),
-    surface = Color.White,
+    primary = Color(0xFF4F70FA), // Warm Royal/Indigo Blue
+    secondary = Color(0xFF10B981), // Emerald Teal
+    tertiary = Color(0xFFF97316), // Accent Amber/Coral
+    background = Color(0xFFF3F7FC), // Clean Soft Light Blue-Grey Background
+    surface = Color(0xFFFFFFFF), // Pure White Rounded Cards
     onPrimary = Color.White,
     onSecondary = Color.White,
-    onBackground = Color(0xFF0F172A),
+    onBackground = Color(0xFF1E293B), // Deep Slate-Blue Text
     onSurface = Color(0xFF1E293B)
   )
 

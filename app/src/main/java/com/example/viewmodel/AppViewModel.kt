@@ -67,6 +67,18 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
         initialValue = emptyList()
     )
 
+    val allFees = repository.allFeesFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+    val allOrganizations = repository.allOrganizationsFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
     init {
         // Automatically seed mock database entries if empty so the screen experiences rich initial reports
         viewModelScope.launch {
@@ -194,6 +206,126 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
                 improvements = "Must maintain meal times."
             )
         )
+
+        // 5. Seed Student Fees
+        repository.insertFee(
+            StudentFee(
+                studentRegister = "2026CS501",
+                month = "May",
+                year = 2026,
+                amount = 1500.0,
+                status = "Paid",
+                paymentDate = "2026-05-15",
+                paymentMode = "UPI",
+                transactionReference = "TXN123456789",
+                remarks = "Thank you for early payment"
+            )
+        )
+        repository.insertFee(
+            StudentFee(
+                studentRegister = "2026CS502",
+                month = "May",
+                year = 2026,
+                amount = 1500.0,
+                status = "Pending",
+                remarks = "Reminder sent via parents"
+            )
+        )
+        repository.insertFee(
+            StudentFee(
+                studentRegister = "2025EC408",
+                month = "May",
+                year = 2026,
+                amount = 1500.0,
+                status = "Overdue",
+                remarks = "More than 15 days late"
+            )
+        )
+
+        // 6. Seed Organizations
+        repository.insertOrganization(
+            Organization(
+                organizationName = "Springfield Academy",
+                contactPerson = "Principal Skinner",
+                mobile = "9876543210",
+                email = "skinner@springfield.edu",
+                subscriptionPlan = "Per Student (₹100/mo)",
+                activeStudentCount = 3, // Out of current data
+                monthlyAmount = 300.0,
+                subscriptionStartDate = "2026-01-01",
+                subscriptionEndDate = "2026-12-31",
+                status = "Active"
+            )
+        )
+    }
+
+    fun recordFeePayment(
+        studentRegister: String,
+        month: String,
+        year: Int,
+        amount: Double,
+        status: String,
+        paymentDate: String = "",
+        paymentMode: String = "",
+        transactionReference: String = "",
+        remarks: String = ""
+    ) {
+        viewModelScope.launch {
+            repository.insertFee(
+                StudentFee(
+                    studentRegister = studentRegister,
+                    month = month,
+                    year = year,
+                    amount = amount,
+                    status = status,
+                    paymentDate = paymentDate,
+                    paymentMode = paymentMode,
+                    transactionReference = transactionReference,
+                    remarks = remarks
+                )
+            )
+        }
+    }
+
+    fun updateFeeStatus(fee: StudentFee) {
+        viewModelScope.launch {
+            repository.updateFee(fee)
+        }
+    }
+
+    fun addOrganization(
+        name: String,
+        contactPerson: String,
+        mobile: String,
+        email: String,
+        activeStudentCount: Int,
+        subscriptionStartDate: String,
+        subscriptionEndDate: String,
+        status: String = "Active"
+    ) {
+        viewModelScope.launch {
+            val amount = activeStudentCount * 100.0
+            repository.insertOrganization(
+                Organization(
+                    organizationName = name,
+                    contactPerson = contactPerson,
+                    mobile = mobile,
+                    email = email,
+                    subscriptionPlan = "Per Student (₹100/mo)",
+                    activeStudentCount = activeStudentCount,
+                    monthlyAmount = amount,
+                    subscriptionStartDate = subscriptionStartDate,
+                    subscriptionEndDate = subscriptionEndDate,
+                    status = status
+                )
+            )
+        }
+    }
+
+    fun updateOrganizationDetails(org: Organization) {
+        viewModelScope.launch {
+            repository.updateOrganization(org)
+        }
     }
 
     // Submit Log / Auth Routines
