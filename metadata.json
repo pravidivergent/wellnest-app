@@ -1,0 +1,6 @@
+{
+  "name": "Wellnest",
+  "description": "Student Attendance & Wellness Tracking Application. Experience detailed dashboards for Students, Coaches, and Admins alongside leave requests and wellness metrics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
