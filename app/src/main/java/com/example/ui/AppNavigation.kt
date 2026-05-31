@@ -33,6 +33,7 @@ import com.example.viewmodel.AuthState
 import com.example.viewmodel.AppViewModel
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlinx.coroutines.launch
 import androidx.compose.ui.text.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -2922,9 +2923,8 @@ fun AdminSubscriptionBillingTab(
     val textPrimary = if (isDark) Color.White else Color(0xFF180A22)
     val textSecondary = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47).copy(0.7f)
     val cardBg = if (isDark) Color(0xFF16112C) else Color.White
-    val accentColor = Color(0xFFF43F5E) // Sunset Rose
+    val accentColor = Color(0xFF4F70FA) // Energetic Royal Blue
 
-    // Form inputs for organization customization
     var showEditOrgDialog by remember { mutableStateOf<Organization?>(null) }
     var editOrgName by remember { mutableStateOf("") }
     var editOrgContact by remember { mutableStateOf("") }
@@ -2941,10 +2941,73 @@ fun AdminSubscriptionBillingTab(
         status = "Active"
     )
 
-    // Compute dynamically: active students count * 100rs monthly charge
     val currentStudentsCount = students.size
-    val standardChargeRate = 100.0
-    val dynamicMonthlyDue = currentStudentsCount * standardChargeRate
+    val coroutineScope = rememberCoroutineScope()
+
+    // Tier Plan management
+    var selectedPlanName by remember(defaultOrg) {
+        mutableStateOf(
+            if (defaultOrg.subscriptionPlan.contains("Starter", ignoreCase = true)) "Starter Plan"
+            else if (defaultOrg.subscriptionPlan.contains("Enterprise", ignoreCase = true) || defaultOrg.subscriptionPlan.contains("Per Student", ignoreCase = true)) "Enterprise Dynamic Plan"
+            else "Professional Plan"
+        )
+    }
+
+    // Dynamic License Price Calculation
+    val basePlanAmount = when (selectedPlanName) {
+        "Starter Plan" -> 1499.0
+        "Professional Plan" -> 4999.0
+        else -> currentStudentsCount * 100.0
+    }
+    
+    val taxAmount = basePlanAmount * 0.18
+    val grandTotalAmount = basePlanAmount + taxAmount
+
+    // Simulated Subscription Flow state
+    var isSubscriptionAutorenew by remember { mutableStateOf(true) }
+    var currentPaidUntilDate by remember(defaultOrg) { 
+        mutableStateOf(if (defaultOrg.subscriptionEndDate.isNotBlank()) defaultOrg.subscriptionEndDate else "June 30, 2026")
+    }
+    var currentSubscriptionStatus by remember(defaultOrg) {
+        mutableStateOf(if (defaultOrg.status.isNotBlank()) defaultOrg.status else "Active")
+    }
+
+    // Toast Toast or Success Toast UI
+    var successToastMessage by remember { mutableStateOf("") }
+
+    // State for Payment Dialog
+    var showPaymentDialog by remember { mutableStateOf(false) }
+    var paymentMethod by remember { mutableStateOf("CARD") } // CARD or UPI
+
+    // Input States for Card checkout form
+    var cardNumber by remember { mutableStateOf("") }
+    var cardExpiry by remember { mutableStateOf("") }
+    var cardCvv by remember { mutableStateOf("") }
+    var cardHolderName by remember { mutableStateOf("") }
+
+    // Input States for UPI checkout form
+    var upiId by remember { mutableStateOf("") }
+
+    // Payment Processing Loader State
+    var isPaymentProcessing by remember { mutableStateOf(false) }
+    var paymentProcessingStep by remember { mutableStateOf("") }
+    var isPaymentSuccessState by remember { mutableStateOf(false) }
+
+    // Stateful Billing Logs which prepends dynamically on successful payment capture
+    val billingLogs = remember {
+        mutableStateListOf(
+            Triple("May 2026", "Professional Plan", "Awaiting Renewal on May 30th"),
+            Triple("Apr 2026", "Professional Plan", "Paid & Settled - Ref: TXN-44919-X"),
+            Triple("Mar 2026", "Professional Plan", "Paid & Settled - Ref: TXN-28311-K")
+        )
+    }
+
+    if (successToastMessage.isNotBlank()) {
+        LaunchedEffect(successToastMessage) {
+            kotlinx.coroutines.delay(3500)
+            successToastMessage = ""
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -2953,13 +3016,31 @@ fun AdminSubscriptionBillingTab(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Institution Subscription Billing", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Institution Subscription Billing", fontSize = 17.sp, fontWeight = FontWeight.Black, color = textPrimary)
+            
+            // Edit profile button on the header
+            IconButton(onClick = {
+                editOrgName = defaultOrg.organizationName
+                editOrgContact = defaultOrg.contactPerson
+                editOrgMobile = defaultOrg.mobile
+                editOrgEmail = defaultOrg.email
+                showEditOrgDialog = defaultOrg
+            }) {
+                Icon(Icons.Default.Settings, contentDescription = "Edit Profile", tint = accentColor)
+            }
+        }
 
         // Descriptive Card with Custom Programmatic Vector Image
         Card(
             colors = CardDefaults.cardColors(containerColor = cardBg),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(1.dp, if (isDark) Color(0xFF1E293B) else Color(0xFFE2E8F0))
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -2971,7 +3052,7 @@ fun AdminSubscriptionBillingTab(
                     text = "ENTERPRISE PORTAL LEDGER",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = Color(0xFF8B5CF6),
+                    color = accentColor,
                     letterSpacing = 1.2.sp
                 )
                 Text(
@@ -2979,137 +3060,598 @@ fun AdminSubscriptionBillingTab(
                     fontSize = 11.sp,
                     textAlign = TextAlign.Center,
                     color = textSecondary,
-                    modifier = Modifier.padding(top = 4.dp, start = 8.dp, end = 8.dp)
+                    modifier = Modifier.padding(top = 4.dp, start = 8.dp, end = 8.dp),
+                    lineHeight = 15.sp
                 )
             }
         }
 
-        // Subscription Summary Cards
+        // Live Active Plan Card
         Card(
             colors = CardDefaults.cardColors(containerColor = cardBg),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(2.dp, accentColor)
         ) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                // Subscription active indicator row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text(defaultOrg.organizationName, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimary)
-                        Text("Contact: ${defaultOrg.contactPerson} | ${defaultOrg.email}", fontSize = 11.sp, color = textSecondary)
+                        Text(defaultOrg.organizationName.ifBlank { "Springfield Academy" }, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                        Text("Active Administrator License Client", fontSize = 11.sp, color = textSecondary)
                     }
+
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(Color(0xFF22C55E).copy(0.15f))
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                if (currentSubscriptionStatus == "Active") Color(0xFF10B981).copy(0.12f)
+                                else Color(0xFFF97316).copy(0.12f)
+                            )
+                            .padding(horizontal = 10.dp, vertical = 6.dp)
                     ) {
-                        Text(defaultOrg.status, color = Color(0xFF22C55E), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .clip(CircleShape)
+                                    .background(if (currentSubscriptionStatus == "Active") Color(0xFF10B981) else Color(0xFFF97316))
+                            )
+                            Text(
+                                text = currentSubscriptionStatus.uppercase(),
+                                color = if (currentSubscriptionStatus == "Active") Color(0xFF10B981) else Color(0xFFF97316),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
 
                 HorizontalDivider(color = textSecondary.copy(alpha = 0.1f))
 
-                // Billing Calculations
+                // Detail Fields
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column(horizontalAlignment = Alignment.Start) {
-                        Text("Active Student Base", fontSize = 10.sp, color = textSecondary)
-                        Text("$currentStudentsCount Enrolled", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
-                    }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("SaaS Plan Mode", fontSize = 10.sp, color = textSecondary)
-                        Text("₹100 / Stud / Mo", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                    Column {
+                        Text("ACTIVE LICENSE PLAN", fontSize = 10.sp, color = textSecondary, fontWeight = FontWeight.Bold)
+                        Text(selectedPlanName, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textPrimary)
                     }
                     Column(horizontalAlignment = Alignment.End) {
-                        Text("Monthly Amount Due", fontSize = 10.sp, color = textSecondary)
-                        Text("₹${dynamicMonthlyDue.toInt()}", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                        Text("LICENSE VALID UNTIL", fontSize = 10.sp, color = textSecondary, fontWeight = FontWeight.Bold)
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Icon(Icons.Default.DateRange, contentDescription = "", tint = accentColor, modifier = Modifier.size(14.dp))
+                            Text(currentPaidUntilDate, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                        }
+                    }
+                }
+
+                // Auto renewal switch setting
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(if (isDark) Color(0xFF10162B) else Color(0xFFF1F5F9))
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.Lock, contentDescription = "", tint = Color(0xFF10B981), modifier = Modifier.size(16.dp))
+                        Column {
+                            Text("Auto-Renewal Safeguard", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                            Text("Drafts billing securely on date end", fontSize = 9.sp, color = textSecondary)
+                        }
+                    }
+                    Switch(
+                        checked = isSubscriptionAutorenew,
+                        onCheckedChange = { isSubscriptionAutorenew = it },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = accentColor
+                        )
+                    )
+                }
+
+                // Interactive Renewal trigger
+                Button(
+                    onClick = {
+                        isPaymentSuccessState = false
+                        showPaymentDialog = true
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(46.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+                ) {
+                    Icon(Icons.Default.Payment, contentDescription = "", tint = Color.White)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Secure Payment Gateway Checkout", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                }
+            }
+        }
+
+        // Custom Toast Box
+        if (successToastMessage.isNotBlank()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFF10B981).copy(0.15f))
+                    .border(1.dp, Color(0xFF10B981), RoundedCornerShape(12.dp))
+                    .padding(12.dp)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Default.CheckCircle, contentDescription = "", tint = Color(0xFF10B981))
+                    Text(successToastMessage, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color.White else Color(0xFF0F5132))
+                }
+            }
+        }
+
+        // Interactive Subscription Tier Configurator Selectors
+        Text("🚀 Select & Configure SaaS Tiers", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            val tiers = listOf(
+                Triple("Starter Plan", "₹1,499", "Up to 30 active student profiles standard logs"),
+                Triple("Professional Plan", "₹4,999", "Up to 200 student profiles, full wellness insights (Most Common)"),
+                Triple("Enterprise Dynamic Plan", "₹100/Student/Mo", "Pricing scales dynamic with database enrollment count")
+            )
+
+            tiers.forEach { (tierName, tierRate, tierDesc) ->
+                val isSelected = selectedPlanName == tierName
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { selectedPlanName = tierName },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isSelected) accentColor.copy(0.08f) else cardBg
+                    ),
+                    border = BorderStroke(
+                        width = if (isSelected) 2.dp else 1.dp,
+                        color = if (isSelected) accentColor else (if (isDark) Color(0xFF1E293B) else Color(0xFFE2E8F0))
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(14.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Text(tierName, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                                if (tierName == "Professional Plan") {
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(accentColor)
+                                            .padding(horizontal = 5.dp, vertical = 2.dp)
+                                    ) {
+                                        Text("POPULAR", color = Color.White, fontSize = 7.sp, fontWeight = FontWeight.ExtraBold)
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(tierDesc, fontSize = 10.sp, color = textSecondary, lineHeight = 13.sp)
+                        }
+                        Column(horizontalAlignment = Alignment.End, modifier = Modifier.padding(start = 8.dp)) {
+                            Text(tierRate, fontSize = 14.sp, fontWeight = FontWeight.Black, color = if (isSelected) accentColor else textPrimary)
+                            Text("monthly billing", fontSize = 8.sp, color = textSecondary)
+                        }
                     }
                 }
             }
         }
 
-        // Live Calculations Card
+        // Live Itemized Calculations Card
         Card(
-            colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF162030) else Color(0xFFE2E8F0)),
+            colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF10162B) else Color(0xFFF1F5F9)),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(10.dp)
+            shape = RoundedCornerShape(12.dp)
         ) {
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("📊 Monthly Calculation Ledger", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                Text("📊 Monthly Calculation Invoice Breakdown", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Total Database Enrollers", fontSize = 11.sp, color = textSecondary)
+                    Text("Total Enrolled Database Actives", fontSize = 11.sp, color = textSecondary)
                     Text("$currentStudentsCount active students", fontSize = 11.sp, color = textPrimary, fontWeight = FontWeight.Bold)
                 }
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Standard Charge Rate", fontSize = 11.sp, color = textSecondary)
-                    Text("₹100 / Student", fontSize = 11.sp, color = textPrimary)
+                    Text("Plan Selected Rate", fontSize = 11.sp, color = textSecondary)
+                    Text(
+                        text = if (selectedPlanName == "Enterprise Dynamic Plan") "₹100.00 / Student" else selectedPlanName,
+                        fontSize = 11.sp,
+                        color = textPrimary,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Service Class Model", fontSize = 11.sp, color = textSecondary)
-                    Text("Education Enterprise SaaS", fontSize = 11.sp, color = textPrimary)
+                    Text("SaaS License Subtotal", fontSize = 11.sp, color = textSecondary)
+                    Text("₹${basePlanAmount.toInt()}.00", fontSize = 11.sp, color = textPrimary, fontWeight = FontWeight.Bold)
+                }
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Cloud Infrastructure Service Levy (GST 18%)", fontSize = 11.sp, color = textSecondary)
+                    Text("₹${taxAmount.toInt()}.00", fontSize = 11.sp, color = textPrimary)
                 }
 
                 HorizontalDivider(color = textSecondary.copy(0.1f), modifier = Modifier.padding(vertical = 4.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Total Calculated Invoices Due", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = textPrimary)
-                    Text("₹${dynamicMonthlyDue.toInt()}.00", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                    Text("Grand Monthly Invoice Total", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                    Text("₹${grandTotalAmount.toInt()}.00", fontSize = 14.sp, fontWeight = FontWeight.Black, color = accentColor)
                 }
             }
         }
 
-        // Configuration setup
-        Button(
-            onClick = {
-                editOrgName = defaultOrg.organizationName
-                editOrgContact = defaultOrg.contactPerson
-                editOrgMobile = defaultOrg.mobile
-                editOrgEmail = defaultOrg.email
-                showEditOrgDialog = defaultOrg
-            },
-            modifier = Modifier.fillMaxWidth().height(48.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = accentColor)
-        ) {
-            Icon(Icons.Default.Edit, contentDescription = "Edit Configuration", tint = Color.White)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Edit Organization Profile Settings", fontWeight = FontWeight.Bold, color = Color.White)
-        }
-
         // Historical Ledger Cycles
-        Text("📅 Historical Billing Ledger Cycles", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+        Text("📅 Historical Billing Ledger Cycles", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = textPrimary)
 
-        listOf(
-            Triple("May 2026", "₹${dynamicMonthlyDue.toInt()}", "Generated - Awaiting Auto-Renewal"),
-            Triple("April 2026", "₹${dynamicMonthlyDue.toInt()}", "Paid & Settled - Ref ID: BIL7982"),
-            Triple("March 2026", "₹${dynamicMonthlyDue.toInt()}", "Paid & Settled - Ref ID: BIL3221")
-        ).forEach { bRecord ->
+        billingLogs.forEach { bRecord ->
             Card(
                 colors = CardDefaults.cardColors(containerColor = cardBg),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                border = BorderStroke(1.dp, if (isDark) Color(0xFF1E293B) else Color(0xFFE2E8F0))
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
-                        Text(bRecord.first, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
-                        Text(bRecord.third, fontSize = 10.sp, color = textSecondary)
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(accentColor.copy(0.1f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.ReceiptLong, contentDescription = "", tint = accentColor, modifier = Modifier.size(16.dp))
+                        }
+                        Column {
+                            Text(bRecord.first, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                            Text("${bRecord.second} • ${bRecord.third}", fontSize = 10.sp, color = textSecondary)
+                        }
                     }
-                    Text(bRecord.second, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                    val amountText = if (bRecord.second == "Starter Plan") "₹1,499"
+                    else if (bRecord.second == "Professional Plan") "₹4,999"
+                    else "₹${(currentStudentsCount * 100 * 1.18).toInt()}"
+                    Text(
+                        text = amountText,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF10B981)
+                    )
                 }
             }
         }
     }
 
-    // Edit organization dialog
+    // 1. PAYMENT GATEWAY SIMULATION CHECKOUT DIALOG
+    if (showPaymentDialog) {
+        AlertDialog(
+            onDismissRequest = { 
+                if (!isPaymentProcessing) showPaymentDialog = false 
+            },
+            title = {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.Lock, contentDescription = "", tint = Color(0xFF10B981), modifier = Modifier.size(20.dp))
+                    Text(
+                        text = "SECURED STRIPE SaaS PORTAL", 
+                        fontSize = 13.sp, 
+                        fontWeight = FontWeight.ExtraBold, 
+                        color = textPrimary,
+                        letterSpacing = 1.2.sp
+                    )
+                }
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    
+                    if (isPaymentProcessing) {
+                        // Banking animation screen
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(220.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = accentColor,
+                                modifier = Modifier.size(48.dp)
+                            )
+                            Spacer(modifier = Modifier.height(18.dp))
+                            Text(
+                                text = "Transaction in Progress",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = textPrimary
+                            )
+                            Text(
+                                text = paymentProcessingStep,
+                                fontSize = 11.sp,
+                                color = textSecondary,
+                                modifier = Modifier.padding(top = 4.dp),
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "🔒 256-bit AES Certified Connection Network",
+                                fontSize = 9.sp,
+                                color = Color(0xFF10B981),
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    } else if (isPaymentSuccessState) {
+                        // Delightful checkout success check
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(220.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.CheckCircle,
+                                contentDescription = "",
+                                tint = Color(0xFF10B981),
+                                modifier = Modifier.size(64.dp)
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                text = "PAYMENT SUCCESSFUL",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = textPrimary,
+                                letterSpacing = 1.sp
+                            )
+                            Text(
+                                text = "Authorized settlement completed securely. App access is fully upgraded.",
+                                fontSize = 11.sp,
+                                color = textSecondary,
+                                modifier = Modifier.padding(top = 4.dp, start = 8.dp, end = 8.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    } else {
+                        // Primary Payment inputs forms
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF10162B) else Color(0xFFF1F5F9)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text("Pay Licensing Total Fee", fontSize = 10.sp, color = textSecondary)
+                                    Text("₹${grandTotalAmount.toInt()}.00", fontSize = 15.sp, fontWeight = FontWeight.Black, color = textPrimary)
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(accentColor.copy(0.12f))
+                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                ) {
+                                    Text(selectedPlanName, color = accentColor, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+
+                        // Gateway Toggle Hub (Credit Card OR UPI)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(if (isDark) Color(0xFF10162B) else Color(0xFFF1F5F9)),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            listOf("CARD", "UPI").forEach { method ->
+                                val isSel = paymentMethod == method
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable { paymentMethod = method }
+                                        .background(if (isSel) accentColor else Color.Transparent)
+                                        .padding(vertical = 10.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = if (method == "CARD") "💳 Credit/Debit Card" else "📱 UPI Address",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 11.sp,
+                                        color = if (isSel) Color.White else textSecondary
+                                    )
+                                }
+                            }
+                        }
+
+                        if (paymentMethod == "CARD") {
+                            // Credit Card Setup Form
+                            OutlinedTextField(
+                                value = cardNumber,
+                                onValueChange = { input ->
+                                    // Strip spaces and keep max digit size 16
+                                    val digits = input.filter { it.isDigit() }.take(16)
+                                    // format: e.g. "4111 2222 3333 4444"
+                                    cardNumber = digits.chunked(4).joinToString(" ")
+                                },
+                                label = { Text("Card Number", fontSize = 11.sp) },
+                                placeholder = { Text("4111 2222 3333 4444", fontSize = 11.sp) },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                textStyle = TextStyle(fontSize = 11.sp, letterSpacing = 1.2.sp)
+                            )
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                OutlinedTextField(
+                                    value = cardExpiry,
+                                    onValueChange = { input ->
+                                        val filtered = input.filter { it.isDigit() }.take(4)
+                                        cardExpiry = if (filtered.length >= 3) {
+                                            "${filtered.substring(0, 2)}/${filtered.substring(2)}"
+                                        } else {
+                                            filtered
+                                        }
+                                    },
+                                    label = { Text("Expiry (MM/YY)", fontSize = 11.sp) },
+                                    placeholder = { Text("12/28", fontSize = 11.sp) },
+                                    modifier = Modifier.weight(1.2f),
+                                    singleLine = true,
+                                    textStyle = TextStyle(fontSize = 11.sp)
+                                )
+
+                                OutlinedTextField(
+                                    value = cardCvv,
+                                    onValueChange = { input ->
+                                        cardCvv = input.filter { it.isDigit() }.take(3)
+                                    },
+                                    label = { Text("CVV", fontSize = 11.sp) },
+                                    placeholder = { Text("***", fontSize = 11.sp) },
+                                    modifier = Modifier.weight(0.8f),
+                                    singleLine = true,
+                                    textStyle = TextStyle(fontSize = 11.sp)
+                                )
+                            }
+
+                            // Card Holder Name Input
+                            OutlinedTextField(
+                                value = cardHolderName,
+                                onValueChange = { cardHolderName = it },
+                                label = { Text("Cardholder Full Name", fontSize = 11.sp) },
+                                placeholder = { Text("Principal Seymour Skinner", fontSize = 11.sp) },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                textStyle = TextStyle(fontSize = 11.sp)
+                            )
+                        } else {
+                            // UPI Virtual Address Setup Form
+                            OutlinedTextField(
+                                value = upiId,
+                                onValueChange = { upiInputString -> 
+                                    upiId = upiInputString.filter { charValue -> !charValue.isWhitespace() } 
+                                },
+                                label = { Text("Virtual Payment Address (VPA)", fontSize = 11.sp) },
+                                placeholder = { Text("skinner@okaxis", fontSize = 11.sp) },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                supportingText = {
+                                    Text(
+                                        text = if (upiId.contains("@") || upiId.isBlank()) "Supports BHIM UPI, GPay, Paytm, PhonePe" else "Missing '@' identifier domain",
+                                        fontSize = 9.sp,
+                                        color = if (upiId.contains("@") || upiId.isBlank()) textSecondary else Color(0xFFF43F5E)
+                                    )
+                                },
+                                textStyle = TextStyle(fontSize = 11.sp)
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                if (isPaymentSuccessState) {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
+                        onClick = {
+                            showPaymentDialog = false
+                            isPaymentSuccessState = false
+                        }
+                    ) {
+                        Text("Finish Checkout", fontSize = 11.sp, color = Color.White)
+                    }
+                } else if (!isPaymentProcessing) {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                        enabled = if (paymentMethod == "CARD") {
+                            cardNumber.length >= 15 && cardExpiry.length >= 5 && cardCvv.length >= 3 && cardHolderName.isNotBlank()
+                        } else {
+                            upiId.contains("@") && upiId.length > 5
+                        },
+                        onClick = {
+                            isPaymentProcessing = true
+                            
+                            // Sequential simulation phases using standard CoroutineScope
+                            coroutineScope.launch {
+                                paymentProcessingStep = "Establishing encrypted stripe handshake..."
+                                kotlinx.coroutines.delay(800)
+                                paymentProcessingStep = "Verifying double-factor credentials & security tokens..."
+                                kotlinx.coroutines.delay(800)
+                                paymentProcessingStep = "Awaiting institutional banking node authorization..."
+                                kotlinx.coroutines.delay(800)
+                                
+                                isPaymentProcessing = false
+                                isPaymentSuccessState = true
+                                
+                                // Live update the business database object!
+                                currentPaidUntilDate = "July 30, 2026"
+                                currentSubscriptionStatus = "Active"
+                                
+                                val updatedOrg = defaultOrg.copy(
+                                    subscriptionPlan = selectedPlanName,
+                                    monthlyAmount = basePlanAmount,
+                                    subscriptionStartDate = "May 30, 2026",
+                                    subscriptionEndDate = "July 30, 2026",
+                                    status = "Active"
+                                )
+                                viewModel.updateOrganizationDetails(updatedOrg)
+                                
+                                val refId = "TXN-${(10000..99999).random()}-" + if (paymentMethod == "CARD") "CR" else "UP"
+                                // prepend standard live log
+                                billingLogs.add(0, Triple("June 2026", selectedPlanName, "Paid & Settled - Ref: $refId"))
+                                
+                                successToastMessage = "Monthly License Renewed successfully for $selectedPlanName!"
+                            }
+                        }
+                    ) {
+                        Text("Authorize ₹${grandTotalAmount.toInt()}.00", fontSize = 11.sp, color = Color.White)
+                    }
+                }
+            },
+            dismissButton = {
+                if (!isPaymentProcessing) {
+                    TextButton(onClick = { showPaymentDialog = false }) {
+                        Text("Cancel", fontSize = 11.sp, color = textSecondary)
+                    }
+                }
+            },
+            containerColor = cardBg
+        )
+    }
+
+    // 2. EDIT CONFIGURATION DIALOG
     showEditOrgDialog?.let { org ->
         AlertDialog(
             onDismissRequest = { showEditOrgDialog = null },
@@ -3119,29 +3661,29 @@ fun AdminSubscriptionBillingTab(
                     OutlinedTextField(
                         value = editOrgName,
                         onValueChange = { editOrgName = it },
-                        placeholder = { Text("Institution Name", fontSize = 11.sp) },
-                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        label = { Text("Institution Name", fontSize = 10.sp) },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
                         textStyle = TextStyle(fontSize = 11.sp)
                     )
                     OutlinedTextField(
                         value = editOrgContact,
                         onValueChange = { editOrgContact = it },
-                        placeholder = { Text("Primary Admin Representative", fontSize = 11.sp) },
-                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        label = { Text("Primary Admin Representative", fontSize = 10.sp) },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
                         textStyle = TextStyle(fontSize = 11.sp)
                     )
                     OutlinedTextField(
                         value = editOrgMobile,
                         onValueChange = { editOrgMobile = it },
-                        placeholder = { Text("Representative Phone", fontSize = 11.sp) },
-                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        label = { Text("Representative Phone", fontSize = 10.sp) },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
                         textStyle = TextStyle(fontSize = 11.sp)
                     )
                     OutlinedTextField(
                         value = editOrgEmail,
                         onValueChange = { editOrgEmail = it },
-                        placeholder = { Text("Billing Notification Email Address", fontSize = 11.sp) },
-                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        label = { Text("Billing Notification Email Address", fontSize = 10.sp) },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
                         textStyle = TextStyle(fontSize = 11.sp)
                     )
                 }
@@ -3157,7 +3699,7 @@ fun AdminSubscriptionBillingTab(
                                 mobile = editOrgMobile,
                                 email = editOrgEmail,
                                 activeStudentCount = currentStudentsCount,
-                                monthlyAmount = currentStudentsCount * 100.0
+                                monthlyAmount = basePlanAmount
                             )
                         )
                         showEditOrgDialog = null
