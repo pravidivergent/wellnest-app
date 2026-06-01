@@ -1523,8 +1523,14 @@ fun StudentHomeTab(
             }
         }
 
-        // Daily Check-ins (Morning / Evening Attendance)
+        // Daily Check-ins (Morning / Evening Attendance Status)
         item {
+            val morningRecord = attendance.find { it.date == todayDateStr && it.shift == "Morning" }
+            val eveningRecord = attendance.find { it.date == todayDateStr && it.shift == "Evening" }
+            
+            val morningStatus = morningRecord?.status ?: "Not Marked Yet"
+            val eveningStatus = eveningRecord?.status ?: "Not Marked Yet"
+
             Card(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC)),
@@ -1533,7 +1539,7 @@ fun StudentHomeTab(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "🚀 DIRECT SEED ATTENDANCE - TODAY",
+                        text = "📅 TODAY'S ATTENDANCE STATUS",
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
@@ -1541,57 +1547,97 @@ fun StudentHomeTab(
                     )
 
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        // Morning Check-in Card
+                        // Morning Check-in Card (Read-only status)
                         Column(
                             modifier = Modifier
                                 .weight(1f)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(if (morningLogged) (if (isDark) Color(0xFF0E1428) else Color(0xFFE2EDFD)) else (MaterialTheme.colorScheme.primary.copy(0.15f)))
-                                .clickable(enabled = !morningLogged) {
-                                    viewModel.studentCheckIn(regNo, "Morning", "Present")
-                                }
+                                .background(
+                                    when (morningStatus) {
+                                        "Present" -> if (isDark) Color(0xFF042F1A) else Color(0xFFDCFCE7)
+                                        "Absent" -> if (isDark) Color(0xFF450A0A) else Color(0xFFFEE2E2)
+                                        "Late" -> if (isDark) Color(0xFF451A03) else Color(0xFFFEF3C7)
+                                        else -> if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9)
+                                    }
+                                )
                                 .padding(14.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Icon(
-                                imageVector = if (morningLogged) Icons.Default.CheckCircle else Icons.Default.WbSunny,
+                                imageVector = when (morningStatus) {
+                                    "Present" -> Icons.Default.CheckCircle
+                                    "Absent" -> Icons.Default.Cancel
+                                    "Late" -> Icons.Default.Schedule
+                                    else -> Icons.Default.WbSunny
+                                },
                                 contentDescription = "",
-                                tint = if (morningLogged) Color(0xFF10B981) else Color(0xFFF97316),
+                                tint = when (morningStatus) {
+                                    "Present" -> Color(0xFF10B981)
+                                    "Absent" -> Color(0xFFEF4444)
+                                    "Late" -> Color(0xFFF59E0B)
+                                    else -> Color(0xFF94A3B8)
+                                },
                                 modifier = Modifier.size(28.dp)
                             )
                             Spacer(modifier = Modifier.height(6.dp))
-                            Text("Morning", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                            Text("Morning Shift", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             Text(
-                                text = if (morningLogged) "Checked-In" else "Check In",
-                                fontSize = 10.sp,
-                                color = if (morningLogged) (if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)) else MaterialTheme.colorScheme.primary
+                                text = morningStatus,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = when (morningStatus) {
+                                    "Present" -> Color(0xFF10B981)
+                                    "Absent" -> Color(0xFFEF4444)
+                                    "Late" -> Color(0xFFF59E0B)
+                                    else -> if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)
+                                }
                             )
                         }
 
-                        // Evening Check-in Card
+                        // Evening Check-in Card (Read-only status)
                         Column(
                             modifier = Modifier
                                 .weight(1f)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(if (eveningLogged) (if (isDark) Color(0xFF0E1428) else Color(0xFFE2EDFD)) else (MaterialTheme.colorScheme.primary.copy(0.15f)))
-                                .clickable(enabled = !eveningLogged) {
-                                    viewModel.studentCheckIn(regNo, "Evening", "Present")
-                                }
+                                .background(
+                                    when (eveningStatus) {
+                                        "Present" -> if (isDark) Color(0xFF042F1A) else Color(0xFFDCFCE7)
+                                        "Absent" -> if (isDark) Color(0xFF450A0A) else Color(0xFFFEE2E2)
+                                        "Late" -> if (isDark) Color(0xFF451A03) else Color(0xFFFEF3C7)
+                                        else -> if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9)
+                                    }
+                                )
                                 .padding(14.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Icon(
-                                imageVector = if (eveningLogged) Icons.Default.CheckCircle else Icons.Default.NightsStay,
+                                imageVector = when (eveningStatus) {
+                                    "Present" -> Icons.Default.CheckCircle
+                                    "Absent" -> Icons.Default.Cancel
+                                    "Late" -> Icons.Default.Schedule
+                                    else -> Icons.Default.NightsStay
+                                },
                                 contentDescription = "",
-                                tint = if (eveningLogged) Color(0xFF10B981) else MaterialTheme.colorScheme.primary,
+                                tint = when (eveningStatus) {
+                                    "Present" -> Color(0xFF10B981)
+                                    "Absent" -> Color(0xFFEF4444)
+                                    "Late" -> Color(0xFFF59E0B)
+                                    else -> Color(0xFF94A3B8)
+                                },
                                 modifier = Modifier.size(28.dp)
                             )
                             Spacer(modifier = Modifier.height(6.dp))
-                            Text("Evening", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                            Text("Evening Shift", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             Text(
-                                text = if (eveningLogged) "Checked-In" else "Check In",
-                                fontSize = 10.sp,
-                                color = if (eveningLogged) (if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)) else MaterialTheme.colorScheme.primary
+                                text = eveningStatus,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = when (eveningStatus) {
+                                    "Present" -> Color(0xFF10B981)
+                                    "Absent" -> Color(0xFFEF4444)
+                                    "Late" -> Color(0xFFF59E0B)
+                                    else -> if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)
+                                }
                             )
                         }
                     }
@@ -2888,6 +2934,201 @@ fun CoachDashboardLayout(
                 }
             }
 
+            // Daily Attendance Management Panel
+            Card(
+                colors = CardDefaults.cardColors(containerColor = cardBg),
+                border = BorderStroke(1.5.dp, cardBorder),
+                shape = RoundedCornerShape(14.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "📋 DAILY ATTENDANCE MANAGEMENT PANEL",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = accentColor
+                    )
+                    Text(
+                        text = "Track, review, and record daily shift attendance for $coachAcademy students.",
+                        fontSize = 11.sp,
+                        color = textSecondary,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+
+                    var selectedAttendanceDate by remember { mutableStateOf(todayStr) }
+                    var selectedShiftState by remember { mutableStateOf("Morning") }
+
+                    // Date and Shift Selection Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OutlinedTextField(
+                            value = selectedAttendanceDate,
+                            onValueChange = { selectedAttendanceDate = it },
+                            label = { Text("Attendance Date", fontSize = 10.sp) },
+                            placeholder = { Text("YYYY-MM-DD", fontSize = 11.sp) },
+                            modifier = Modifier.weight(1.2f),
+                            textStyle = TextStyle(fontSize = 12.sp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = textPrimary,
+                                unfocusedTextColor = textPrimary,
+                                focusedBorderColor = Color(0xFFFF7A00),
+                                unfocusedBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
+                                focusedLabelColor = Color(0xFFFF7A00),
+                                unfocusedLabelColor = textSecondary
+                            ),
+                            singleLine = true
+                        )
+
+                        // Shift Toggle Buttons
+                        Row(
+                            modifier = Modifier.weight(1.5f),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            listOf("Morning", "Evening").forEach { shift ->
+                                val isSelected = selectedShiftState == shift
+                                Button(
+                                    onClick = { selectedShiftState = shift },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = if (isSelected) accentColor else (if (isDark) Color(0xFF2E190A) else Color(0xFFFFDFC6))
+                                    ),
+                                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = if (shift == "Morning") Icons.Default.WbSunny else Icons.Default.NightsStay,
+                                        contentDescription = null,
+                                        tint = if (isSelected) Color.White else textPrimary,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = shift,
+                                        fontSize = 11.sp,
+                                        color = if (isSelected) Color.White else textPrimary,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+                    HorizontalDivider(color = textSecondary.copy(alpha = 0.2f))
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "Select Student Status to Record:",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = textPrimary,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    if (filteredStudents.isEmpty()) {
+                        Text(
+                            text = "No students enrolled in Springfield Academy yet.",
+                            fontSize = 11.sp,
+                            color = textSecondary,
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                        )
+                    } else {
+                        filteredStudents.forEach { s ->
+                            val currentRec = allAttendance.find {
+                                it.registerNumber == s.registerNumber &&
+                                it.date == selectedAttendanceDate &&
+                                it.shift == selectedShiftState
+                            }
+                            val currentStatus = currentRec?.status ?: "No Record"
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 6.dp)
+                                    .background(
+                                        if (isDark) Color(0xFF0F172A).copy(0.4f) else Color(0xFFF8FAFC),
+                                        RoundedCornerShape(10.dp)
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = if (isDark) Color(0xFF1E293B) else Color(0xFFE2E8F0),
+                                        shape = RoundedCornerShape(10.dp)
+                                    )
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1.1f)) {
+                                    Text(
+                                        text = s.name,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = textPrimary
+                                    )
+                                    Text(
+                                        text = "Reg: ${s.registerNumber} | Batch: ${s.batch}",
+                                        fontSize = 10.sp,
+                                        color = textSecondary
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = "Current: $currentStatus",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = when (currentStatus) {
+                                            "Present" -> Color(0xFF10B981)
+                                            "Absent" -> Color(0xFFEF4444)
+                                            "Late" -> Color(0xFFF59E0B)
+                                            else -> textSecondary
+                                        }
+                                    )
+                                }
+
+                                // Status action buttons
+                                Row(
+                                    modifier = Modifier.weight(1.4f),
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    listOf(
+                                        "Present" to Color(0xFF10B981),
+                                        "Absent" to Color(0xFFEF4444),
+                                        "Late" to Color(0xFFF59E0B)
+                                    ).forEach { (statusOpt, color) ->
+                                        val isSelected = currentStatus == statusOpt
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .clip(RoundedCornerShape(6.dp))
+                                                .background(if (isSelected) color else color.copy(alpha = 0.08f))
+                                                .clickable {
+                                                    viewModel.markAttendance(
+                                                        registerNumber = s.registerNumber,
+                                                        date = selectedAttendanceDate,
+                                                        shift = selectedShiftState,
+                                                        status = statusOpt
+                                                    )
+                                                }
+                                                .padding(vertical = 6.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = statusOpt,
+                                                fontSize = 9.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = if (isSelected) Color.White else color
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             // Student Absence report tracker
             Card(
                 colors = CardDefaults.cardColors(containerColor = cardBg),
@@ -3044,7 +3285,7 @@ fun CoachDashboardLayout(
                             Icon(Icons.Default.Warning, contentDescription = "", tint = Color(0xFFEF4444), modifier = Modifier.size(24.dp))
                             Spacer(modifier = Modifier.width(12.dp))
                             Column(modifier = Modifier.weight(1f)) {
-                                val sName = students.find { it.registerNumber == entry.registerNumber }?.name ?: entry.registerNumber
+                                val sName = filteredStudents.find { it.registerNumber == entry.registerNumber }?.name ?: entry.registerNumber
                                 Text(sName, fontWeight = FontWeight.Bold, color = textPrimary, fontSize = 13.sp)
                                 Text("Sleep Level: ${entry.sleepHours}h", fontSize = 11.sp, color = if (isDark) Color(0xFFFFAFA8) else Color(0xFFB91C1C))
                                 Text("Mood: ${entry.mood} | Notes: ${entry.notes}", fontSize = 11.sp, color = textSecondary, lineHeight = 15.sp)
@@ -3059,7 +3300,7 @@ fun CoachDashboardLayout(
             // Wellness Metrics Directory (Sleep hours, Breakfast, Lunch, Dinner, Water intake, Energy level, Mood, Notes, Improvements)
             Text("📋 Student Wellness & Meal Logs Directory", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimary)
             var expandedCoachStudentId by remember { mutableStateOf<String?>(null) }
-            students.forEach { s ->
+            filteredStudents.forEach { s ->
                 val isSelected = expandedCoachStudentId == s.registerNumber
                 Card(
                     colors = CardDefaults.cardColors(containerColor = cardBg),
@@ -3328,7 +3569,7 @@ fun CoachDashboardLayout(
                     var showDocSelectorForStudentId by remember { mutableStateOf<String?>(null) }
                     var showDocSelectorField by remember { mutableStateOf("") }
 
-                    students.forEach { std ->
+                    filteredStudents.forEach { std ->
                         val studentDocs = docStatusMap[std.registerNumber] ?: mapOf(
                             "Birth Certificate" to "Pending Updation",
                             "Medical Form" to "Pending Updation",
@@ -3393,7 +3634,7 @@ fun CoachDashboardLayout(
                     if (showDocSelectorForStudentId != null) {
                         val activeStudentId = showDocSelectorForStudentId!!
                         val activeDoc = showDocSelectorField
-                        val stdName = students.find { it.registerNumber == activeStudentId }?.name ?: activeStudentId
+                        val stdName = filteredStudents.find { it.registerNumber == activeStudentId }?.name ?: activeStudentId
                         val currentStatus = (docStatusMap[activeStudentId] ?: emptyMap())[activeDoc] ?: "Pending Updation"
 
                         AlertDialog(
@@ -3649,7 +3890,7 @@ fun AdminDashboardLayout(
                             // Student enrollment form & database (Scrollable container inside column)
                             Column(
                                 modifier = Modifier
-                                    .fillMaxSize()
+                                    .weight(1f)
                                     .verticalScroll(rememberScrollState()),
                                 verticalArrangement = Arrangement.spacedBy(14.dp)
                             ) {
@@ -3886,7 +4127,7 @@ fun AdminDashboardLayout(
                             // Coach Management System Tab
                             Column(
                                 modifier = Modifier
-                                    .fillMaxSize()
+                                    .weight(1f)
                                     .verticalScroll(rememberScrollState()),
                                 verticalArrangement = Arrangement.spacedBy(14.dp)
                             ) {
@@ -4015,14 +4256,16 @@ fun AdminDashboardLayout(
                                 viewModel = viewModel,
                                 students = filteredStudents,
                                 allFees = filteredFees,
-                                isDark = isDark
+                                isDark = isDark,
+                                modifier = Modifier.weight(1f)
                             )
                         } else {
                             AdminSubscriptionBillingTab(
                                 viewModel = viewModel,
                                 students = filteredStudents,
                                 allOrganizations = filteredOrganizations,
-                                isDark = isDark
+                                isDark = isDark,
+                                modifier = Modifier.weight(1f)
                             )
                         }
                     }
@@ -4037,7 +4280,8 @@ fun AdminFeesManagementTab(
     viewModel: AppViewModel,
     students: List<StudentProfile>,
     allFees: List<StudentFee>,
-    isDark: Boolean
+    isDark: Boolean,
+    modifier: Modifier = Modifier
 ) {
     val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
     val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
@@ -4083,8 +4327,7 @@ fun AdminFeesManagementTab(
     val collectionPercentage = ((totalCollection / totalAmountInvoice) * 100).toInt()
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -4500,7 +4743,8 @@ fun AdminSubscriptionBillingTab(
     viewModel: AppViewModel,
     students: List<StudentProfile>,
     allOrganizations: List<Organization>,
-    isDark: Boolean
+    isDark: Boolean,
+    modifier: Modifier = Modifier
 ) {
     val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
     val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
@@ -4592,8 +4836,7 @@ fun AdminSubscriptionBillingTab(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)

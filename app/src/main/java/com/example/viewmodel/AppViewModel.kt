@@ -496,6 +496,20 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
+    // Coach records attendance for any date
+    fun markAttendance(registerNumber: String, date: String, shift: String, status: String) {
+        viewModelScope.launch {
+            repository.insertAttendance(
+                AttendanceRecord(
+                    registerNumber = registerNumber,
+                    date = date,
+                    shift = shift,
+                    status = status
+                )
+            )
+        }
+    }
+
     // Submit Leave Application
     fun applyForLeave(registerNumber: String, name: String, startStr: String, endStr: String, reason: String, proof: String) {
         viewModelScope.launch {
