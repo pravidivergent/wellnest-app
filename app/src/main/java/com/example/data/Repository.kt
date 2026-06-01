@@ -8,8 +8,25 @@ class AppRepository(
     private val leaveDao: LeaveDao,
     private val wellnessDao: WellnessDao,
     private val studentFeeDao: StudentFeeDao,
-    private val organizationDao: OrganizationDao
+    private val organizationDao: OrganizationDao,
+    private val userAccountDao: UserAccountDao,
+    private val coachDao: CoachDao
 ) {
+    // Coach Actions
+    val allCoachesFlow: Flow<List<CoachProfile>> = coachDao.getAllCoachesFlow()
+
+    suspend fun insertCoach(coach: CoachProfile) {
+        coachDao.insertCoach(coach)
+    }
+
+    suspend fun updateCoach(coach: CoachProfile) {
+        coachDao.updateCoach(coach)
+    }
+
+    suspend fun deleteCoach(coach: CoachProfile) {
+        coachDao.deleteCoach(coach)
+    }
+
     // Student Actions
     val allStudentsFlow: Flow<List<StudentProfile>> = studentDao.getAllStudentsFlow()
     
@@ -94,5 +111,14 @@ class AppRepository(
 
     suspend fun updateOrganization(org: Organization) {
         organizationDao.updateOrganization(org)
+    }
+
+    // User Account Actions
+    suspend fun getAccountByPhone(phone: String): UserAccount? {
+        return userAccountDao.getAccountByPhoneDirect(phone)
+    }
+
+    suspend fun insertUserAccount(account: UserAccount) {
+        userAccountDao.insertAccount(account)
     }
 }

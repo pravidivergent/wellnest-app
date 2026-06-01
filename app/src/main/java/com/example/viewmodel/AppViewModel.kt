@@ -20,8 +20,14 @@ sealed interface AuthState {
         val role: String, // "STUDENT", "COACH", "ADMIN"
         val registerNumber: String, // Empty if not a Student
         val name: String,
-        val mobile: String
+        val mobile: String,
+        val academyName: String = ""
     ) : AuthState
+}
+
+enum class AppLanguage(val code: String, val displayName: String) {
+    EN("en", "English"),
+    TA("ta", "தமிழ்")
 }
 
 class AppViewModel(private val repository: AppRepository) : ViewModel() {
@@ -31,11 +37,19 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     // Dark/Light Mode Setting State
-    private val _isDarkMode = MutableStateFlow(true)
+    private val _isDarkMode = MutableStateFlow(false)
     val isDarkMode: StateFlow<Boolean> = _isDarkMode.asStateFlow()
 
     fun toggleDarkMode() {
         _isDarkMode.value = !_isDarkMode.value
+    }
+
+    // Language state
+    private val _currentLanguage = MutableStateFlow(AppLanguage.EN)
+    val currentLanguage: StateFlow<AppLanguage> = _currentLanguage.asStateFlow()
+
+    fun setLanguage(language: AppLanguage) {
+        _currentLanguage.value = language
     }
 
     // Active User Student Profile (if active user is STUDENT)
@@ -44,6 +58,12 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
 
     // Flow listings from repository
     val allStudents = repository.allStudentsFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+    val allCoaches = repository.allCoachesFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
@@ -99,7 +119,8 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
             parentMobile = "9123456780",
             batch = "Batch CS-A",
             course = "Computer Science & Eng",
-            profilePhoto = "avatar_1"
+            profilePhoto = "avatar_1",
+            academyName = "Springfield Academy"
         )
         val stu2 = StudentProfile(
             registerNumber = "2026CS502",
@@ -109,7 +130,8 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
             parentMobile = "9123456781",
             batch = "Batch CS-A",
             course = "Information Technology",
-            profilePhoto = "avatar_2"
+            profilePhoto = "avatar_2",
+            academyName = "Springfield Academy"
         )
         val stu3 = StudentProfile(
             registerNumber = "2025EC408",
@@ -119,7 +141,8 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
             parentMobile = "9123456782",
             batch = "Batch EC-B",
             course = "Electronics & Comm Eng",
-            profilePhoto = "avatar_3"
+            profilePhoto = "avatar_3",
+            academyName = "Stamford Academy"
         )
 
         repository.insertStudentProfile(stu1)
@@ -250,12 +273,54 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
                 mobile = "9876543210",
                 email = "skinner@springfield.edu",
                 subscriptionPlan = "Per Student (₹100/mo)",
-                activeStudentCount = 3, // Out of current data
-                monthlyAmount = 300.0,
+                activeStudentCount = 2, // Springfield has Alex & Siddharth
+                monthlyAmount = 200.0,
                 subscriptionStartDate = "2026-01-01",
                 subscriptionEndDate = "2026-12-31",
                 status = "Active"
             )
+        )
+        repository.insertOrganization(
+            Organization(
+                organizationName = "Stamford Academy",
+                contactPerson = "Principal Stamford",
+                mobile = "9876543212",
+                email = "stamford@academy.edu",
+                subscriptionPlan = "Per Student (₹100/mo)",
+                activeStudentCount = 1, // Stamford has Cynthia
+                monthlyAmount = 100.0,
+                subscriptionStartDate = "2026-01-01",
+                subscriptionEndDate = "2026-12-31",
+                status = "Active"
+            )
+        )
+
+        // 7. Seed Default User Accounts for Phone & Password Login
+        repository.insertUserAccount(
+            UserAccount(phoneNumber = "9876543210", password = "password123", role = "STUDENT", registerNumber = "2026CS501", academyName = "Springfield Academy")
+        )
+        repository.insertUserAccount(
+            UserAccount(phoneNumber = "9876543211", password = "password123", role = "STUDENT", registerNumber = "2026CS502", academyName = "Springfield Academy")
+        )
+        repository.insertUserAccount(
+            UserAccount(phoneNumber = "9876543212", password = "password123", role = "STUDENT", registerNumber = "2025EC408", academyName = "Stamford Academy")
+        )
+        repository.insertUserAccount(
+            UserAccount(phoneNumber = "9900990099", password = "password123", role = "COACH", academyName = "Springfield Academy")
+        )
+        repository.insertUserAccount(
+            UserAccount(phoneNumber = "8888888888", password = "password123", role = "ADMIN", academyName = "Springfield Academy")
+        )
+        repository.insertUserAccount(
+            UserAccount(phoneNumber = "7777777777", password = "password123", role = "ADMIN", academyName = "Stamford Academy")
+        )
+
+        // Seed Coach Profiles
+        repository.insertCoach(
+            CoachProfile(username = "9900990099", name = "Coach Harrison", specialty = "Soccer Chief Coach", academyName = "Springfield Academy", hasAccess = true)
+        )
+        repository.insertCoach(
+            CoachProfile(username = "9911991199", name = "Coach Stamford", specialty = "Tennis & Swimming", academyName = "Stamford Academy", hasAccess = true)
         )
     }
 
@@ -491,6 +556,145 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
                     remarks = remarks
                 )
                 repository.updateLeave(updated)
+            }
+        }
+    }
+
+    // New Signup Flow
+    fun createOneTimeAccount(phone: String, pass: String, role: String, regNo: String = "", academyName: String = "", onResult: (Boolean, String) -> Unit) {
+        if (phone.isBlank() || pass.isBlank()) {
+            onResult(false, "Phone and password cannot be empty.")
+            return
+        }
+        viewModelScope.launch {
+            val existing = repository.getAccountByPhone(phone)
+            if (existing != null) {
+                onResult(false, "Username (Phone number) already exists.")
+            } else {
+                repository.insertUserAccount(
+                    UserAccount(phoneNumber = phone, password = pass, role = role, registerNumber = if (role == "STUDENT") regNo else "", academyName = academyName)
+                )
+                if (role == "STUDENT") {
+                    repository.insertStudentProfile(
+                        StudentProfile(
+                            registerNumber = regNo,
+                            name = "Student ($phone)",
+                            address = "General",
+                            mobileNumber = phone,
+                            parentMobile = "9123456789",
+                            batch = "Batch CS-A",
+                            course = "Computer Science",
+                            profilePhoto = "avatar_1",
+                            academyName = academyName
+                        )
+                    )
+                }
+                onResult(true, "Account created successfully! Please login with your credentials.")
+            }
+        }
+    }
+
+    fun addCoachDetails(name: String, username: String, pass: String, specialty: String, academy: String, hasAccess: Boolean) {
+        viewModelScope.launch {
+            repository.insertCoach(
+                CoachProfile(username = username, name = name, specialty = specialty, academyName = academy, hasAccess = hasAccess)
+            )
+            repository.insertUserAccount(
+                UserAccount(phoneNumber = username, password = pass, role = "COACH", academyName = academy, hasAccess = hasAccess)
+            )
+        }
+    }
+
+    fun updateCoachAccess(coach: CoachProfile, hasAccess: Boolean) {
+        viewModelScope.launch {
+            val updatedCoach = coach.copy(hasAccess = hasAccess)
+            repository.insertCoach(updatedCoach)
+            val account = repository.getAccountByPhone(coach.username)
+            if (account != null) {
+                repository.insertUserAccount(account.copy(hasAccess = hasAccess))
+            }
+        }
+    }
+
+    fun forceSwitchRole(newRole: String) {
+        val current = _authState.value
+        if (current is AuthState.Authenticated) {
+            _authState.value = current.copy(role = newRole)
+        }
+    }
+
+    // New Login Flow with Phone and Password
+    fun loginWithPassword(phone: String, pass: String, role: String = "", regNo: String = "", academy: String = "", onResult: (Boolean, String) -> Unit) {
+        if (phone.isBlank() || pass.isBlank()) {
+            onResult(false, "Phone and password cannot be empty.")
+            return
+        }
+        viewModelScope.launch {
+            val account = repository.getAccountByPhone(phone)
+            if (account == null) {
+                onResult(false, "No account found with this username (phone number).")
+            } else if (account.password != pass) {
+                onResult(false, "Incorrect password.")
+            } else if (account.role == "COACH" && academy.isNotBlank() && !account.academyName.equals(academy, ignoreCase = true)) {
+                onResult(false, "Access Denied: You are not registered at $academy.")
+            } else if (account.role == "COACH" && !account.hasAccess) {
+                onResult(false, "Access Denied: Your access is turned off by Academy Admin.")
+            } else {
+                // If role argument is passed as blank, auto-resolve it from the database account!
+                val resolvedRole = if (role.isNotBlank()) role else account.role
+                val userAcademy = if (account.academyName.isNotBlank()) account.academyName else "Springfield Academy"
+                
+                val studentReg = if (resolvedRole == "STUDENT") {
+                    if (account.registerNumber.isNotEmpty()) account.registerNumber else regNo
+                } else {
+                    ""
+                }
+                
+                val name = when (resolvedRole) {
+                    "COACH" -> {
+                        val coachRecord = repository.allCoachesFlow.firstOrNull()?.find { it.username == phone }
+                        coachRecord?.name ?: "Coach Harrison"
+                    }
+                    "ADMIN" -> "Admin Controller"
+                    else -> {
+                        val profile = repository.getStudentProfileDirect(studentReg)
+                        if (profile == null) {
+                            val newProfile = StudentProfile(
+                                registerNumber = studentReg,
+                                name = "Alex Johnson",
+                                address = "Springfield",
+                                mobileNumber = phone,
+                                parentMobile = "9123456780",
+                                batch = "Batch CS-A",
+                                course = "Computer Science",
+                                profilePhoto = "avatar_1",
+                                academyName = userAcademy
+                            )
+                            repository.insertStudentProfile(newProfile)
+                            _currentStudentProfile.value = newProfile
+                            newProfile.name
+                        } else {
+                            _currentStudentProfile.value = profile
+                            profile.name
+                        }
+                    }
+                }
+                
+                // Get the final student profile and use its actual academy to keep synced
+                val finalAcademy = if (resolvedRole == "STUDENT") {
+                    _currentStudentProfile.value?.academyName ?: userAcademy
+                } else {
+                    userAcademy
+                }
+                
+                _authState.value = AuthState.Authenticated(
+                    role = resolvedRole,
+                    registerNumber = studentReg,
+                    name = name,
+                    mobile = phone,
+                    academyName = finalAcademy
+                )
+                onResult(true, "Logged in as $name ($resolvedRole)")
             }
         }
     }

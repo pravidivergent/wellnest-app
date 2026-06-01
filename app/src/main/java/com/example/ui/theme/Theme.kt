@@ -14,28 +14,28 @@ import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme =
   darkColorScheme(
-    primary = Color(0xFF5A7CF1), // Energetic Royal/Cornflower Blue
-    secondary = Color(0xFF34D399), // Mint Green
-    tertiary = Color(0xFFFB923C), // Accent Orange
-    background = Color(0xFF0E1428), // Deep Ocean Cobalt
-    surface = Color(0xFF182246), // Cobalt Blue Surface
+    primary = Color(0xFFFF7A00), // Energetic Active Solar Orange Accent
+    secondary = Color(0xFFE65100), // Deep Burned Orange Secondary
+    tertiary = Color(0xFFFFB088), // Warm Peach Tertiary Accent
+    background = Color(0xFF070402), // Pure Pitch Black with Espresso Glow
+    surface = Color(0xFF1A1009), // Deep Charcoal-Orange Card Surfaces
     onPrimary = Color.White,
-    onSecondary = Color(0xFF0E1428),
-    onBackground = Color(0xFFF8FAFC),
-    onSurface = Color(0xFFF8FAFC)
+    onSecondary = Color.White,
+    onBackground = Color(0xFFFFF5F0), // Off-White Warm Primary Text
+    onSurface = Color(0xFFFFF5F0) // Off-White Warm Primary Text
   )
 
 private val LightColorScheme =
   lightColorScheme(
-    primary = Color(0xFF4F70FA), // Warm Royal/Indigo Blue
-    secondary = Color(0xFF10B981), // Emerald Teal
-    tertiary = Color(0xFFF97316), // Accent Amber/Coral
-    background = Color(0xFFF3F7FC), // Clean Soft Light Blue-Grey Background
-    surface = Color(0xFFFFFFFF), // Pure White Rounded Cards
+    primary = Color(0xFFFF6F00), // Vibrant Deep Hot Sun Orange Accent
+    secondary = Color(0xFFE65100), // Rich Burned Orange Secondary
+    tertiary = Color(0xFFFF9E7D), // Vibrant Coral Peach Accent
+    background = Color(0xFFFFFDFB), // Sand Pure White High-Contrast Background
+    surface = Color(0xFFFFF3EC), // Cream Light Orange card surfaces
     onPrimary = Color.White,
     onSecondary = Color.White,
-    onBackground = Color(0xFF1E293B), // Deep Slate-Blue Text
-    onSurface = Color(0xFF1E293B)
+    onBackground = Color(0xFF2E190A), // Espresso Dark Readable Text
+    onSurface = Color(0xFF2E190A) // Espresso Dark Readable Text
   )
 
 @Composable

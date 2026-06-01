@@ -13,7 +13,8 @@ data class StudentProfile(
     val parentMobile: String,
     val batch: String,
     val course: String,
-    val profilePhoto: String // Name of avatar or representation
+    val profilePhoto: String, // Name of avatar or representation
+    val academyName: String = "Springfield Academy"
 )
 
 @Entity(tableName = "attendance_records")
@@ -85,6 +86,38 @@ data class Organization(
     val subscriptionEndDate: String = "",
     val status: String = "Active"
 )
+
+@Entity(tableName = "coach_profiles")
+data class CoachProfile(
+    @PrimaryKey val username: String, // Username/mobile
+    val name: String,
+    val specialty: String,
+    val academyName: String,
+    val hasAccess: Boolean = true
+)
+
+@Entity(tableName = "user_accounts")
+data class UserAccount(
+    @PrimaryKey val phoneNumber: String, // Username is the phone number
+    val password: String,
+    val role: String, // STUDENT, COACH, ADMIN
+    val registerNumber: String = "", // Optional link for STUDENT
+    val academyName: String = "",
+    val hasAccess: Boolean = true
+)
+
+// 2. DAOs
+@Dao
+interface UserAccountDao {
+    @Query("SELECT * FROM user_accounts WHERE phoneNumber = :phone LIMIT 1")
+    suspend fun getAccountByPhoneDirect(phone: String): UserAccount?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAccount(account: UserAccount)
+
+    @Query("SELECT * FROM user_accounts")
+    suspend fun getAllAccountsDirect(): List<UserAccount>
+}
 
 // 2. DAOs
 @Dao
@@ -174,6 +207,21 @@ interface OrganizationDao {
     suspend fun updateOrganization(org: Organization)
 }
 
+@Dao
+interface CoachDao {
+    @Query("SELECT * FROM coach_profiles")
+    fun getAllCoachesFlow(): Flow<List<CoachProfile>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCoach(coach: CoachProfile)
+
+    @Update
+    suspend fun updateCoach(coach: CoachProfile)
+
+    @Delete
+    suspend fun deleteCoach(coach: CoachProfile)
+}
+
 // 3. Database
 @Database(
     entities = [
@@ -182,9 +230,11 @@ interface OrganizationDao {
         LeaveApplication::class,
         WellnessEntry::class,
         StudentFee::class,
-        Organization::class
+        Organization::class,
+        UserAccount::class,
+        CoachProfile::class
     ],
-    version = 2,
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -194,4 +244,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun wellnessDao(): WellnessDao
     abstract fun studentFeeDao(): StudentFeeDao
     abstract fun organizationDao(): OrganizationDao
+    abstract fun userAccountDao(): UserAccountDao
+    abstract fun coachDao(): CoachDao
 }
