@@ -99,6 +99,24 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
         initialValue = emptyList()
     )
 
+    val allTournaments = repository.allTournamentsFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+    val allDocuments = repository.allDocumentsFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+    val allAccounts = repository.allAccountsFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
     init {
         // Automatically seed mock database entries if empty so the screen experiences rich initial reports
         viewModelScope.launch {
@@ -322,6 +340,91 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
         repository.insertCoach(
             CoachProfile(username = "9911991199", name = "Coach Stamford", specialty = "Tennis & Swimming", academyName = "Stamford Academy", hasAccess = true)
         )
+
+        // Seed Tournaments
+        repository.insertTournament(
+            Tournament(
+                title = "District Junior Athletics Meet",
+                date = "2026-06-28",
+                location = "Stadium Grounds A",
+                academyName = "Springfield Academy",
+                coachName = "Coach Harrison"
+            )
+        )
+        repository.insertTournament(
+            Tournament(
+                title = "National Selection Volleyball Trials",
+                date = "2026-07-15",
+                location = "Indoor Sports Pavilion",
+                academyName = "Springfield Academy",
+                coachName = "Coach Harrison"
+            )
+        )
+        repository.insertTournament(
+            Tournament(
+                title = "State Level Track & Field Trophy",
+                date = "2026-07-29",
+                location = "University Complex",
+                academyName = "Springfield Academy",
+                coachName = "Coach Harrison"
+            )
+        )
+
+        // Seed default student documents
+        repository.insertDocument(
+            StudentDocument(
+                registerNumber = "2026CS501",
+                documentName = "Birth Certificate",
+                fileDetails = "birth_certificate_alex.pdf",
+                status = "Verified",
+                remarks = "Verified by Coach Harrison"
+            )
+        )
+        repository.insertDocument(
+            StudentDocument(
+                registerNumber = "2026CS501",
+                documentName = "Medical Form",
+                fileDetails = "medical_report_alex.pdf",
+                status = "Submitted",
+                remarks = "Ready for audit"
+            )
+        )
+        repository.insertDocument(
+            StudentDocument(
+                registerNumber = "2026CS501",
+                documentName = "Consent Slip",
+                fileDetails = "consent_slip_alex.pdf",
+                status = "Verified",
+                remarks = "Consent confirmed"
+            )
+        )
+        repository.insertDocument(
+            StudentDocument(
+                registerNumber = "2026CS502",
+                documentName = "Birth Certificate",
+                fileDetails = "birth_certificate_sid.pdf",
+                status = "Submitted",
+                remarks = "New upload"
+            )
+        )
+        repository.insertDocument(
+            StudentDocument(
+                registerNumber = "2026CS502",
+                documentName = "Medical Form",
+                fileDetails = "medical_report_sid.pdf",
+                status = "Pending Updation",
+                remarks = "Needs signatures"
+            )
+        )
+        repository.insertDocument(
+            StudentDocument(
+                registerNumber = "2026CS502",
+                documentName = "Consent Slip",
+                fileDetails = "consent_slip_sid.pdf",
+                status = "Pending Updation",
+                remarks = "Verification unresolved"
+            )
+        )
     }
 
     fun recordFeePayment(
@@ -415,8 +518,14 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
             // Any 6 digits will succeed for this production-grade simulation
             if (code.length == 6) {
                 viewModelScope.launch {
+                    val account = repository.getAccountByPhone(current.mobile)
+                    val userAcademy = account?.academyName?.ifBlank { "Springfield Academy" } ?: "Springfield Academy"
+
                     val name = when (current.selectedRole) {
-                        "COACH" -> "Coach Harrison"
+                        "COACH" -> {
+                            val coachRecord = repository.allCoachesFlow.firstOrNull()?.find { it.username == current.mobile }
+                            coachRecord?.name ?: "Coach Harrison"
+                        }
                         "ADMIN" -> "Admin Controller"
                         else -> {
                             val profile = repository.getStudentProfileDirect(current.registerNumber)
@@ -430,7 +539,8 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
                                     parentMobile = "9123451234",
                                     batch = "Batch CS-A",
                                     course = "Computer Science",
-                                    profilePhoto = "avatar_1"
+                                    profilePhoto = "avatar_1",
+                                    academyName = userAcademy
                                 )
                                 repository.insertStudentProfile(newProfile)
                                 _currentStudentProfile.value = newProfile
@@ -441,11 +551,19 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
                             }
                         }
                     }
+
+                    val finalAcademy = if (current.selectedRole == "STUDENT") {
+                        _currentStudentProfile.value?.academyName ?: userAcademy
+                    } else {
+                        userAcademy
+                    }
+
                     _authState.value = AuthState.Authenticated(
                         role = current.selectedRole,
                         registerNumber = current.registerNumber,
                         name = name,
-                        mobile = current.mobile
+                        mobile = current.mobile,
+                        academyName = finalAcademy
                     )
                 }
                 return true
@@ -538,7 +656,10 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
         energy: Int,
         mood: String,
         notes: String,
-        improvements: String
+        improvements: String,
+        breakfastMenu: String = "",
+        lunchMenu: String = "",
+        dinnerMenu: String = ""
     ) {
         val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         viewModelScope.launch {
@@ -554,7 +675,10 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
                     energyLevel = energy,
                     mood = mood,
                     notes = notes,
-                    improvements = improvements
+                    improvements = improvements,
+                    breakfastMenu = breakfastMenu,
+                    lunchMenu = lunchMenu,
+                    dinnerMenu = dinnerMenu
                 )
             )
         }
@@ -709,6 +833,93 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
                     academyName = finalAcademy
                 )
                 onResult(true, "Logged in as $name ($resolvedRole)")
+            }
+        }
+    }
+
+    // Post new Tournament (Coach)
+    fun publishTournament(title: String, date: String, location: String, academyName: String, coachName: String = "") {
+        viewModelScope.launch {
+            repository.insertTournament(
+                Tournament(
+                    title = title,
+                    date = date,
+                    location = location,
+                    academyName = academyName,
+                    coachName = coachName
+                )
+            )
+        }
+    }
+
+    // Delete a Tournament
+    fun deleteTournament(tournament: Tournament) {
+        viewModelScope.launch {
+            repository.deleteTournament(tournament)
+        }
+    }
+
+    // Students can submit/add a Document
+    fun addStudentDocument(registerNumber: String, documentName: String, fileDetails: String) {
+        viewModelScope.launch {
+            repository.insertDocument(
+                StudentDocument(
+                    registerNumber = registerNumber,
+                    documentName = documentName,
+                    fileDetails = fileDetails,
+                    status = "Submitted",
+                    remarks = "Newly added document by student."
+                )
+            )
+        }
+    }
+
+    // Coaches can update document status
+    fun updateStudentDocumentStatus(documentId: Int, newStatus: String, remarks: String = "") {
+        viewModelScope.launch {
+            val doc = allDocuments.value.find { it.id == documentId }
+            if (doc != null) {
+                repository.updateDocument(
+                    doc.copy(
+                        status = newStatus,
+                        remarks = remarks
+                    )
+                )
+            }
+        }
+    }
+
+    // Student can delete a document if they uploaded it incorrectly
+    fun deleteStudentDocument(doc: StudentDocument) {
+        viewModelScope.launch {
+            repository.deleteDocument(doc)
+        }
+    }
+
+    // Unified save or update student document status
+    fun saveOrUpdateDocument(registerNumber: String, documentName: String, status: String, fileDetails: String = "No File", remarks: String = "") {
+        viewModelScope.launch {
+            val existing = repository.allDocumentsFlow.firstOrNull()?.find {
+                it.registerNumber == registerNumber && it.documentName == documentName
+            }
+            if (existing != null) {
+                repository.updateDocument(
+                    existing.copy(
+                        status = status,
+                        fileDetails = fileDetails,
+                        remarks = remarks
+                    )
+                )
+            } else {
+                repository.insertDocument(
+                    StudentDocument(
+                        registerNumber = registerNumber,
+                        documentName = documentName,
+                        fileDetails = fileDetails,
+                        status = status,
+                        remarks = remarks
+                    )
+                )
             }
         }
     }

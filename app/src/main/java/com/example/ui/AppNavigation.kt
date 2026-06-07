@@ -41,8 +41,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 val translations = mapOf(
     AppLanguage.EN to mapOf(
-        "wellnest_title" to "Wellnest",
-        "wellnest_subtitle" to "Secure Student Daily Wellness & Attendance Analytics",
+        "wellnest_title" to "TrackNest",
+        "wellnest_subtitle" to "Academy Attendance & Student Health Monitor",
         "switch_role_title" to "Switch Portal Role",
         "switch_role_desc" to "Select which dashboard/role you would like to test or switch into:",
         "switch_lang_title" to "Choose Language",
@@ -88,6 +88,24 @@ val translations = mapOf(
         "field_parent_mobile" to "Parent/Guardian Mobile",
         "field_address" to "Physical Address",
 
+        // Additional keys used by getTranslation calls in code
+        "leaves_title" to "Leave Management",
+        "leaves_subtitle" to "Request formal absences. Upload verification proofs for Coach reviews.",
+        "applicant_label" to "📄 APPLICANT",
+        "start_date_label" to "Start Date (yyyy-MM-dd)",
+        "end_date_label" to "End Date (yyyy-MM-dd)",
+        "absence_reason_label" to "Absence Reason",
+        "absence_reason_placeholder" to "Details or medical details",
+        "verification_proof_label" to "Verification Proof attachment (.jpg/.pdf)",
+        "verification_proof_placeholder" to "e.g. prescription_receipt.pdf",
+        "leaves_success" to "Submitted to your assigned Coach dashboard. Monitor decision report below.",
+        "btn_submit_absence" to "Submit Absence Request",
+        "history_title" to "Your Registered Absence History",
+        "history_empty" to "No requested leaves found.",
+        "reason_prefix" to "Reason",
+        "proof_prefix" to "Proof Attachment",
+        "save_btn" to "Save & Sync Profile Changes",
+
         // Coach dashboard translations
         "coach_title" to "Staff Coach Dashboard",
         "leaves_pending" to "LEAVES PENDING",
@@ -105,11 +123,103 @@ val translations = mapOf(
         "resolved_warning_msg" to "All athletes wellness values are safe.",
         "student_roster" to "📋 Active Student Roster & Live Stats",
         "admin_title" to "Central Admin Controls",
-        "admin_subtitle" to "System Enrollment & Metric Auditing"
+        "admin_subtitle" to "System Enrollment & Metric Auditing",
+
+        // Student Dashboard Home Tab Keys
+        "welcome_back_to" to "Welcome back to",
+        "home_subtitle" to "Track your attendance status and mental energy level today.",
+        "attendance_pct_label" to "ATTENDANCE",
+        "compliance_status_label" to "COMPLIANCE STATUS",
+        "good_standing" to "Good Standing ✅",
+        "below_criteria" to "Below Criteria ⚠️",
+        "good_standing_desc" to "Maintain 75%+ to qualify for year-end university schedules.",
+        "below_criteria_desc" to "Action needed: submit leave proof files inside portal immediately.",
+        "todays_attendance_status" to "📅 TODAY'S ATTENDANCE STATUS",
+        "morning_shift" to "Morning Shift",
+        "evening_shift" to "Evening Shift",
+        "not_marked_yet" to "Not Marked Yet",
+
+        // Student Dashboard Attendance Tab Keys
+        "attendance_logs_title" to "Your Attendance Logs",
+        "attendance_logs_desc" to "Detailed record of daily check-ins for register number: %s",
+        "no_logs_recorded" to "No logs recorded yet.",
+        "shift_label_prefix" to "Shift: ",
+
+        // Student Dashboard Billing Tab Keys
+        "billing_title" to "Academy Billing & Invoices",
+        "billing_desc" to "Track, manage, and complete your coaching and academy fee payments.",
+        "outstanding_balance" to "OUTSTANDING BALANCE",
+        "payments_due" to "PAYMENTS DUE",
+        "fully_paid" to "FULLY PAID",
+        "registered_academy_prefix" to "Your registered academy: ",
+        "academy_platform_sub" to "ACADEMY PLATFORM SUBSCRIPTION",
+        "saas_license_title" to "TrackNest SaaS License",
+        "saas_model_desc" to "This academy uses TrackNest SaaS on a dynamic licensing model. As a registered student of %s, you can view and pay/renew the client infrastructure subscription directly from this portal to avoid service disruption.",
+        "fees_history_header" to "Your Personalized Invoices & Fee History",
+        "fees_empty_msg" to "No billing invoices found. Enjoy your coaching session!",
+        "invoice_no" to "Invoice No: ",
+        "pay_now_btn" to "Pay Now (SaaS)",
+        "pay_fee_btn" to "Pay Fee",
+        "status_label" to "Status: ",
+        "due_date_label" to "Due Date: ",
+        "active_license_tier" to "ACTIVE LICENSE TIER",
+        "enterprise_plan" to "Enterprise Dynamic Plan",
+        "platform_charge" to "PLATFORM CHARGE",
+        "paid_until_date" to "PAID UNTIL DATE",
+        "registered_fee_invoices" to "Registered Fee Invoices",
+        "billing_coaching_fees" to "%s Coaching Fees",
+        "billing_amount" to "Amount: ",
+
+        // Restricted Screen Keys
+        "saas_restricted_title" to "🚫 SaaS License Restricted",
+        "saas_restricted_desc" to "The TrackNest monthly SaaS subscription for \"%s\" has expired or is currently inactive.",
+        "saas_restricted_lock_msg" to "All core student/coach features, registries, attendance logs and analytics have been locked until the subscription is renewed.",
+        "saas_restricted_btn_renew" to "Go to Billing & Renew",
+        "saas_restricted_admin_notice" to "📢 Please contact your school administrator or head management to process the renewal via their central Billing Console.",
+
+        // Extra Student Home Tab Keys
+        "weekly_wellness_profile" to "🍀 WEEKLY WELLNESS PROFILE",
+        "no_wellness_msg" to "No wellness entries submitted recently. Press the 'Wellness' tab in bottom bar to record meals, sleep hours, water intake, and build your wellness score.",
+        "sleep_label" to "Sleep",
+        "water_label" to "Water",
+        "daily_meals_taken" to "Daily Meals Taken:",
+        "breakfast_label" to "Breakfast",
+        "lunch_label" to "Lunch",
+        "dinner_label" to "Dinner",
+        "meal_menu_logs" to "Meal Menu Logs:",
+        "leave_app_statuses" to "📬 LEAVE APPLICATION STATUSES",
+        "all_leaves_clear_msg" to "All leave registers are clear. You can request formal absences inside the Leaves screen.",
+        "mood_prefix" to "Mood: %s",
+        "not_logged" to "Not Logged",
+        "yes_label" to "Yes",
+        "no_label" to "No",
+
+        // Status keys
+        "Present" to "Present",
+        "Absent" to "Absent",
+        "Late" to "Late",
+        "Not Marked Yet" to "Not Marked Yet",
+
+        // Extra Tournaments and Leave reason keys
+        "reason_label" to "Reason: %s",
+        "upcoming_academy_tournaments" to "🏆 UPCOMING ACADEMY TOURNAMENTS",
+        "scheduled_count" to "%d Scheduled",
+        "no_tournaments_msg" to "No pending tournament events recorded for %s. Ask your coaches to publish soccer, tracks, or athletics tournaments.",
+
+        // Attendance and Billing Tab Keys
+        "attendance_logs_title" to "Your Attendance Logs",
+        "attendance_logs_subtitle" to "Detailed record of daily check-ins for register number: %s",
+        "no_logs_msg" to "No logs recorded yet.",
+        "shift_label" to "Shift: %s",
+        "Morning" to "Morning Shift",
+        "Evening" to "Evening Shift",
+        "billing_title" to "Academy Billing & Invoices",
+        "billing_subtitle" to "Track, manage, and complete your coaching and academy fee payments.",
+        "outstanding_balance" to "OUTSTANDING BALANCE"
     ),
     AppLanguage.TA to mapOf(
-        "wellnest_title" to "வெல்நெஸ்ட்",
-        "wellnest_subtitle" to "மாணவர்களின் தினசரி நல்வாழ்வு & வருகை பகுப்பாய்வு",
+        "wellnest_title" to "டிராக்நெஸ்ட்",
+        "wellnest_subtitle" to "அகாடமி வருகை மற்றும் மாணவர் நல்வாழ்வு கண்காணிப்பு",
         "switch_role_title" to "போர்டல் பங்கை மாற்றவும்",
         "switch_role_desc" to "நீங்கள் சோதிக்க விரும்பும் டாஷ்போர்டு/பங்கினைத் தேர்ந்தெடுக்கவும்:",
         "switch_lang_title" to "மொழியைத் தேர்ந்தெடுக்கவும்",
@@ -121,13 +231,13 @@ val translations = mapOf(
         "logout" to "வெளியேறு",
         "exit" to "வெளியேறு",
         "wellness_title" to "தினசரி நல்வாழ்வு கண்காணிப்பு",
-        "wellness_subtitle" to "ஆரோக்கியமான அறிக்கையை உருவாக்க தூக்க நேரம், உணவு, ஆற்றல் நிலை ஆகியவற்றை பதிவு செய்யவும்.",
-        "sleep_hours_count" to "🛌 தூக்க நேர கணக்கு",
-        "meals_question" to "🍽️ இன்று நீங்கள் உணவருந்தினீர்களா?",
+        "wellness_subtitle" to "தினசரி நல்வாழ்வு அறிக்கை தயாரிக்க தூக்க நேரம், உணவு, ஆற்றல் நிலை மற்றும் உணர்வுகளை பதிவு செய்யவும்.",
+        "sleep_hours_count" to "🛌 தூக்க நேரம்",
+        "meals_question" to "🍽️ இன்று நீங்கள் சாப்பிட்டீர்களா?",
         "water_intake" to "💧 தினசரி நீர் உட்கொள்ளல் (லிட்டர்)",
-        "mental_vibe" to "🎭 ஒட்டுமொத்த மனநிலை / மன அதிர்வு",
+        "mental_vibe" to "🎭 ஒன்பது மன நிலை / உணர்வு",
         "wellness_notes" to "📝 மன நல்வாழ்வு குறிப்புகள்",
-        "wellness_goals" to "🔮 நாளைக்கான ஆரோக்கியம் மற்றும் நல்வாழ்வு இலக்குகள்",
+        "wellness_goals" to "🔮 ஆரோக்கியம் மற்றும் நல்வாழ்வு இலக்குகள்",
         "wellness_placeholder" to "இன்று உங்களுக்கு ஏன் இப்படி தோன்றியது? சவால்களை விவரிக்கவும்.",
         "goals_placeholder" to "நாளைக்கு உங்களுக்கு என்ன இலக்குகள் உள்ளன?",
         "success_saved" to "🎉 தினசரி நல்வாழ்வு தரவு வெற்றிகரமாக சேமிக்கப்பட்டது!",
@@ -154,6 +264,22 @@ val translations = mapOf(
         "field_mobile" to "முதன்மை மொபைல்",
         "field_parent_mobile" to "பெற்றோர் மொபைல்",
         "field_address" to "இருப்பிட முகவரி",
+        "leaves_title" to "விடுப்பு மேலாண்மை",
+        "leaves_subtitle" to "முறையான விடுப்புகளைக் கோரவும், பயிற்சியாளர் மதிப்பாய்வுக்கான சான்றுகளைப் பதிவேற்றவும்.",
+        "applicant_label" to "📄 விண்ணப்பதாரர்",
+        "start_date_label" to "தொடக்க தேதி (yyyy-MM-dd)",
+        "end_date_label" to "முடிவு தேதி (yyyy-MM-dd)",
+        "absence_reason_label" to "விடுப்பிற்கான காரணம்",
+        "absence_reason_placeholder" to "விவரங்கள் அல்லது மருத்துவ விபரம்",
+        "verification_proof_label" to "சான்று இணைப்பு (.jpg/.pdf)",
+        "verification_proof_placeholder" to "உதாரணமாக prescription_receipt.pdf",
+        "leaves_success" to "மதிப்பாய்வுக்காக உங்கள் பயிற்சியாளருக்கு அனுப்பப்பட்டது. கீழே முடிவைக் கண்காணிக்கவும்.",
+        "btn_submit_absence" to "விடுப்பு கோரிக்கையை சமர்ப்பிக்கவும்",
+        "history_title" to "உங்களின் பதிவு செய்யப்பட்ட விடுப்பு வரலாறு",
+        "history_empty" to "கோரப்பட்ட விடுப்பு எதுவும் கிடைக்கவில்லை.",
+        "reason_prefix" to "காரணம்",
+        "proof_prefix" to "சான்று இணைப்பு",
+        "save_btn" to "சுயவிவர மாற்றங்களைச் சேமிக்கவும்",
         "coach_title" to "பயிற்சியாளர் டாஷ்போர்டு",
         "leaves_pending" to "நிலுவையில் உள்ள விடுப்புகள்",
         "wellness_warnings" to "நல்வாழ்வு எச்சரிக்கைகள்",
@@ -170,7 +296,99 @@ val translations = mapOf(
         "resolved_warning_msg" to "அனைத்து விளையாட்டு வீரர்களின் நல்வாழ்வு நிலைகளும் பாதுகாப்பாக உள்ளன.",
         "student_roster" to "📋 செயலில் உள்ள மாணவர் பட்டியல் மற்றும் புள்ளிவிவரங்கள்",
         "admin_title" to "மத்திய நிர்வாகக் கட்டுப்பாடுகள்",
-        "admin_subtitle" to "சேர்க்கை மற்றும் தணிக்கை"
+        "admin_subtitle" to "சேர்க்கை மற்றும் தணிக்கை",
+
+        // Student Dashboard Home Tab Keys
+        "welcome_back_to" to "மீண்டும் வருக",
+        "home_subtitle" to "இன்று உங்கள் வருகை நிலை மற்றும் மன ஆற்றல் அளவை கண்காணிக்கவும்.",
+        "attendance_pct_label" to "வருகை",
+        "compliance_status_label" to "இணக்க நிலை",
+        "good_standing" to "சிறந்த நிலை ✅",
+        "below_criteria" to "குறைந்த நிலை ⚠️",
+        "good_standing_desc" to "ஆண்டு இறுதி பல்கலைக்கழக கால அட்டவணைகளுக்கு தகுதி பெற 75%+ வருகையைப் பராமரிக்கவும்.",
+        "below_criteria_desc" to "உடனடி நடவடிக்கை: இந்த போர்ட்டலில் உடனடியாக விடுப்புச் சான்று கோப்புகளைச் சமர்ப்பிக்கவும்.",
+        "todays_attendance_status" to "📅 இன்றைய வருகை நிலை",
+        "morning_shift" to "காலை அணி",
+        "evening_shift" to "மாலை அணி",
+        "not_marked_yet" to "இன்னும் பதிவு செய்யப்படவில்லை",
+
+        // Student Dashboard Attendance Tab Keys
+        "attendance_logs_title" to "உங்களின் வருகை பதிவுகள்",
+        "attendance_logs_desc" to "பதிவு எண்ணுக்கான தினசரி வருகை விவரங்கள்: %s",
+        "no_logs_recorded" to "இதுவரை பதிவுகள் எதுவும் இல்லை.",
+        "shift_label_prefix" to "அணி: ",
+
+        // Student Dashboard Billing Tab Keys
+        "billing_title" to "அகாடமி கட்டண விவரங்கள் & விலைப்பட்டியல்கள்",
+        "billing_desc" to "உங்கள் அகாடமி மற்றும் பயிற்சிக்கான கட்டணங்களை எளிதாக கண்காணிக்கவும் மற்றும் செலுத்தவும்.",
+        "outstanding_balance" to "செலுத்த வேண்டிய நிலுவைத் தொகை",
+        "payments_due" to "கட்டணம் நிலுவையில் உள்ளது",
+        "fully_paid" to "முழுமையாக செலுத்தப்பட்டது",
+        "registered_academy_prefix" to "உங்களின் பதிவு செய்யப்பட்ட அகாடமி: ",
+        "academy_platform_sub" to "அகாடமி தள சந்தா",
+        "saas_license_title" to "டிராக்நெஸ்ட் சாஸ் (SaaS) உரிமம்",
+        "saas_model_desc" to "இந்த அகாடமி டிராக்நெஸ்ட் சாஸ் (SaaS) மென்பொருளைப் பயன்படுத்துகிறது. %s இன் பதிவுசெய்யப்பட்ட மாணவராகிய நீங்கள், சேவையில் இடையூறு ஏற்படுவதைத் தவிர்க்க, இந்த தளத்திலிருந்து நேரடியாக உங்களது சந்தாவை செலுத்தி புதுப்பிக்கலாம்.",
+        "fees_history_header" to "உங்களின் கட்டண வரலாறு மற்றும் விலைப்பட்டியல்கள்",
+        "fees_empty_msg" to "விலைப்பட்டியல் எதுவும் இல்லை. உங்கள் பயிற்சியைத் தொடருங்கள்!",
+        "invoice_no" to "விலைப்பட்டியல் எண்: ",
+        "pay_now_btn" to "உடனடி செலுத்துக (SaaS)",
+        "pay_fee_btn" to "கட்டணம் செலுத்துக",
+        "status_label" to "நிலை: ",
+        "due_date_label" to "கடைசி தேதி: ",
+        "active_license_tier" to "செயலில் உள்ள உரிம அடுக்கு",
+        "enterprise_plan" to "நிறுவன டைனமிக் திட்டம்",
+        "platform_charge" to "தள கட்டணம்",
+        "paid_until_date" to "செலுத்தப்பட்ட தேதி வரை",
+        "registered_fee_invoices" to "பதிவு செய்யப்பட்ட கட்டண விலைப்பட்டியல்கள்",
+        "billing_coaching_fees" to "%s பயிற்சிக்கான கட்டணம்",
+        "billing_amount" to "தொகை: ",
+
+        // Restricted Screen Keys
+        "saas_restricted_title" to "🚫 சாஸ் (SaaS) உரிமம் முடக்கப்பட்டுள்ளது",
+        "saas_restricted_desc" to "\"%s\" க்கான மாதாந்திர சாஸ் (SaaS) சந்தா முடிவடைந்தது அல்லது செயலில் இல்லை.",
+        "saas_restricted_lock_msg" to "சந்தா புதுப்பிக்கப்படும் வரை அனைத்து மாணவர்/பயிற்சியாளர் அம்சங்கள், பதிவுகள் மற்றும் வருகை பதிவேடுகள் பூட்டப்பட்டுள்ளன.",
+        "saas_restricted_btn_renew" to "கட்டணம் செலுத்திப் புதுப்பிக்க பக்கத்திற்குச் செல்லவும்",
+        "saas_restricted_admin_notice" to "📢 சந்தாவை புதுப்பிக்க உங்கள் பள்ளி நிர்வாகத்தை அல்லது தலைமை நிர்வாகியைத் தொடர்பு கொள்ளவும்.",
+
+        // Extra Student Home Tab Keys
+        "weekly_wellness_profile" to "🍀 வாராந்திர நல்வாழ்வு சுயவிவரம்",
+        "no_wellness_msg" to "சமீபத்தில் நல்வாழ்வு பதிவுகள் எதுவும் சமர்ப்பிக்கப்படவில்லை. உணவு, தூக்க நேரம், நீர் உட்கொள்ளல் ஆகியவற்றை பதிவு செய்ய கீழே உள்ள 'Wellness' தாவலை அழுத்தவும்.",
+        "sleep_label" to "தூக்கம்",
+        "water_label" to "தண்ணீர்",
+        "daily_meals_taken" to "தினசரி உட்கொண்ட உணவுகள்:",
+        "breakfast_label" to "காலை உணவு",
+        "lunch_label" to "மதிய உணவு",
+        "dinner_label" to "இரவு உணவு",
+        "meal_menu_logs" to "உணவு மெனு பதிவுகள்:",
+        "leave_app_statuses" to "📬 விடுப்பு விண்ணப்ப நிலைகள்",
+        "all_leaves_clear_msg" to "அனைத்து விடுப்பு பதிவுகளும் காலியாக உள்ளன. விடுப்பு திரையில் முறையான விடுப்புகளைக் கோரலாம்.",
+        "mood_prefix" to "மனநிலை: %s",
+        "not_logged" to "பதிவு செய்யப்படவில்லை",
+        "yes_label" to "ஆம்",
+        "no_label" to "இல்லை",
+
+        // Status keys
+        "Present" to "வருகை",
+        "Absent" to "விடுப்பு",
+        "Late" to "தாமதம்",
+        "Not Marked Yet" to "இன்னும் பதிவு செய்யப்படவில்லை",
+
+        // Extra Tournaments and Leave reason keys
+        "reason_label" to "காரணம்: %s",
+        "upcoming_academy_tournaments" to "🏆 வரவிருக்கும் அகாடமி போட்டிகள்",
+        "scheduled_count" to "%d திட்டமிடப்பட்டுள்ளது",
+        "no_tournaments_msg" to "%s அகாடமிக்கு எந்த வரவிருக்கும் போட்டிகளும் இல்லை. போட்டிகளை வெளியிட உங்கள் பயிற்சியாளர்களைக் கேட்கவும்.",
+
+        // Attendance and Billing Tab Keys
+        "attendance_logs_title" to "உங்கள் வருகை முகப்பு",
+        "attendance_logs_subtitle" to "பதிவு எண் %s க்கான வருகையின் விரிவான பதிவு",
+        "no_logs_msg" to "வருகை பதிவுகள் எதுவும் இதுவரை பதிவு செய்யப்படவில்லை.",
+        "shift_label" to "பிரிவு: %s",
+        "Morning" to "காலைப்பிரிவு",
+        "Evening" to "மாலைப்பிரிவு",
+        "billing_title" to "அகாடமி பில்லிங் & இன்வாய்ஸ்கள்",
+        "billing_subtitle" to "உங்கள் பயிற்சிக் கட்டணங்களைக் கண்காணித்து, நிர்வகித்து, செலுத்துங்கள்.",
+        "outstanding_balance" to "செலுத்த வேண்டிய நிலுவைத் தொகை"
     )
 )
 
@@ -178,6 +396,105 @@ val translations = mapOf(
 fun getTranslation(key: String, viewModel: AppViewModel): String {
     val lang by viewModel.currentLanguage.collectAsState()
     return translations[lang]?.get(key) ?: translations[AppLanguage.EN]?.get(key) ?: key
+}
+
+@Composable
+fun SubscriptionRestrictedScreen(
+    viewModel: AppViewModel,
+    orgName: String,
+    onActivateClick: (() -> Unit)? = null,
+    isDark: Boolean
+) {
+    val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
+    val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
+    val cardBg = if (isDark) Color(0xFF1E1107) else Color(0xFFFFF0E6)
+    val accentColor = Color(0xFFFF7A00)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = cardBg),
+            border = BorderStroke(2.dp, accentColor)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape)
+                        .background(accentColor.copy(0.12f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = "Subscription Expired",
+                        tint = accentColor,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+
+                Text(
+                    text = getTranslation("saas_restricted_title", viewModel),
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = textPrimary,
+                    textAlign = TextAlign.Center
+                )
+
+                Text(
+                    text = getTranslation("saas_restricted_desc", viewModel).replace("%s", orgName),
+                    fontSize = 12.sp,
+                    color = textSecondary,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 17.sp
+                )
+
+                Text(
+                    text = getTranslation("saas_restricted_lock_msg", viewModel),
+                    fontSize = 10.sp,
+                    color = textSecondary.copy(alpha = 0.8f),
+                    textAlign = TextAlign.Center,
+                    lineHeight = 15.sp
+                )
+
+                if (onActivateClick != null) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Button(
+                        onClick = onActivateClick,
+                        colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp)
+                    ) {
+                        Icon(Icons.Default.Payments, contentDescription = "", tint = Color.White, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(getTranslation("saas_restricted_btn_renew", viewModel), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    }
+                } else {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = getTranslation("saas_restricted_admin_notice", viewModel),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = accentColor,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 15.sp
+                    )
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -272,7 +589,7 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
     var setPasswordVal by remember { mutableStateOf("") }
     var setRegisterNumberVal by remember { mutableStateOf("") }
     
-    var signUpRole by remember { mutableStateOf("STUDENT") } // "STUDENT", "COACH", "ADMIN"
+    var signUpRole by remember { mutableStateOf("ADMIN") } // Restricted to "ADMIN", coach and students are admin-created
     var signUpAcademy by remember { mutableStateOf("Springfield Academy") }
     var signUpSpecialty by remember { mutableStateOf("") }
     
@@ -357,6 +674,8 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
+            TrackNestLogo(modifier = Modifier.padding(bottom = 16.dp), isDark = isDark)
+
             Text(
                 text = getTranslation("wellnest_title", viewModel),
                 fontSize = 32.sp,
@@ -390,7 +709,7 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
                     when (loginStep) {
                         "LOGIN" -> {
                             Text(
-                                text = "LOGIN TO WELLNEST",
+                                text = "LOGIN TO TRACKNEST",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = MaterialTheme.colorScheme.primary,
@@ -628,6 +947,15 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
                                 ) {
                                     Text("Create One-Time Account", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                                 }
+
+                                Text(
+                                    text = "⚠️ Students and Coaches: Please obtain your login credentials from your Academy Admin. Only Administrators can register new accounts here.",
+                                    fontSize = 10.sp,
+                                    lineHeight = 13.sp,
+                                    color = if (isDark) Color(0xFFFAF9FF).copy(0.6f) else Color(0xFF475569),
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
                             }
                         }
                         "ENTER_OTP" -> {
@@ -739,27 +1067,38 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
                                 modifier = Modifier.align(Alignment.Start)
                             )
                             Spacer(modifier = Modifier.height(4.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            Card(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF2E190A).copy(0.4f) else Color(0xFFFFF2E6))
                             ) {
-                                listOf("STUDENT", "COACH", "ADMIN").forEach { role ->
-                                    Button(
-                                        onClick = { signUpRole = role },
-                                        modifier = Modifier.weight(1f),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = if (signUpRole == role) MaterialTheme.colorScheme.primary else (if (isDark) Color(0xFF1E293B) else Color(0xFFE2E8F0))
-                                        ),
-                                        contentPadding = PaddingValues(4.dp)
-                                    ) {
-                                        Text(
-                                            text = role,
-                                            fontSize = 11.sp,
-                                            color = if (signUpRole == role) Color.White else (if (isDark) Color.LightGray else Color.DarkGray),
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
+                                Column(modifier = Modifier.padding(10.dp)) {
+                                    Text(
+                                        text = "🔒 Restriction Notice",
+                                        fontSize = 11.sp,
+                                        color = if (isDark) Color(0xFFFFB088) else Color(0xFFE65100),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = "Only Administrators can register new Coaches and Students from their Central Admin Dashboard. Self-registration is restricted to ADMIN role only.",
+                                        fontSize = 10.sp,
+                                        color = if (isDark) Color(0xFFFFF5F0) else Color(0xFF5D4037)
+                                    )
                                 }
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Button(
+                                onClick = { signUpRole = "ADMIN" },
+                                modifier = Modifier.fillMaxWidth().height(40.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                                shape = RoundedCornerShape(10.dp)
+                            ) {
+                                Text(
+                                    text = "ADMINISTRATOR (DEFAULT PROFILE)",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
                             }
 
                             Spacer(modifier = Modifier.height(12.dp))
@@ -1126,6 +1465,11 @@ fun StudentDashboardLayout(
     val textPrimary = if (isDark) Color.White else Color(0xFF180A22)
     val textSecondary = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47)
 
+    val allOrgs by viewModel.allOrganizations.collectAsState()
+    val studentAcademy = studentProfile?.academyName?.ifBlank { state.academyName } ?: state.academyName
+    val matchingOrg = allOrgs.firstOrNull { it.organizationName.equals(studentAcademy, ignoreCase = true) }
+    val isSubscriptionActive = matchingOrg == null || matchingOrg.status == "Active"
+
     // Synchronize selected profile manually in case ID changes
     LaunchedEffect(state.registerNumber) {
         viewModel.setStudentDirectly(state.registerNumber)
@@ -1203,14 +1547,6 @@ fun StudentDashboardLayout(
                             )
                         }
 
-                        var showRoleMenu by remember { mutableStateOf(false) }
-                        IconButton(onClick = { showRoleMenu = true }) {
-                            Icon(
-                                imageVector = Icons.Default.ManageAccounts,
-                                contentDescription = "Switch Portal Role",
-                                tint = if (isDark) Color(0xFFFF7A00) else Color(0xFF2E190A)
-                            )
-                        }
                         IconButton(onClick = { viewModel.logout() }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ExitToApp,
@@ -1246,45 +1582,6 @@ fun StudentDashboardLayout(
                                 confirmButton = {},
                                 dismissButton = {
                                     TextButton(onClick = { showLanguageDialog = false }) {
-                                        Text(getTranslation("cancel", viewModel), color = Color(0xFFFF7A00))
-                                    }
-                                },
-                                containerColor = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC),
-                                modifier = Modifier.border(1.5.dp, if (isDark) Color(0xFFFF7A00).copy(0.7f) else Color(0xFFFF9E7D), RoundedCornerShape(28.dp))
-                            )
-                        }
-
-                        if (showRoleMenu) {
-                            AlertDialog(
-                                onDismissRequest = { showRoleMenu = false },
-                                title = { Text(getTranslation("switch_role_title", viewModel), fontWeight = FontWeight.Bold, color = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)) },
-                                text = {
-                                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                        Text(getTranslation("switch_role_desc", viewModel), fontSize = 13.sp, color = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00))
-                                        Spacer(modifier = Modifier.height(4.dp))
-                                        listOf(
-                                            "STUDENT" to getTranslation("student_portal", viewModel),
-                                            "COACH" to getTranslation("coach_portal", viewModel),
-                                            "ADMIN" to getTranslation("admin_portal", viewModel)
-                                        ).forEach { (roleCode, label) ->
-                                            Button(
-                                                onClick = {
-                                                    viewModel.forceSwitchRole(roleCode)
-                                                    showRoleMenu = false
-                                                },
-                                                modifier = Modifier.fillMaxWidth(),
-                                                colors = ButtonDefaults.buttonColors(
-                                                    containerColor = if (state.role == roleCode) Color(0xFFFF7A00) else (if (isDark) Color(0xFF2E190A) else Color(0xFFFFDFC6))
-                                                )
-                                            ) {
-                                                Text(label, color = if (state.role == roleCode) Color.White else (if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)), fontWeight = FontWeight.Bold)
-                                            }
-                                        }
-                                    }
-                                },
-                                confirmButton = {},
-                                dismissButton = {
-                                    TextButton(onClick = { showRoleMenu = false }) {
                                         Text(getTranslation("cancel", viewModel), color = Color(0xFFFF7A00))
                                     }
                                 },
@@ -1335,53 +1632,62 @@ fun StudentDashboardLayout(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            when (activeTab) {
-                "DASH" -> StudentHomeTab(
+            if (!isSubscriptionActive && activeTab != "BILL") {
+                SubscriptionRestrictedScreen(
                     viewModel = viewModel,
-                    state = state,
-                    regNo = state.registerNumber,
-                    studentProfile = studentProfile,
-                    attendance = studentLogs,
-                    leaves = studentLeaves,
-                    wellness = studentWellness
-                )
-                "ATT" -> StudentAttendanceTab(
-                    studentLogs = studentLogs,
-                    regNo = state.registerNumber,
-                    viewModel = viewModel
-                )
-                "WELL" -> StudentWellnessTab(
-                    registerNumber = state.registerNumber,
-                    wellnessList = studentWellness,
-                    isDark = isDark,
-                    viewModel = viewModel,
-                    onSubmit = { sleep, b, l, d, water, energy, mood, n, i ->
-                        viewModel.submitWellness(state.registerNumber, sleep, b, l, d, water, energy, mood, n, i)
-                    }
-                )
-                "LEAVE" -> StudentLeavesTab(
-                    registerNumber = state.registerNumber,
-                    studentName = studentProfile?.name ?: state.name,
-                    leavesList = studentLeaves,
-                    isDark = isDark,
-                    viewModel = viewModel,
-                    onApply = { start, end, reason, proof ->
-                        viewModel.applyForLeave(state.registerNumber, studentProfile?.name ?: state.name, start, end, reason, proof)
-                    }
-                )
-                 "BILL" -> StudentBillingTab(
-                    viewModel = viewModel,
-                    state = state,
+                    orgName = studentAcademy.ifBlank { "Springfield Academy" },
+                    onActivateClick = { activeTab = "BILL" },
                     isDark = isDark
                 )
-                "PROF" -> StudentProfileTab(
-                    studentProfile = studentProfile,
-                    isDark = isDark,
-                    viewModel = viewModel,
-                    onSave = { updated ->
-                        viewModel.saveStudentProfile(updated)
-                    }
-                )
+            } else {
+                when (activeTab) {
+                    "DASH" -> StudentHomeTab(
+                        viewModel = viewModel,
+                        state = state,
+                        regNo = state.registerNumber,
+                        studentProfile = studentProfile,
+                        attendance = studentLogs,
+                        leaves = studentLeaves,
+                        wellness = studentWellness
+                    )
+                    "ATT" -> StudentAttendanceTab(
+                        studentLogs = studentLogs,
+                        regNo = state.registerNumber,
+                        viewModel = viewModel
+                    )
+                    "WELL" -> StudentWellnessTab(
+                        registerNumber = state.registerNumber,
+                        wellnessList = studentWellness,
+                        isDark = isDark,
+                        viewModel = viewModel,
+                        onSubmit = { sleep, b, l, d, water, energy, mood, n, i, bMenu, lMenu, dMenu ->
+                            viewModel.submitWellness(state.registerNumber, sleep, b, l, d, water, energy, mood, n, i, bMenu, lMenu, dMenu)
+                        }
+                    )
+                    "LEAVE" -> StudentLeavesTab(
+                        registerNumber = state.registerNumber,
+                        studentName = studentProfile?.name ?: state.name,
+                        leavesList = studentLeaves,
+                        isDark = isDark,
+                        viewModel = viewModel,
+                        onApply = { start, end, reason, proof ->
+                            viewModel.applyForLeave(state.registerNumber, studentProfile?.name ?: state.name, start, end, reason, proof)
+                        }
+                    )
+                     "BILL" -> StudentBillingTab(studentProfile = studentProfile,
+                        viewModel = viewModel,
+                        state = state,
+                        isDark = isDark
+                    )
+                    "PROF" -> StudentProfileTab(
+                        studentProfile = studentProfile,
+                        isDark = isDark,
+                        viewModel = viewModel,
+                        onSave = { updated ->
+                            viewModel.saveStudentProfile(updated)
+                        }
+                    )
+                }
             }
         }
     }
@@ -1428,11 +1734,22 @@ fun StudentHomeTab(
         item {
             // Header message
             Column {
-                Text(
-                    text = "Welcome back,",
-                    fontSize = 14.sp,
-                    color = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47).copy(0.7f)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = getTranslation("welcome_back_to", viewModel),
+                        fontSize = 14.sp,
+                        color = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47).copy(0.7f)
+                    )
+                    Text(
+                        text = studentProfile?.academyName?.ifBlank { state.academyName } ?: state.academyName,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isDark) Color(0xFFFF9E7D) else Color(0xFFFF7A00)
+                    )
+                }
                 Text(
                     text = studentProfile?.name ?: state.name,
                     fontSize = 24.sp,
@@ -1440,7 +1757,7 @@ fun StudentHomeTab(
                     color = if (isDark) Color.White else Color(0xFF180A22)
                 )
                 Text(
-                    text = "Track your attendance status and mental energy level today.",
+                    text = getTranslation("home_subtitle", viewModel),
                     fontSize = 11.sp,
                     color = Color(0xFFFF8A65)
                 )
@@ -1488,7 +1805,7 @@ fun StudentHomeTab(
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "ATTENDANCE",
+                                text = getTranslation("attendance_pct_label", viewModel),
                                 fontSize = 7.sp,
                                 color = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47).copy(0.7f),
                                 fontWeight = FontWeight.Bold
@@ -1500,20 +1817,20 @@ fun StudentHomeTab(
 
                     Column {
                         Text(
-                            text = "COMPLIANCE STATUS",
+                            text = getTranslation("compliance_status_label", viewModel),
                             fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
                         )
                         val criteriaMet = attendancePct >= 75
                         Text(
-                            text = if (criteriaMet) "Good Standing ✅" else "Below Criteria ⚠️",
+                            text = if (criteriaMet) getTranslation("good_standing", viewModel) else getTranslation("below_criteria", viewModel),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (criteriaMet) Color(0xFF10B981) else Color(0xFFEF4444)
                         )
                         Text(
-                            text = if (criteriaMet) "Maintain 75%+ to qualify for year-end university schedules." else "Action needed: submit leave proof files inside portal immediately.",
+                            text = if (criteriaMet) getTranslation("good_standing_desc", viewModel) else getTranslation("below_criteria_desc", viewModel),
                             fontSize = 10.sp,
                             color = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47).copy(0.7f),
                             lineHeight = 14.sp
@@ -1539,7 +1856,7 @@ fun StudentHomeTab(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "📅 TODAY'S ATTENDANCE STATUS",
+                        text = getTranslation("todays_attendance_status", viewModel),
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
@@ -1580,9 +1897,9 @@ fun StudentHomeTab(
                                 modifier = Modifier.size(28.dp)
                             )
                             Spacer(modifier = Modifier.height(6.dp))
-                            Text("Morning Shift", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                            Text(getTranslation("morning_shift", viewModel), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             Text(
-                                text = morningStatus,
+                                text = getTranslation(morningStatus, viewModel),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = when (morningStatus) {
@@ -1627,9 +1944,9 @@ fun StudentHomeTab(
                                 modifier = Modifier.size(28.dp)
                             )
                             Spacer(modifier = Modifier.height(6.dp))
-                            Text("Evening Shift", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                            Text(getTranslation("evening_shift", viewModel), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             Text(
-                                text = eveningStatus,
+                                text = getTranslation(eveningStatus, viewModel),
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.ExtraBold,
                                 color = when (eveningStatus) {
@@ -1661,7 +1978,7 @@ fun StudentHomeTab(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "🍀 WEEKLY WELLNESS PROFILE",
+                            text = getTranslation("weekly_wellness_profile", viewModel),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFFE65100)
@@ -1672,8 +1989,9 @@ fun StudentHomeTab(
                                 .background(Color(0xFFE65100).copy(0.15f))
                                 .padding(horizontal = 8.dp, vertical = 4.dp)
                         ) {
+                            val moodVal = lastWellnessEntry?.mood?.let { getTranslation(it, viewModel) } ?: getTranslation("not_logged", viewModel)
                             Text(
-                                text = "Mood: ${lastWellnessEntry?.mood ?: "Not Logged"}",
+                                text = getTranslation("mood_prefix", viewModel).replace("%s", moodVal),
                                 fontSize = 10.sp,
                                 color = Color(0xFFE65100),
                                 fontWeight = FontWeight.Bold
@@ -1685,7 +2003,7 @@ fun StudentHomeTab(
 
                     if (lastWellnessEntry == null) {
                         Text(
-                            text = "No wellness entries submitted recently. Press the 'Wellness' tab in bottom bar to record meals, sleep hours, water intake, and build your wellness score.",
+                            text = getTranslation("no_wellness_msg", viewModel),
                             fontSize = 11.sp,
                             color = if (isDark) Color(0xFFFAF9FF).copy(0.7f) else Color(0xFF1E293B).copy(0.7f),
                             lineHeight = 16.sp
@@ -1697,12 +2015,12 @@ fun StudentHomeTab(
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
                                 Icon(Icons.Default.LocalHotel, contentDescription = "", tint = MaterialTheme.colorScheme.primary)
-                                Text("Sleep", fontSize = 11.sp, color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B))
+                                Text(getTranslation("sleep_label", viewModel), fontSize = 11.sp, color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B))
                                 Text("${lastWellnessEntry.sleepHours} hrs", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
                                 Icon(Icons.Default.LocalDrink, contentDescription = "", tint = Color(0xFF0284C7))
-                                Text("Water", fontSize = 11.sp, color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B))
+                                Text(getTranslation("water_label", viewModel), fontSize = 11.sp, color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B))
                                 Text("${String.format(Locale.getDefault(), "%.2f", lastWellnessEntry.waterIntakeCups * 0.25f)} L", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             }
                         }
@@ -1710,7 +2028,7 @@ fun StudentHomeTab(
                         Spacer(modifier = Modifier.height(12.dp))
                         // Progress / Checklist summary
                         Text(
-                            text = "Daily Meals Taken:",
+                            text = getTranslation("daily_meals_taken", viewModel),
                             fontSize = 11.sp,
                             color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B),
                             fontWeight = FontWeight.SemiBold
@@ -1724,16 +2042,63 @@ fun StudentHomeTab(
                                 "Lunch" to lastWellnessEntry.hadLunch,
                                 "Dinner" to lastWellnessEntry.hadDinner
                             ).forEach { (mealName, didEat) ->
+                                val mealKey = when (mealName) {
+                                    "Breakfast" -> "breakfast_label"
+                                    "Lunch" -> "lunch_label"
+                                    "Dinner" -> "dinner_label"
+                                    else -> mealName
+                                }
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(if (didEat) Color(0xFF10B981).copy(0.15f) else Color(0xFFEF4444).copy(0.15f))
                                         .padding(horizontal = 8.dp, vertical = 2.dp)
                                 ) {
+                                    val didEatStr = if (didEat) getTranslation("yes_label", viewModel) else getTranslation("no_label", viewModel)
                                     Text(
-                                        text = "$mealName: ${if (didEat) "Yes" else "No"}",
+                                        text = "${getTranslation(mealKey, viewModel)}: $didEatStr",
                                         fontSize = 10.sp,
                                         color = if (didEat) Color(0xFF10B981) else Color(0xFFEF4444)
+                                    )
+                                }
+                            }
+                        }
+
+                        // Display food menu items details
+                        val hasBreakfastDetails = lastWellnessEntry.hadBreakfast && lastWellnessEntry.breakfastMenu.isNotBlank()
+                        val hasLunchDetails = lastWellnessEntry.hadLunch && lastWellnessEntry.lunchMenu.isNotBlank()
+                        val hasDinnerDetails = lastWellnessEntry.hadDinner && lastWellnessEntry.dinnerMenu.isNotBlank()
+                        if (hasBreakfastDetails || hasLunchDetails || hasDinnerDetails) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = getTranslation("meal_menu_logs", viewModel),
+                                fontSize = 11.sp,
+                                color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B),
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(4.dp),
+                                modifier = Modifier.padding(top = 4.dp)
+                            ) {
+                                if (hasBreakfastDetails) {
+                                    Text(
+                                        text = "🍳 ${getTranslation("breakfast_label", viewModel)}: ${lastWellnessEntry.breakfastMenu}",
+                                        fontSize = 11.sp,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                                if (hasLunchDetails) {
+                                    Text(
+                                        text = "🍱 ${getTranslation("lunch_label", viewModel)}: ${lastWellnessEntry.lunchMenu}",
+                                        fontSize = 11.sp,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                                if (hasDinnerDetails) {
+                                    Text(
+                                        text = "🍜 ${getTranslation("dinner_label", viewModel)}: ${lastWellnessEntry.dinnerMenu}",
+                                        fontSize = 11.sp,
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             }
@@ -1753,7 +2118,7 @@ fun StudentHomeTab(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "📬 LEAVE APPLICATION STATUSES",
+                        text = getTranslation("leave_app_statuses", viewModel),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -1762,7 +2127,7 @@ fun StudentHomeTab(
 
                     if (leaves.isEmpty()) {
                         Text(
-                            text = "All leave registers are clear. You can request formal absences inside the Leaves screen.",
+                            text = getTranslation("all_leaves_clear_msg", viewModel),
                             fontSize = 11.sp,
                             color = if (isDark) Color(0xFFFAF9FF).copy(0.7f) else Color(0xFF1E293B).copy(0.7f)
                         )
@@ -1776,7 +2141,7 @@ fun StudentHomeTab(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
-                                    Text(text = "Reason: ${leave.reason}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                                    Text(text = getTranslation("reason_label", viewModel).replace("%s", leave.reason), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                                     Text(text = "${leave.startDate} to ${leave.endDate}", fontSize = 10.sp, color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B))
                                 }
                                 val (bg, textCol) = when(leave.status) {
@@ -1790,10 +2155,253 @@ fun StudentHomeTab(
                                         .background(bg)
                                         .padding(horizontal = 8.dp, vertical = 4.dp)
                                 ) {
-                                    Text(leave.status, color = textCol, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                    Text(getTranslation(leave.status, viewModel), color = textCol, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        // Academy Tournaments Schedule
+        item {
+            val dbTournaments by viewModel.allTournaments.collectAsState()
+            val studentAcademy = studentProfile?.academyName ?: state.academyName
+            val academyTournaments = dbTournaments.filter { it.academyName.equals(studentAcademy, ignoreCase = true) }
+
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF101918) else Color(0xFFE8F5E9)),
+                border = BorderStroke(1.5.dp, if (isDark) Color(0xFF10B981).copy(0.7f) else Color(0xFF81C784)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = getTranslation("upcoming_academy_tournaments", viewModel),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isDark) Color(0xFF34D399) else Color(0xFF2E7D32)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(if (isDark) Color(0xFF34D399).copy(0.2f) else Color(0xFF81C784).copy(0.2f))
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        ) {
+                            Text(getTranslation("scheduled_count", viewModel).replace("%d", academyTournaments.size.toString()), fontSize = 9.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color(0xFF34D399) else Color(0xFF2E7D32))
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    if (academyTournaments.isEmpty()) {
+                        Text(
+                            text = getTranslation("no_tournaments_msg", viewModel).replace("%s", studentAcademy),
+                            fontSize = 11.sp,
+                            color = if (isDark) Color(0xFFFAF9FF).copy(0.7f) else Color(0xFF1E293B).copy(0.7f)
+                        )
+                    } else {
+                        academyTournaments.forEach { tour ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .background(if (isDark) Color(0xFF0F172A).copy(0.3f) else Color.White, RoundedCornerShape(8.dp))
+                                    .padding(8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(text = tour.title, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 2.dp)) {
+                                        Icon(Icons.Default.Place, contentDescription = "", tint = if (isDark) Color(0xFF34D399) else Color(0xFF2E7D32), modifier = Modifier.size(11.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(tour.location, fontSize = 10.sp, color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B))
+                                    }
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(if (isDark) Color(0xFF34D399).copy(0.15f) else Color(0xFF81C784).copy(0.15f))
+                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                ) {
+                                    Text(tour.date, color = if (isDark) Color(0xFF34D399) else Color(0xFF2E7D32), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Student Document Hub (Upload and Status Tracker)
+        item {
+            val dbDocuments by viewModel.allDocuments.collectAsState()
+            val studentDocs = dbDocuments.filter { it.registerNumber == regNo }
+
+            var selectDocType by remember { mutableStateOf("Birth Certificate") }
+            var fileDetailsText by remember { mutableStateOf("") }
+            var successMessage by remember { mutableStateOf("") }
+
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF0A122C) else Color(0xFFE8EAF6)),
+                border = BorderStroke(1.5.dp, if (isDark) Color(0xFF3F51B5).copy(0.7f) else Color(0xFF9FA8DA)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "📂 MY STUDENT PORTAL DOCUMENTS",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isDark) Color(0xFF7986CB) else Color(0xFF3F51B5)
+                    )
+                    Text(
+                        text = "Add eligibility worksheets, ID validations, or consent medical slips for coach audits.",
+                        fontSize = 10.sp,
+                        color = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47).copy(0.7f)
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // List existing documents
+                    if (studentDocs.isEmpty()) {
+                        Text(
+                            text = "No documents submitted yet. Use the upload panel below to submit requirements.",
+                            fontSize = 11.sp,
+                            color = Color.Red.copy(alpha = 0.8f),
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(bottom = 12.dp)
+                        )
+                    } else {
+                        studentDocs.forEach { doc ->
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .background(if (isDark) Color(0xFF0F172A).copy(0.3f) else Color.White, RoundedCornerShape(8.dp))
+                                    .padding(10.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(doc.documentName, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                                        Text("File: ${doc.fileDetails}", fontSize = 10.sp, color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B))
+                                    }
+                                    
+                                    val (bg, textCol) = when (doc.status) {
+                                        "Verified" -> Color(0xFF10B981).copy(0.15f) to Color(0xFF10B981)
+                                        "Submitted" -> Color(0xFF3B82F6).copy(0.15f) to Color(0xFF3B82F6)
+                                        else -> Color(0xFFEF4444).copy(0.15f) to Color(0xFFEF4444)
+                                    }
+                                    
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(bg)
+                                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                                    ) {
+                                        Text(doc.status, color = textCol, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                    }
+                                }
+                                if (doc.remarks.isNotEmpty()) {
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "Remarks: ${doc.remarks}",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = if (isDark) Color(0xFFFFB74D) else Color(0xFFE65100)
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    // Upload document card
+                    Divider(color = if (isDark) Color(0xFF2E3B5E) else Color(0xFFC5CAE9), thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
+
+                    Text("📤 Upload/Add New Document Verification", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    // Choice of document name with custom row elements
+                    val docTypes = listOf("Birth Certificate", "Medical Form", "Consent Slip", "School ID Card")
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState())
+                    ) {
+                        docTypes.forEach { docName ->
+                            val isSel = selectDocType == docName
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(if (isSel) Color(0xFF3F51B5) else (if (isDark) Color(0xFF2E190A) else Color(0xFFE8EAF6)))
+                                    .clickable { selectDocType = docName }
+                                    .padding(horizontal = 10.dp, vertical = 5.dp)
+                            ) {
+                                Text(
+                                    text = docName,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isSel) Color.White else (if (isDark) Color(0xFFFFF5F0) else Color(0xFF3F51B5))
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = fileDetailsText,
+                        onValueChange = { 
+                            fileDetailsText = it
+                            successMessage = ""
+                        },
+                        placeholder = { Text("Enter file name or remarks (e.g., photo_slip_alex.pdf)", fontSize = 10.sp) },
+                        modifier = Modifier.fillMaxWidth(),
+                        textStyle = TextStyle(fontSize = 11.sp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = if (isDark) Color.White else Color.Black,
+                            unfocusedTextColor = if (isDark) Color.White else Color.Black,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        onClick = {
+                            if (fileDetailsText.trim().isNotEmpty()) {
+                                viewModel.addStudentDocument(
+                                    registerNumber = regNo,
+                                    documentName = selectDocType,
+                                    fileDetails = fileDetailsText.trim()
+                                )
+                                successMessage = "✅ Successfully submitted $selectDocType for verification!"
+                                fileDetailsText = ""
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = if (isDark) Color(0xFF3F51B5) else Color(0xFF303F9F)),
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text("Add to Verification Queue", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    }
+
+                    if (successMessage.isNotEmpty()) {
+                        Text(
+                            text = successMessage,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF10B981),
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
                     }
                 }
             }
@@ -1816,8 +2424,8 @@ fun StudentAttendanceTab(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text("Your Attendance Logs", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A))
-        Text("Detailed record of daily check-ins for register number: $regNo", fontSize = 11.sp, color = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00))
+        Text(getTranslation("attendance_logs_title", viewModel), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A))
+        Text(getTranslation("attendance_logs_subtitle", viewModel).replace("%s", regNo), fontSize = 11.sp, color = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00))
         Spacer(modifier = Modifier.height(16.dp))
 
         if (studentLogs.isEmpty()) {
@@ -1825,7 +2433,7 @@ fun StudentAttendanceTab(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(Icons.Default.Event, contentDescription = "", tint = if (isDark) Color(0xFFFFB088).copy(0.4f) else Color(0xFFFF9E7D).copy(0.4f), modifier = Modifier.size(54.dp))
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("No logs recorded yet.", color = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00), fontSize = 14.sp)
+                    Text(getTranslation("no_logs_msg", viewModel), color = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00), fontSize = 14.sp)
                 }
             }
         } else {
@@ -1847,7 +2455,7 @@ fun StudentAttendanceTab(
                         ) {
                             Column {
                                 Text(text = item.date, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
-                                Text(text = "Shift: ${item.shift}", fontSize = 11.sp, color = Color(0xFFE65100))
+                                Text(text = getTranslation("shift_label", viewModel).replace("%s", getTranslation(item.shift, viewModel)), fontSize = 11.sp, color = Color(0xFFE65100))
                             }
                             val (pillBg, pillText) = when (item.status.uppercase(Locale.US)) {
                                 "PRESENT" -> Color(0xFF10B981).copy(0.15f) to Color(0xFF10B981)
@@ -1860,7 +2468,7 @@ fun StudentAttendanceTab(
                                     .background(pillBg)
                                     .padding(horizontal = 10.dp, vertical = 4.dp)
                             ) {
-                                Text(text = item.status, color = pillText, fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                                Text(text = getTranslation(item.status, viewModel), color = pillText, fontWeight = FontWeight.Bold, fontSize = 11.sp)
                             }
                         }
                     }
@@ -1879,12 +2487,15 @@ fun StudentWellnessTab(
     wellnessList: List<WellnessEntry>,
     isDark: Boolean = false,
     viewModel: AppViewModel,
-    onSubmit: (Float, Boolean, Boolean, Boolean, Int, Int, String, String, String) -> Unit
+    onSubmit: (Float, Boolean, Boolean, Boolean, Int, Int, String, String, String, String, String, String) -> Unit
 ) {
     var sleepHours by remember { mutableStateOf(7.5f) }
     var brekkie by remember { mutableStateOf(true) }
     var lunch by remember { mutableStateOf(true) }
     var dinner by remember { mutableStateOf(true) }
+    var breakfastMenu by remember { mutableStateOf("") }
+    var lunchMenu by remember { mutableStateOf("") }
+    var dinnerMenu by remember { mutableStateOf("") }
     var waterCups by remember { mutableStateOf(6) }
     var energy by remember { mutableStateOf(7) }
     var selectedMood by remember { mutableStateOf("Calm") }
@@ -1930,6 +2541,7 @@ fun StudentWellnessTab(
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Slider(
                     value = sleepHours,
                     onValueChange = { sleepHours = it },
@@ -1978,7 +2590,70 @@ fun StudentWellnessTab(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Conditionally show What did they eat forms with exquisite Material Design styling
+                AnimatedVisibility(visible = brekkie) {
+                    Column(modifier = Modifier.padding(bottom = 12.dp)) {
+                        Text("🍳 What did you have for Breakfast?", color = textSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        OutlinedTextField(
+                            value = breakfastMenu,
+                            onValueChange = { breakfastMenu = it },
+                            placeholder = { Text("e.g., Oatmeal with fruits, boiled eggs, milk", color = if (isDark) Color(0xFFFFB088).copy(0.5f) else Color(0xFF8C3E00).copy(0.5f), fontSize = 11.sp) },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp),
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = textPrimary, unfocusedTextColor = textPrimary,
+                                focusedBorderColor = Color(0xFFFF7A00), unfocusedBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
+                                focusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB), unfocusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB)
+                            )
+                        )
+                    }
+                }
+
+                AnimatedVisibility(visible = lunch) {
+                    Column(modifier = Modifier.padding(bottom = 12.dp)) {
+                        Text("🍱 What did you have for Lunch?", color = textSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        OutlinedTextField(
+                            value = lunchMenu,
+                            onValueChange = { lunchMenu = it },
+                            placeholder = { Text("e.g., Grilled chicken breast, wild rice, steamed vegetables", color = if (isDark) Color(0xFFFFB088).copy(0.5f) else Color(0xFF8C3E00).copy(0.5f), fontSize = 11.sp) },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp),
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = textPrimary, unfocusedTextColor = textPrimary,
+                                focusedBorderColor = Color(0xFFFF7A00), unfocusedBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
+                                focusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB), unfocusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB)
+                            )
+                        )
+                    }
+                }
+
+                AnimatedVisibility(visible = dinner) {
+                    Column(modifier = Modifier.padding(bottom = 12.dp)) {
+                        Text("🍜 What did you have for Dinner?", color = textSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        OutlinedTextField(
+                            value = dinnerMenu,
+                            onValueChange = { dinnerMenu = it },
+                            placeholder = { Text("e.g., Baked salmon, sweet potatoes, salad", color = if (isDark) Color(0xFFFFB088).copy(0.5f) else Color(0xFF8C3E00).copy(0.5f), fontSize = 11.sp) },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp),
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = textPrimary, unfocusedTextColor = textPrimary,
+                                focusedBorderColor = Color(0xFFFF7A00), unfocusedBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
+                                focusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB), unfocusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB)
+                            )
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
 
                 // Water intake counter
                 Text("${getTranslation("water_intake", viewModel)}: ${String.format(Locale.getDefault(), "%.2f", waterCups * 0.25f)} L", color = textPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
@@ -2069,7 +2744,20 @@ fun StudentWellnessTab(
 
                 Button(
                     onClick = {
-                        onSubmit(sleepHours, brekkie, lunch, dinner, waterCups, energy, selectedMood, notes, improvements)
+                        onSubmit(
+                            sleepHours,
+                            brekkie,
+                            lunch,
+                            dinner,
+                            waterCups,
+                            energy,
+                            selectedMood,
+                            notes,
+                            improvements,
+                            if (brekkie) breakfastMenu else "",
+                            if (lunch) lunchMenu else "",
+                            if (dinner) dinnerMenu else ""
+                        )
                         showSuccessToast = true
                     },
                     modifier = Modifier
@@ -2414,6 +3102,8 @@ fun StudentProfileTab(
             shape = RoundedCornerShape(16.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                // Academy Name (Read-Only)
+                ProfileFieldItem(label = "ACADEMY NAME", value = studentProfile.academyName.ifBlank { "Springfield Academy" }, enabled = false, isDark = isDark, onValueChange = {})
                 // Name
                 ProfileFieldItem(label = getTranslation("field_name", viewModel), value = name, enabled = isEditState, isDark = isDark, onValueChange = { name = it })
                 // Course
@@ -2494,10 +3184,14 @@ fun ProfileFieldItem(
 fun StudentBillingTab(
     viewModel: AppViewModel,
     state: AuthState.Authenticated,
-    isDark: Boolean
+    isDark: Boolean,
+    studentProfile: StudentProfile? = null
 ) {
     val allFees by viewModel.allFees.collectAsState()
     val myFees = allFees.filter { it.studentRegister == state.registerNumber }
+    val allStudents by viewModel.allStudents.collectAsState()
+    val allOrgs by viewModel.allOrganizations.collectAsState()
+
     val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
     val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
     val cardBg = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC)
@@ -2511,14 +3205,42 @@ fun StudentBillingTab(
     var payRemarks by remember { mutableStateOf("") }
     var successMessage by remember { mutableStateOf("") }
 
+    val coroutineScope = rememberCoroutineScope()
+    var upiIdVal by remember { mutableStateOf("") }
+    var rzpCardNum by remember { mutableStateOf("") }
+    var rzpCardExpiry by remember { mutableStateOf("") }
+    var rzpCardCvv by remember { mutableStateOf("") }
+    var rzpCardHolderName by remember { mutableStateOf(studentProfile?.name ?: state.name) }
+    var rzpSelectedBank by remember { mutableStateOf("State Bank of India") }
+    
+    var rzpPaymentState by remember { mutableStateOf("METHODS") } // "METHODS", "PROCESSING", "SUCCESS"
+    var rzpProcessingStep by remember { mutableStateOf("") }
+    var rzpProgressVal by remember { mutableFloatStateOf(0.1f) }
+    var rzpTxnId by remember { mutableStateOf("") }
+
+    // Organization Subscription states
+    var showOrgSubscriptionDialog by remember { mutableStateOf(false) }
+    var orgSubPayMode by remember { mutableStateOf("UPI") }
+    var orgSubUpiIdVal by remember { mutableStateOf("") }
+    var orgSubCardNum by remember { mutableStateOf("") }
+    var orgSubCardExpiry by remember { mutableStateOf("") }
+    var orgSubCardCvv by remember { mutableStateOf("") }
+    var orgSubCardHolderName by remember { mutableStateOf(studentProfile?.name ?: state.name) }
+    var orgSubSelectedBank by remember { mutableStateOf("State Bank of India") }
+    
+    var orgSubPaymentState by remember { mutableStateOf("METHODS") }
+    var orgSubProcessingStep by remember { mutableStateOf("") }
+    var orgSubProgressVal by remember { mutableFloatStateOf(0.1f) }
+    var orgSubTxnId by remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        Text("Academy Billing & Invoices", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = textPrimary)
-        Text("Track, manage, and complete your coaching and academy fee payments.", fontSize = 11.sp, color = textSecondary)
+        Text(getTranslation("billing_title", viewModel), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+        Text(getTranslation("billing_subtitle", viewModel), fontSize = 11.sp, color = textSecondary)
         Spacer(modifier = Modifier.height(16.dp))
 
         // Balance Card
@@ -2534,7 +3256,7 @@ fun StudentBillingTab(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text("OUTSTANDING BALANCE", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                        Text(getTranslation("outstanding_balance", viewModel), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = accentColor)
                         Text("₹${pendingAmount}", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = textPrimary)
                     }
                     Box(
@@ -2551,11 +3273,123 @@ fun StudentBillingTab(
                     }
                 }
                 Spacer(modifier = Modifier.height(10.dp))
-                Text("Your registered academy: ${state.academyName}", fontSize = 12.sp, color = textSecondary, fontWeight = FontWeight.SemiBold)
+                Text("Your registered academy: ${studentProfile?.academyName?.ifBlank { state.academyName } ?: state.academyName}", fontSize = 12.sp, color = textSecondary, fontWeight = FontWeight.SemiBold)
             }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
+
+        // Academy Subscription SaaS Contribution Card
+        val studentAcademy = studentProfile?.academyName?.ifBlank { state.academyName } ?: state.academyName
+        val defaultOrg = allOrgs.firstOrNull { it.organizationName == studentAcademy } ?: allOrgs.firstOrNull() ?: Organization(
+            organizationName = studentAcademy.ifBlank { "Springfield Academy" },
+            contactPerson = "Principal Skinner",
+            mobile = "9876543210",
+            email = "skinner@springfield.edu",
+            activeStudentCount = allStudents.filter { it.academyName == studentAcademy }.size.coerceAtLeast(1),
+            monthlyAmount = allStudents.filter { it.academyName == studentAcademy }.size.coerceAtLeast(1) * 100.0,
+            status = "Active"
+        )
+        val orgEndDate = if (defaultOrg.subscriptionEndDate.isNotBlank()) defaultOrg.subscriptionEndDate else "June 30, 2026"
+        val orgStatus = if (defaultOrg.status.isNotBlank()) defaultOrg.status else "Active"
+
+        Card(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF131c2c) else Color(0xFFF1F5F9)),
+            border = BorderStroke(1.dp, color = accentColor.copy(0.4f))
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("ACADEMY PLATFORM SUBSCRIPTION", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                        Text("TrackNest SaaS License", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                    }
+                    Box(
+                        modifier = Modifier
+                            .background(if (orgStatus == "Active") Color(0xFF10B981).copy(0.12f) else Color(0xFFEF4444).copy(0.12f), RoundedCornerShape(8.dp))
+                            .padding(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = orgStatus.uppercase(),
+                            color = if (orgStatus == "Active") Color(0xFF10B981) else Color(0xFFEF4444),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                
+                Text(
+                    text = "This academy uses TrackNest SaaS on a dynamic licensing model. " +
+                           "As a registered student of ${defaultOrg.organizationName}, you can view and pay/renew the client infrastructure subscription directly from this portal to avoid service disruption.",
+                    fontSize = 11.sp,
+                    color = textSecondary,
+                    lineHeight = 15.sp
+                )
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                val orgStudentsCount = allStudents.filter { it.academyName == studentAcademy }.size.coerceAtLeast(1)
+                val orgBaseAmount = orgStudentsCount * 100.0
+                val orgTax = orgBaseAmount * 0.18
+                val orgGrandTotal = orgBaseAmount + orgTax
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text("ACTIVE LICENSE TIER", fontSize = 9.sp, color = textSecondary, fontWeight = FontWeight.Bold)
+                        Text("Enterprise Dynamic Plan", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                        Text("₹100/student/mo ($orgStudentsCount students)", fontSize = 10.sp, color = textSecondary)
+                    }
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text("PLATFORM CHARGE", fontSize = 9.sp, color = textSecondary, fontWeight = FontWeight.Bold)
+                        Text("₹${orgGrandTotal.toInt()}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                        Text("incl. 18% GST", fontSize = 9.sp, color = textSecondary)
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text("PAID UNTIL DATE", fontSize = 9.sp, color = textSecondary, fontWeight = FontWeight.Bold)
+                        Text(orgEndDate, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                    }
+                    Button(
+                        onClick = {
+                            showOrgSubscriptionDialog = true
+                            orgSubPaymentState = "METHODS"
+                            orgSubTxnId = "pay_web_rzp_" + (100000..999999).random().toString() + (100000..999999).random().toString()
+                            orgSubProgressVal = 0.1f
+                            orgSubProcessingStep = "Connecting secure Razorpay checkout node..."
+                            orgSubCardNum = ""
+                            orgSubCardExpiry = ""
+                            orgSubCardCvv = ""
+                            orgSubUpiIdVal = ""
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = accentColor),
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text("Pay SaaS Renewal", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
 
         if (successMessage.isNotEmpty()) {
             Card(
@@ -2630,6 +3464,14 @@ fun StudentBillingTab(
                                         showPaymentDialog = fee
                                         payRef = "TXN" + (10000000..99999999).random().toString()
                                         payRemarks = ""
+                                        rzpPaymentState = "METHODS"
+                                        rzpTxnId = "pay_rzp_" + (100000..999999).random().toString() + (100000..999999).random().toString()
+                                        rzpProgressVal = 0.1f
+                                        rzpProcessingStep = "Initializing Razorpay Secure Checkout..."
+                                        rzpCardNum = ""
+                                        rzpCardExpiry = ""
+                                        rzpCardCvv = ""
+                                        upiIdVal = ""
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = accentColor),
                                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
@@ -2647,83 +3489,788 @@ fun StudentBillingTab(
         if (showPaymentDialog != null) {
             val f = showPaymentDialog!!
             AlertDialog(
-                onDismissRequest = { showPaymentDialog = null },
-                title = { Text("Complete Fee Payment", fontWeight = FontWeight.Bold, color = textPrimary) },
-                text = {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text("You are paying ₹${f.amount} for ${f.month} ${f.year} fees.", fontSize = 12.sp, color = textSecondary)
-
-                        Text("Payment Mode", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = accentColor)
-                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            listOf("UPI", "Cash", "Bank Transfer").forEach { mode ->
-                                Button(
-                                    onClick = { payMode = mode },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = if (payMode == mode) accentColor else (if (isDark) Color(0xFF2E190A) else Color(0xFFFFDFC6))
-                                    ),
-                                    modifier = Modifier.weight(1f),
-                                    contentPadding = PaddingValues(4.dp)
+                onDismissRequest = { 
+                    if (rzpPaymentState != "PROCESSING") showPaymentDialog = null 
+                },
+                title = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .background(Color(0xFF3395FF), RoundedCornerShape(6.dp)),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    Text(mode, fontSize = 10.sp, color = if (payMode == mode) Color.White else textPrimary, fontWeight = FontWeight.Bold)
+                                    Text("R", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                }
+                                Text("Razorpay Secure", fontSize = 14.sp, fontWeight = FontWeight.ExtraBold, color = if (isDark) Color.White else Color(0xFF0F172A))
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .background(Color(0xFFFF9E7D).copy(0.15f), RoundedCornerShape(4.dp))
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            ) {
+                                Text("TEST MODE", color = Color(0xFFFF7A00), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                        Divider(color = (if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0)).copy(0.5f), modifier = Modifier.padding(top = 8.dp))
+                    }
+                },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        if (rzpPaymentState == "PROCESSING") {
+                            Column(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                CircularProgressIndicator(
+                                    color = Color(0xFF3395FF),
+                                    strokeWidth = 3.dp,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("Processing secure payment...", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color.White else Color(0xFF0F172A))
+                                    Text(rzpProcessingStep, fontSize = 10.sp, color = textSecondary, textAlign = TextAlign.Center)
+                                }
+                                LinearProgressIndicator(
+                                    progress = { rzpProgressVal },
+                                    modifier = Modifier.fillMaxWidth(0.8f).clip(RoundedCornerShape(4.dp)),
+                                    color = Color(0xFF3395FF),
+                                    trackColor = if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0)
+                                )
+                            }
+                        } else if (rzpPaymentState == "SUCCESS") {
+                            Column(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.CheckCircle,
+                                    contentDescription = "Success",
+                                    tint = Color(0xFF10B981),
+                                    modifier = Modifier.size(56.dp)
+                                )
+                                Text("Payment Authorized!", fontSize = 14.sp, fontWeight = FontWeight.ExtraBold, color = Color(0xFF10B981))
+                                Card(
+                                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF0C192E) else Color(0xFFF1F5F9)),
+                                    modifier = Modifier.fillMaxWidth().border(1.dp, Color(0xFF10B981).copy(0.3f), RoundedCornerShape(8.dp))
+                                ) {
+                                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                            Text("Merchant", fontSize = 10.sp, color = textSecondary)
+                                            Text(studentProfile?.academyName?.ifBlank { state.academyName } ?: state.academyName, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color.White else Color(0xFF0F172A))
+                                        }
+                                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                            Text("Razorpay ID", fontSize = 10.sp, color = textSecondary)
+                                            Text(rzpTxnId, fontSize = 10.sp, color = Color(0xFF3395FF), fontWeight = FontWeight.SemiBold)
+                                        }
+                                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                            Text("Amount Paid", fontSize = 10.sp, color = textSecondary)
+                                            Text("₹${f.amount}.00", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color.White else Color(0xFF0F172A))
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            // Order total view
+                            Card(
+                                colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF0A1220) else Color(0xFFF8FAFC)),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(12.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column {
+                                        Text("ACADEMY GROUP FEES", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
+                                        Text("${f.month} ${f.year} Coaching Tuition", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color.White else Color(0xFF0F172A))
+                                    }
+                                    Text("₹${f.amount}", fontSize = 18.sp, fontWeight = FontWeight.Black, color = if (isDark) Color.White else Color(0xFF0F172A))
+                                }
+                            }
+
+                            // Payment method selector tabs
+                            Row(
+                                modifier = Modifier.fillMaxWidth().background(if (isDark) Color(0xFF0B1321) else Color(0xFFF1F5F9), RoundedCornerShape(8.dp)),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                listOf("UPI", "CARD", "NETBANKING").forEach { mode ->
+                                    val isSel = payMode == mode
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickable { payMode = mode }
+                                            .background(if (isSel) Color(0xFF3395FF) else Color.Transparent, RoundedCornerShape(8.dp))
+                                            .padding(vertical = 8.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = when(mode) {
+                                                "UPI" -> "📱 UPI"
+                                                "CARD" -> "💳 Card"
+                                                else -> "🏦 Bank"
+                                            },
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = if (isSel) Color.White else textSecondary
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (payMode == "UPI") {
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text("Pay via UPI ID / Virtual Address", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
+                                    OutlinedTextField(
+                                        value = upiIdVal,
+                                        onValueChange = { upiIdVal = it.filter { c -> !c.isWhitespace() } },
+                                        placeholder = { Text("e.g. mobile@okaxis", fontSize = 11.sp) },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        singleLine = true,
+                                        textStyle = TextStyle(fontSize = 11.sp),
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedBorderColor = Color(0xFF3395FF),
+                                            focusedTextColor = if (isDark) Color.White else Color(0xFF0F172A),
+                                            unfocusedTextColor = if (isDark) Color.White else Color(0xFF0F172A)
+                                        )
+                                    )
+
+                                    Text("Select Preferred UPI App", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        // Google Pay Pill
+                                        val isGPay = upiIdVal.endsWith("@okaxis") || upiIdVal.endsWith("@oksbi") || upiIdVal.endsWith("@okicici")
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(if (isGPay) Color(0xFFE8F0FE) else if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9))
+                                                .border(BorderStroke(1.dp, if (isGPay) Color(0xFF1A73E8) else Color.Transparent), RoundedCornerShape(8.dp))
+                                                .clickable {
+                                                    val contact = studentProfile?.parentMobile?.ifBlank { state.mobile } ?: state.mobile
+                                                    upiIdVal = "${contact.ifBlank { "9876543210" }}@okaxis"
+                                                }
+                                                .padding(horizontal = 8.dp, vertical = 6.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                Box(modifier = Modifier.size(10.dp).background(Color(0xFF1A73E8), RoundedCornerShape(2.dp)))
+                                                Text("Google Pay", fontSize = 10.sp, color = if (isGPay) Color(0xFF1A73E8) else textPrimary, fontWeight = FontWeight.Bold)
+                                            }
+                                        }
+
+                                        // PhonePe Pill
+                                        val isPhonePe = upiIdVal.endsWith("@ybl") || upiIdVal.endsWith("@ibl") || upiIdVal.endsWith("@axl")
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(if (isPhonePe) Color(0xFFF3E8FF) else if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9))
+                                                .border(BorderStroke(1.dp, if (isPhonePe) Color(0xFF7C3AED) else Color.Transparent), RoundedCornerShape(8.dp))
+                                                .clickable {
+                                                    val contact = studentProfile?.parentMobile?.ifBlank { state.mobile } ?: state.mobile
+                                                    upiIdVal = "${contact.ifBlank { "9876543210" }}@ybl"
+                                                }
+                                                .padding(horizontal = 8.dp, vertical = 6.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                Box(modifier = Modifier.size(10.dp).background(Color(0xFF5F259F), RoundedCornerShape(2.dp)))
+                                                Text("PhonePe", fontSize = 10.sp, color = if (isPhonePe) Color(0xFF7C3AED) else textPrimary, fontWeight = FontWeight.Bold)
+                                            }
+                                        }
+                                    }
+
+                                    // Quick recommendation tag chips
+                                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                        listOf("gpay", "paytm", "okaxis", "ybl").forEach { suffix ->
+                                            Box(
+                                                modifier = Modifier
+                                                    .background(if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9), RoundedCornerShape(6.dp))
+                                                    .clickable {
+                                                        val contact = studentProfile?.parentMobile?.ifBlank { state.mobile } ?: state.mobile
+                                                        upiIdVal = "${contact}@${suffix}"
+                                                    }
+                                                    .padding(horizontal = 6.dp, vertical = 4.dp)
+                                            ) {
+                                                Text("@$suffix", fontSize = 9.sp, color = textSecondary, fontWeight = FontWeight.SemiBold)
+                                            }
+                                        }
+                                    }
+                                }
+                            } else if (payMode == "CARD") {
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text("Debit / Credit Card Details", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
+                                    
+                                    val detectedNetwork = when {
+                                        rzpCardNum.startsWith("4") -> "Visa"
+                                        rzpCardNum.startsWith("5") -> "MasterCard"
+                                        rzpCardNum.startsWith("6") -> "RuPay"
+                                        else -> "Unknown Network"
+                                    }
+                                    
+                                    OutlinedTextField(
+                                        value = rzpCardNum,
+                                        onValueChange = { input ->
+                                            val digits = input.filter { it.isDigit() }.take(16)
+                                            rzpCardNum = digits.chunked(4).joinToString(" ")
+                                        },
+                                        label = { Text("Card Number", fontSize = 10.sp) },
+                                        placeholder = { Text("4111 2222 3333 4444", fontSize = 11.sp) },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        singleLine = true,
+                                        textStyle = TextStyle(fontSize = 11.sp, letterSpacing = 1.sp),
+                                        trailingIcon = {
+                                            if (rzpCardNum.isNotEmpty()) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .background(Color(0xFF3395FF).copy(0.12f), RoundedCornerShape(4.dp))
+                                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                                ) {
+                                                    Text(detectedNetwork, color = Color(0xFF3395FF), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                                                }
+                                            }
+                                        },
+                                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF3395FF))
+                                    )
+
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        OutlinedTextField(
+                                            value = rzpCardExpiry,
+                                            onValueChange = { input ->
+                                                val filtered = input.filter { it.isDigit() }.take(4)
+                                                rzpCardExpiry = if (filtered.length >= 3) {
+                                                    "${filtered.substring(0, 2)}/${filtered.substring(2)}"
+                                                } else {
+                                                    filtered
+                                                }
+                                            },
+                                            placeholder = { Text("MM/YY", fontSize = 11.sp) },
+                                            label = { Text("Expiry", fontSize = 10.sp) },
+                                            modifier = Modifier.weight(1.2f),
+                                            singleLine = true,
+                                            textStyle = TextStyle(fontSize = 11.sp),
+                                            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF3395FF))
+                                        )
+                                        OutlinedTextField(
+                                            value = rzpCardCvv,
+                                            onValueChange = { rzpCardCvv = it.filter { c -> c.isDigit() }.take(3) },
+                                            placeholder = { Text("CVV", fontSize = 11.sp) },
+                                            label = { Text("CVV", fontSize = 10.sp) },
+                                            modifier = Modifier.weight(0.8f),
+                                            singleLine = true,
+                                            textStyle = TextStyle(fontSize = 11.sp),
+                                            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF3377E8))
+                                        )
+                                    }
+
+                                    OutlinedTextField(
+                                        value = rzpCardHolderName,
+                                        onValueChange = { rzpCardHolderName = it },
+                                        label = { Text("Cardholder Name", fontSize = 10.sp) },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        singleLine = true,
+                                        textStyle = TextStyle(fontSize = 11.sp),
+                                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF3395FF))
+                                    )
+                                }
+                            } else {
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text("Popular Net Banking Channels", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
+                                    listOf("State Bank of India", "HDFC Bank", "ICICI Bank", "Axis Bank").forEach { bank ->
+                                        val isBankSel = rzpSelectedBank == bank
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(if (isBankSel) Color(0xFF3395FF).copy(0.1f) else Color.Transparent)
+                                                .border(1.dp, if (isBankSel) Color(0xFF3395FF) else (if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0)), RoundedCornerShape(8.dp))
+                                                .clickable { rzpSelectedBank = bank }
+                                                .padding(10.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Text(bank, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = if (isBankSel) Color(0xFF3395FF) else textPrimary)
+                                            if (isBankSel) {
+                                                Icon(Icons.Default.Check, contentDescription = "", tint = Color(0xFF3395FF), modifier = Modifier.size(14.dp))
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
-
-                        Text("Transaction Reference Line / UPI ID", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = accentColor)
-                        OutlinedTextField(
-                            value = payRef,
-                            onValueChange = { payRef = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            textStyle = TextStyle(fontSize = 12.sp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = accentColor,
-                                focusedTextColor = textPrimary,
-                                unfocusedTextColor = textPrimary
-                            )
-                        )
-
-                        Text("Optional Note", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = accentColor)
-                        OutlinedTextField(
-                            value = payRemarks,
-                            onValueChange = { payRemarks = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("e.g. Paid online", fontSize = 12.sp) },
-                            textStyle = TextStyle(fontSize = 12.sp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = accentColor,
-                                focusedTextColor = textPrimary,
-                                unfocusedTextColor = textPrimary
-                            )
-                        )
                     }
                 },
                 confirmButton = {
-                    Button(
-                        onClick = {
-                            val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-                            val updatedFee = f.copy(
-                                status = "Paid",
-                                paymentDate = todayStr,
-                                paymentMode = payMode,
-                                transactionReference = payRef,
-                                remarks = payRemarks.ifBlank { "Paid by mobile app" }
-                            )
-                            viewModel.updateFeeStatus(updatedFee)
-                            successMessage = "Successfully completed ₹${f.amount} payment for ${f.month} ${f.year}!"
-                            showPaymentDialog = null
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981))
-                    ) {
-                        Text("Confirm Payment", color = Color.White)
+                    if (rzpPaymentState == "SUCCESS") {
+                        Button(
+                            onClick = {
+                                val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                                val updatedFee = f.copy(
+                                    status = "Paid",
+                                    paymentDate = todayStr,
+                                    paymentMode = "Razorpay ($payMode)",
+                                    transactionReference = rzpTxnId,
+                                    remarks = payRemarks.ifBlank { "Paid securely via Razorpay Live-Simulation" }
+                                )
+                                viewModel.updateFeeStatus(updatedFee)
+                                successMessage = "Successfully completed ₹${f.amount} Razorpay payment for ${f.month} ${f.year}!"
+                                showPaymentDialog = null
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981))
+                        ) {
+                            Text("Done", color = Color.White)
+                        }
+                    } else if (rzpPaymentState == "METHODS") {
+                        val canPay = when(payMode) {
+                            "UPI" -> upiIdVal.contains("@") && upiIdVal.length >= 5
+                            "CARD" -> rzpCardNum.length >= 15 && rzpCardExpiry.length >= 5 && rzpCardCvv.length >= 3
+                            "NETBANKING" -> rzpSelectedBank.isNotEmpty()
+                            else -> false
+                        }
+                        Button(
+                            onClick = {
+                                rzpPaymentState = "PROCESSING"
+                                coroutineScope.launch {
+                                    rzpProcessingStep = "Contacting merchant sandbox gateway..."
+                                    rzpProgressVal = 0.2f
+                                    kotlinx.coroutines.delay(800)
+                                    rzpProcessingStep = "Running token challenge validations..."
+                                    rzpProgressVal = 0.5f
+                                    kotlinx.coroutines.delay(900)
+                                    rzpProcessingStep = "Completing signature secure webhooks..."
+                                    rzpProgressVal = 0.85f
+                                    kotlinx.coroutines.delay(700)
+                                    rzpProgressVal = 1.0f
+                                    rzpPaymentState = "SUCCESS"
+                                }
+                            },
+                            enabled = canPay,
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3395FF))
+                        ) {
+                            Text("Pay ₹${f.amount}.00 Securely via Razorpay", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showPaymentDialog = null }) {
-                        Text("Cancel", color = accentColor)
+                    if (rzpPaymentState == "METHODS") {
+                        TextButton(onClick = { showPaymentDialog = null }) {
+                            Text("Cancel Progress", color = Color(0xFFEF4444), fontSize = 11.sp)
+                        }
                     }
                 },
-                containerColor = cardBg,
-                modifier = Modifier.border(1.5.dp, accentColor, RoundedCornerShape(28.dp))
+                containerColor = if (isDark) Color(0xFF0F172A) else Color.White,
+                modifier = Modifier.border(1.5.dp, Color(0xFF3395FF), RoundedCornerShape(28.dp))
+            )
+        }
+
+        if (showOrgSubscriptionDialog) {
+            val orgStudentsCount = allStudents.filter { it.academyName == studentAcademy }.size.coerceAtLeast(1)
+            val orgBaseAmount = orgStudentsCount * 100.0
+            val orgTax = orgBaseAmount * 0.18
+            val orgGrandTotal = orgBaseAmount + orgTax
+
+            AlertDialog(
+                onDismissRequest = { 
+                    if (orgSubPaymentState != "PROCESSING") showOrgSubscriptionDialog = false 
+                },
+                title = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .background(Color(0xFF3395FF), RoundedCornerShape(6.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text("R", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                }
+                                Text("Razorpay Secure", fontSize = 14.sp, fontWeight = FontWeight.ExtraBold, color = if (isDark) Color.White else Color(0xFF0F172A))
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .background(Color(0xFFFF9E7D).copy(0.15f), RoundedCornerShape(4.dp))
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            ) {
+                                Text("TEST MODE", color = Color(0xFFFF7A00), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                        Divider(color = (if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0)).copy(0.5f), modifier = Modifier.padding(top = 8.dp))
+                    }
+                },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        if (orgSubPaymentState == "PROCESSING") {
+                            Column(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                CircularProgressIndicator(
+                                    color = Color(0xFF3395FF),
+                                    strokeWidth = 3.dp,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("Processing secure payment...", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color.White else Color(0xFF0F172A))
+                                    Text(orgSubProcessingStep, fontSize = 10.sp, color = textSecondary, textAlign = TextAlign.Center)
+                                }
+                                LinearProgressIndicator(
+                                    progress = { orgSubProgressVal },
+                                    modifier = Modifier.fillMaxWidth(0.8f).clip(RoundedCornerShape(4.dp)),
+                                    color = Color(0xFF3395FF),
+                                    trackColor = if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0)
+                                )
+                            }
+                        } else if (orgSubPaymentState == "SUCCESS") {
+                            Column(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.CheckCircle,
+                                    contentDescription = "Success",
+                                    tint = Color(0xFF10B981),
+                                    modifier = Modifier.size(56.dp)
+                                )
+                                Text("Payment Authorized!", fontSize = 14.sp, fontWeight = FontWeight.ExtraBold, color = Color(0xFF10B981))
+                                Card(
+                                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF0C192E) else Color(0xFFF1F5F9)),
+                                    modifier = Modifier.fillMaxWidth().border(1.dp, Color(0xFF10B981).copy(0.3f), RoundedCornerShape(8.dp))
+                                ) {
+                                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                            Text("Merchant", fontSize = 10.sp, color = textSecondary)
+                                            Text("TrackNest Platform Gateway", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color.White else Color(0xFF0F172A))
+                                        }
+                                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                            Text("SaaS Organization", fontSize = 10.sp, color = textSecondary)
+                                            Text(defaultOrg.organizationName, fontSize = 10.sp, color = if (isDark) Color.White else Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
+                                        }
+                                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                            Text("Razorpay ID", fontSize = 10.sp, color = textSecondary)
+                                            Text(orgSubTxnId, fontSize = 10.sp, color = Color(0xFF3395FF), fontWeight = FontWeight.SemiBold)
+                                        }
+                                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                            Text("Amount Paid", fontSize = 10.sp, color = textSecondary)
+                                            Text("₹${orgGrandTotal.toInt()}.00", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color.White else Color(0xFF0F172A))
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            // Order total view
+                            Card(
+                                colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF0A1220) else Color(0xFFF8FAFC)),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(12.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column {
+                                        Text("TRACKNEST PLATFORM SAAS", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
+                                        Text("Enterprise Dynamic Plan SaaS", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color.White else Color(0xFF0F172A))
+                                        Text("Institutional subscription for ${defaultOrg.organizationName}", fontSize = 9.sp, color = textSecondary)
+                                    }
+                                    Text("₹${orgGrandTotal.toInt()}", fontSize = 18.sp, fontWeight = FontWeight.Black, color = if (isDark) Color.White else Color(0xFF0F172A))
+                                }
+                            }
+
+                            // Payment method selector tabs
+                            Row(
+                                modifier = Modifier.fillMaxWidth().background(if (isDark) Color(0xFF0B1321) else Color(0xFFF1F5F9), RoundedCornerShape(8.dp)),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                listOf("UPI", "CARD", "NETBANKING").forEach { mode ->
+                                    val isSel = orgSubPayMode == mode
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickable { orgSubPayMode = mode }
+                                            .background(if (isSel) Color(0xFF3395FF) else Color.Transparent, RoundedCornerShape(8.dp))
+                                            .padding(vertical = 8.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = when(mode) {
+                                                "UPI" -> "📱 UPI"
+                                                "CARD" -> "💳 Card"
+                                                else -> "🏦 Bank"
+                                            },
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = if (isSel) Color.White else textSecondary
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (orgSubPayMode == "UPI") {
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text("Pay via UPI ID / Virtual Address", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
+                                    OutlinedTextField(
+                                        value = orgSubUpiIdVal,
+                                        onValueChange = { orgSubUpiIdVal = it.filter { c -> !c.isWhitespace() } },
+                                        placeholder = { Text("e.g. name@okaxis", fontSize = 11.sp) },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        singleLine = true,
+                                        textStyle = TextStyle(fontSize = 11.sp),
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedBorderColor = Color(0xFF3395FF),
+                                            focusedTextColor = if (isDark) Color.White else Color(0xFF0F172A),
+                                            unfocusedTextColor = if (isDark) Color.White else Color(0xFF0F172A)
+                                        )
+                                    )
+
+                                    Text("Select Preferred UPI App", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        // Google Pay Pill
+                                        val isGPay = orgSubUpiIdVal.endsWith("@okaxis") || orgSubUpiIdVal.endsWith("@oksbi") || orgSubUpiIdVal.endsWith("@okicici")
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(if (isGPay) Color(0xFFE8F0FE) else if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9))
+                                                .border(BorderStroke(1.dp, if (isGPay) Color(0xFF1A73E8) else Color.Transparent), RoundedCornerShape(8.dp))
+                                                .clickable {
+                                                    val contact = studentProfile?.parentMobile?.ifBlank { state.mobile } ?: state.mobile
+                                                    orgSubUpiIdVal = "${contact.ifBlank { "9876543210" }}@okaxis"
+                                                }
+                                                .padding(horizontal = 8.dp, vertical = 6.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                Box(modifier = Modifier.size(10.dp).background(Color(0xFF1A73E8), RoundedCornerShape(2.dp)))
+                                                Text("Google Pay", fontSize = 10.sp, color = if (isGPay) Color(0xFF1A73E8) else textPrimary, fontWeight = FontWeight.Bold)
+                                            }
+                                        }
+
+                                        // PhonePe Pill
+                                        val isPhonePe = orgSubUpiIdVal.endsWith("@ybl") || orgSubUpiIdVal.endsWith("@ibl") || orgSubUpiIdVal.endsWith("@axl")
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(if (isPhonePe) Color(0xFFF3E8FF) else if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9))
+                                                .border(BorderStroke(1.dp, if (isPhonePe) Color(0xFF7C3AED) else Color.Transparent), RoundedCornerShape(8.dp))
+                                                .clickable {
+                                                    val contact = studentProfile?.parentMobile?.ifBlank { state.mobile } ?: state.mobile
+                                                    orgSubUpiIdVal = "${contact.ifBlank { "9876543210" }}@ybl"
+                                                }
+                                                .padding(horizontal = 8.dp, vertical = 6.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                Box(modifier = Modifier.size(10.dp).background(Color(0xFF5F259F), RoundedCornerShape(2.dp)))
+                                                Text("PhonePe", fontSize = 10.sp, color = if (isPhonePe) Color(0xFF7C3AED) else textPrimary, fontWeight = FontWeight.Bold)
+                                            }
+                                        }
+                                    }
+
+                                    // Quick recommendation tag chips
+                                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                        listOf("gpay", "paytm", "okaxis", "ybl").forEach { suffix ->
+                                            Box(
+                                                modifier = Modifier
+                                                    .background(if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9), RoundedCornerShape(6.dp))
+                                                    .clickable {
+                                                        val contact = studentProfile?.parentMobile?.ifBlank { state.mobile } ?: state.mobile
+                                                        orgSubUpiIdVal = "${contact}@${suffix}"
+                                                    }
+                                                    .padding(horizontal = 6.dp, vertical = 4.dp)
+                                            ) {
+                                                Text("@$suffix", fontSize = 9.sp, color = textSecondary, fontWeight = FontWeight.SemiBold)
+                                            }
+                                        }
+                                    }
+                                }
+                            } else if (orgSubPayMode == "CARD") {
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text("Debit / Credit Card Details", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
+                                    val detectedNetwork = when {
+                                        orgSubCardNum.startsWith("4") -> "Visa"
+                                        orgSubCardNum.startsWith("5") -> "MasterCard"
+                                        orgSubCardNum.startsWith("6") -> "RuPay"
+                                        else -> "Unknown Network"
+                                    }
+                                    OutlinedTextField(
+                                        value = orgSubCardNum,
+                                        onValueChange = { input ->
+                                            val digits = input.filter { it.isDigit() }.take(16)
+                                            orgSubCardNum = digits.chunked(4).joinToString(" ")
+                                        },
+                                        label = { Text("Card Number", fontSize = 10.sp) },
+                                        placeholder = { Text("4111 2222 3333 4444", fontSize = 11.sp) },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        singleLine = true,
+                                        textStyle = TextStyle(fontSize = 11.sp, letterSpacing = 1.sp),
+                                        trailingIcon = {
+                                            if (orgSubCardNum.isNotEmpty()) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .background(Color(0xFF3395FF).copy(0.12f), RoundedCornerShape(4.dp))
+                                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                                ) {
+                                                    Text(detectedNetwork, color = Color(0xFF3395FF), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                                                }
+                                            }
+                                        },
+                                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF3395FF))
+                                    )
+
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        OutlinedTextField(
+                                            value = orgSubCardExpiry,
+                                            onValueChange = { input ->
+                                                val filtered = input.filter { it.isDigit() }.take(4)
+                                                orgSubCardExpiry = if (filtered.length >= 3) {
+                                                    "${filtered.substring(0, 2)}/${filtered.substring(2)}"
+                                                } else {
+                                                    filtered
+                                                }
+                                            },
+                                            placeholder = { Text("MM/YY", fontSize = 11.sp) },
+                                            label = { Text("Expiry", fontSize = 10.sp) },
+                                            modifier = Modifier.weight(1.2f),
+                                            singleLine = true,
+                                            textStyle = TextStyle(fontSize = 11.sp),
+                                            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF3395FF))
+                                        )
+                                        OutlinedTextField(
+                                            value = orgSubCardCvv,
+                                            onValueChange = { orgSubCardCvv = it.filter { c -> c.isDigit() }.take(3) },
+                                            placeholder = { Text("CVV", fontSize = 11.sp) },
+                                            label = { Text("CVV", fontSize = 10.sp) },
+                                            modifier = Modifier.weight(0.8f),
+                                            singleLine = true,
+                                            textStyle = TextStyle(fontSize = 11.sp),
+                                            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF3377E8))
+                                        )
+                                    }
+
+                                    OutlinedTextField(
+                                        value = orgSubCardHolderName,
+                                        onValueChange = { orgSubCardHolderName = it },
+                                        label = { Text("Cardholder Name", fontSize = 10.sp) },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        singleLine = true,
+                                        textStyle = TextStyle(fontSize = 11.sp),
+                                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF3395FF))
+                                    )
+                                }
+                            } else {
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text("Popular Net Banking Channels", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
+                                    listOf("State Bank of India", "HDFC Bank", "ICICI Bank", "Axis Bank").forEach { bank ->
+                                        val isBankSel = orgSubSelectedBank == bank
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(if (isBankSel) Color(0xFF3395FF).copy(0.1f) else Color.Transparent)
+                                                .border(1.dp, if (isBankSel) Color(0xFF3395FF) else (if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0)), RoundedCornerShape(8.dp))
+                                                .clickable { orgSubSelectedBank = bank }
+                                                .padding(10.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Text(bank, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = if (isBankSel) Color(0xFF3395FF) else textPrimary)
+                                            if (isBankSel) {
+                                                Icon(Icons.Default.Check, contentDescription = "", tint = Color(0xFF3395FF), modifier = Modifier.size(14.dp))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    if (orgSubPaymentState == "SUCCESS") {
+                        Button(
+                            onClick = {
+                                val updatedOrg = defaultOrg.copy(
+                                    subscriptionPlan = "Enterprise Dynamic Plan",
+                                    monthlyAmount = orgBaseAmount,
+                                    subscriptionStartDate = "June 30, 2026",
+                                    subscriptionEndDate = "August 30, 2026",
+                                    status = "Active"
+                                )
+                                viewModel.updateOrganizationDetails(updatedOrg)
+                                successMessage = "Paid & Renewed Academy SaaS Subscription for ₹${orgGrandTotal.toInt()} successfully!"
+                                showOrgSubscriptionDialog = false
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981))
+                        ) {
+                            Text("Done", color = Color.White)
+                        }
+                    } else if (orgSubPaymentState == "METHODS") {
+                        val canPay = when(orgSubPayMode) {
+                            "UPI" -> orgSubUpiIdVal.contains("@") && orgSubUpiIdVal.length >= 5
+                            "CARD" -> orgSubCardNum.length >= 15 && orgSubCardExpiry.length >= 5 && orgSubCardCvv.length >= 3
+                            "NETBANKING" -> orgSubSelectedBank.isNotEmpty()
+                            else -> false
+                        }
+                        Button(
+                            onClick = {
+                                orgSubPaymentState = "PROCESSING"
+                                coroutineScope.launch {
+                                    orgSubProcessingStep = "Contacting TrackNest subscription billing nodes..."
+                                    orgSubProgressVal = 0.2f
+                                    kotlinx.coroutines.delay(800)
+                                    orgSubProcessingStep = "Securing credit and webhook validations..."
+                                    orgSubProgressVal = 0.5f
+                                    kotlinx.coroutines.delay(900)
+                                    orgSubProcessingStep = "Updating license authorizations..."
+                                    orgSubProgressVal = 0.85f
+                                    kotlinx.coroutines.delay(700)
+                                    orgSubProgressVal = 1.0f
+                                    orgSubPaymentState = "SUCCESS"
+                                }
+                            },
+                            enabled = canPay,
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3395FF))
+                        ) {
+                            Text("Pay ₹${orgGrandTotal.toInt()}.00 via Razorpay", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                },
+                dismissButton = {
+                    if (orgSubPaymentState == "METHODS") {
+                        TextButton(onClick = { showOrgSubscriptionDialog = false }) {
+                            Text("Cancel", color = Color(0xFFEF4444), fontSize = 11.sp)
+                        }
+                    }
+                },
+                containerColor = if (isDark) Color(0xFF0F172A) else Color.White,
+                modifier = Modifier.border(1.5.dp, Color(0xFF3395FF), RoundedCornerShape(28.dp))
             )
         }
     }
@@ -2749,8 +4296,15 @@ fun CoachDashboardLayout(
     var showLanguageDialog by remember { mutableStateOf(false) }
 
     val coachAcademy = state.academyName
+    val allOrgs by viewModel.allOrganizations.collectAsState()
+    val matchingOrg = allOrgs.firstOrNull { it.organizationName.equals(coachAcademy, ignoreCase = true) }
+    val isSubscriptionActive = matchingOrg == null || matchingOrg.status == "Active"
+
     val filteredStudents = students.filter { it.academyName == coachAcademy }
     val academyRegs = filteredStudents.map { it.registerNumber }.toSet()
+
+    val dbTournaments by viewModel.allTournaments.collectAsState()
+    val dbDocuments by viewModel.allDocuments.collectAsState()
 
     val filteredAttendance = allAttendance.filter { it.registerNumber in academyRegs }
     val filteredLeaves = allLeaves.filter { it.studentRegister in academyRegs }
@@ -2897,14 +4451,22 @@ fun CoachDashboardLayout(
             }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        if (!isSubscriptionActive) {
+            SubscriptionRestrictedScreen(
+                viewModel = viewModel,
+                orgName = coachAcademy.ifBlank { "Springfield Academy" },
+                onActivateClick = null,
+                isDark = isDark
+            )
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
 
             // Stats row
             Row(
@@ -3359,9 +4921,13 @@ fun CoachDashboardLayout(
                                         Text("Daily Meals Intake: ", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = textPrimary)
                                     }
                                     Column(modifier = Modifier.padding(start = 24.dp)) {
-                                        Text("🍳 Breakfast: ${if (latestLog.hadBreakfast) "Had Breakfast" else "Skipped"}", fontSize = 11.sp, color = textPrimary)
-                                        Text("🍱 Lunch: ${if (latestLog.hadLunch) "Had Lunch" else "Skipped"}", fontSize = 11.sp, color = textPrimary)
-                                        Text("🍜 Dinner: ${if (latestLog.hadDinner) "Had Dinner" else "Skipped"}", fontSize = 11.sp, color = textPrimary)
+                                        val bDetails = if (latestLog.hadBreakfast && latestLog.breakfastMenu.isNotBlank()) " (${latestLog.breakfastMenu})" else ""
+                                        val lDetails = if (latestLog.hadLunch && latestLog.lunchMenu.isNotBlank()) " (${latestLog.lunchMenu})" else ""
+                                        val dDetails = if (latestLog.hadDinner && latestLog.dinnerMenu.isNotBlank()) " (${latestLog.dinnerMenu})" else ""
+
+                                        Text("🍳 Breakfast: ${if (latestLog.hadBreakfast) "Had Breakfast" else "Skipped"}$bDetails", fontSize = 11.sp, color = textPrimary)
+                                        Text("🍱 Lunch: ${if (latestLog.hadLunch) "Had Lunch" else "Skipped"}$lDetails", fontSize = 11.sp, color = textPrimary)
+                                        Text("🍜 Dinner: ${if (latestLog.hadDinner) "Had Dinner" else "Skipped"}$dDetails", fontSize = 11.sp, color = textPrimary)
                                     }
 
                                     // 3. Water Intake
@@ -3435,11 +5001,6 @@ fun CoachDashboardLayout(
                     var tourTitle by remember { mutableStateOf("") }
                     var tourDate by remember { mutableStateOf("") }
                     var tourLoc by remember { mutableStateOf("") }
-                    var tournaments by remember { mutableStateOf(listOf(
-                        CustomTournament("District Junior Athletics Meet", "2026-06-28", "Stadium Grounds A"),
-                        CustomTournament("National Selection Volleyball Trials", "2026-07-15", "Indoor Sports Pavilion"),
-                        CustomTournament("State Level Track & Field Trophy", "2026-07-29", "University Complex")
-                    )) }
 
                     Card(
                         colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB)),
@@ -3487,7 +5048,13 @@ fun CoachDashboardLayout(
                             Button(
                                 onClick = {
                                     if (tourTitle.trim().isNotEmpty() && tourDate.trim().isNotEmpty()) {
-                                        tournaments = tournaments + CustomTournament(tourTitle, tourDate, tourLoc)
+                                        viewModel.publishTournament(
+                                            title = tourTitle.trim(),
+                                            date = tourDate.trim(),
+                                            location = tourLoc.trim(),
+                                            academyName = coachAcademy,
+                                            coachName = state.name
+                                        )
                                         tourTitle = ""
                                         tourDate = ""
                                         tourLoc = ""
@@ -3504,7 +5071,8 @@ fun CoachDashboardLayout(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    tournaments.forEach { tour ->
+                    val activeTournaments = dbTournaments.filter { it.academyName.equals(coachAcademy, ignoreCase = true) }
+                    activeTournaments.forEach { tour ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -3520,15 +5088,27 @@ fun CoachDashboardLayout(
                                     Icon(Icons.Default.Place, contentDescription = "", tint = accentColor, modifier = Modifier.size(11.dp))
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(tour.location, fontSize = 10.sp, color = textSecondary)
+                                    if (tour.coachName.isNotEmpty()) {
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("By: ${tour.coachName}", fontSize = 9.sp, color = textSecondary, fontWeight = FontWeight.SemiBold)
+                                    }
                                 }
                             }
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(accentColor.copy(0.15f))
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                            ) {
-                                Text(tour.date, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(accentColor.copy(0.15f))
+                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                ) {
+                                    Text(tour.date, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                                }
+                                IconButton(
+                                    onClick = { viewModel.deleteTournament(tour) },
+                                    modifier = Modifier.size(24.dp)
+                                ) {
+                                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red.copy(alpha = 0.6f), modifier = Modifier.size(14.dp))
+                                }
                             }
                         }
                     }
@@ -3560,21 +5140,15 @@ fun CoachDashboardLayout(
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
 
-                    var docStatusMap by remember { mutableStateOf(mapOf(
-                        "2026CS501" to mapOf("Birth Certificate" to "Verified", "Medical Form" to "Submitted", "Consent Slip" to "Verified"),
-                        "2026CS502" to mapOf("Birth Certificate" to "Submitted", "Medical Form" to "Pending Updation", "Consent Slip" to "Pending Updation"),
-                        "2026CS503" to mapOf("Birth Certificate" to "Verified", "Medical Form" to "Verified", "Consent Slip" to "Verified")
-                    )) }
-
                     var showDocSelectorForStudentId by remember { mutableStateOf<String?>(null) }
                     var showDocSelectorField by remember { mutableStateOf("") }
 
                     filteredStudents.forEach { std ->
-                        val studentDocs = docStatusMap[std.registerNumber] ?: mapOf(
-                            "Birth Certificate" to "Pending Updation",
-                            "Medical Form" to "Pending Updation",
-                            "Consent Slip" to "Pending Updation"
-                        )
+                        val studentDocsFromDb = dbDocuments.filter { it.registerNumber == std.registerNumber }
+                        val docTypes = listOf("Birth Certificate", "Medical Form", "Consent Slip")
+                        val studentDocs = docTypes.associateWith { docType ->
+                            studentDocsFromDb.find { it.documentName == docType }?.status ?: "Pending Updation"
+                        }
 
                         Row(
                             modifier = Modifier
@@ -3635,7 +5209,7 @@ fun CoachDashboardLayout(
                         val activeStudentId = showDocSelectorForStudentId!!
                         val activeDoc = showDocSelectorField
                         val stdName = filteredStudents.find { it.registerNumber == activeStudentId }?.name ?: activeStudentId
-                        val currentStatus = (docStatusMap[activeStudentId] ?: emptyMap())[activeDoc] ?: "Pending Updation"
+                        val currentStatus = dbDocuments.find { it.registerNumber == activeStudentId && it.documentName == activeDoc }?.status ?: "Pending Updation"
 
                         AlertDialog(
                             onDismissRequest = { showDocSelectorForStudentId = null },
@@ -3653,11 +5227,13 @@ fun CoachDashboardLayout(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .clickable {
-                                                    val currentDocsMap = docStatusMap[activeStudentId]?.toMutableMap() ?: mutableMapOf()
-                                                    currentDocsMap[activeDoc] = statusOpt
-                                                    val updatedMap = docStatusMap.toMutableMap()
-                                                    updatedMap[activeStudentId] = currentDocsMap
-                                                    docStatusMap = updatedMap
+                                                    viewModel.saveOrUpdateDocument(
+                                                        registerNumber = activeStudentId,
+                                                        documentName = activeDoc,
+                                                        status = statusOpt,
+                                                        fileDetails = "Updated by Coach",
+                                                        remarks = "Updated by coach ${state.name}"
+                                                    )
                                                     showDocSelectorForStudentId = null
                                                 }
                                                 .padding(vertical = 10.dp, horizontal = 4.dp),
@@ -3683,6 +5259,7 @@ fun CoachDashboardLayout(
             }
 
             Spacer(modifier = Modifier.height(20.dp))
+            }
         }
     }
 }
@@ -3711,6 +5288,9 @@ fun AdminDashboardLayout(
     val accentColor = Color(0xFFFF7A00)
 
     val adminAcademy = state.academyName
+    val matchingOrg = allOrganizations.firstOrNull { it.organizationName.equals(adminAcademy, ignoreCase = true) }
+    val isSubscriptionActive = matchingOrg == null || matchingOrg.status == "Active"
+
     val filteredStudents = students.filter { it.academyName == adminAcademy }
     val academyRegs = filteredStudents.map { it.registerNumber }.toSet()
     
@@ -3728,13 +5308,18 @@ fun AdminDashboardLayout(
     var parentNo by remember { mutableStateOf("") }
     var batchStr by remember { mutableStateOf("") }
     var courseStr by remember { mutableStateOf("") }
+    var studentUsernameVal by remember { mutableStateOf("") }
+    var studentPasswordVal by remember { mutableStateOf("password123") }
+    var studentAcademyVal by remember { mutableStateOf(adminAcademy) }
     var successToast by remember { mutableStateOf("") }
 
     // Coach and Subtab states
+    val allAccounts by viewModel.allAccounts.collectAsState()
     var enrollmentSubTab by remember { mutableStateOf("STUDENTS") } // "STUDENTS" or "COACHES"
     var coachName by remember { mutableStateOf("") }
     var coachUsername by remember { mutableStateOf("") }
     var coachPass by remember { mutableStateOf("") }
+    var coachAcademyVal by remember { mutableStateOf(adminAcademy) }
     var coachSpecialty by remember { mutableStateOf("") }
     var coachSuccessToast by remember { mutableStateOf("") }
 
@@ -3780,7 +5365,6 @@ fun AdminDashboardLayout(
                                             Text("Select which dashboard/role you would like to test or switch into:", fontSize = 13.sp, color = Color.LightGray)
                                             Spacer(modifier = Modifier.height(4.dp))
                                             listOf(
-                                                "STUDENT" to "🎓 Student Portal",
                                                 "COACH" to "⚽ Coach / Staff Portal",
                                                 "ADMIN" to "⚙️ Central Admin Portal"
                                             ).forEach { (roleCode, label) ->
@@ -3846,8 +5430,16 @@ fun AdminDashboardLayout(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            when (activeTab) {
-                "ANALYTICS" -> {
+            if (!isSubscriptionActive && activeTab != "SUBSCRIPTION_BILLING") {
+                SubscriptionRestrictedScreen(
+                    viewModel = viewModel,
+                    orgName = adminAcademy.ifBlank { "Springfield Academy" },
+                    onActivateClick = { activeTab = "SUBSCRIPTION_BILLING" },
+                    isDark = isDark
+                )
+            } else {
+                when (activeTab) {
+                    "ANALYTICS" -> {
                     AdminAnalyticsTab(
                         students = filteredStudents,
                         attendance = filteredAttendance,
@@ -3908,34 +5500,72 @@ fun AdminDashboardLayout(
                                     OutlinedTextField(value = courseStr, onValueChange = { courseStr = it }, placeholder = { Text("Course Program", color = Color(0xFF64748B)) }, modifier = Modifier.weight(1f), colors = OutlinedTextFieldDefaults.colors(focusedTextColor = textPrimary, unfocusedTextColor = textPrimary, focusedBorderColor = accentColor))
                                 }
 
+                                Card(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF2C190F) else Color(0xFFFFF7F2)),
+                                    border = BorderStroke(1.dp, accentColor.copy(0.3f))
+                                ) {
+                                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                        Text("🔐 Student Portal Credentials & Academy", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                                        
+                                        OutlinedTextField(
+                                            value = studentUsernameVal,
+                                            onValueChange = { studentUsernameVal = it },
+                                            placeholder = { Text("Portal Username / Phone (e.g. 2026CS509)", color = Color(0xFF64748B)) },
+                                            modifier = Modifier.fillMaxWidth(),
+                                            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = textPrimary, unfocusedTextColor = textPrimary, focusedBorderColor = accentColor)
+                                        )
+                                        
+                                        OutlinedTextField(
+                                            value = studentPasswordVal,
+                                            onValueChange = { studentPasswordVal = it },
+                                            placeholder = { Text("Choose Login Password", color = Color(0xFF64748B)) },
+                                            modifier = Modifier.fillMaxWidth(),
+                                            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = textPrimary, unfocusedTextColor = textPrimary, focusedBorderColor = accentColor)
+                                        )
+                                        
+                                        OutlinedTextField(
+                                            value = studentAcademyVal,
+                                            onValueChange = { studentAcademyVal = it },
+                                            placeholder = { Text("Academy Name (e.g. Springfield Academy)", color = Color(0xFF64748B)) },
+                                            modifier = Modifier.fillMaxWidth(),
+                                            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = textPrimary, unfocusedTextColor = textPrimary, focusedBorderColor = accentColor)
+                                        )
+                                    }
+                                }
+
                                 if (successToast.isNotBlank()) {
                                     Text(successToast, color = Color(0xFF10B981), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                 }
 
                                 Button(
                                     onClick = {
-                                        if (registerNum.isNotBlank() && enrollmentName.isNotBlank() && mobileNo.isNotBlank()) {
+                                        if (registerNum.isNotBlank() && enrollmentName.isNotBlank()) {
+                                            val finalUsername = studentUsernameVal.ifBlank { mobileNo.ifBlank { registerNum } }.trim()
+                                            val finalPassword = studentPasswordVal.ifBlank { "password123" }.trim()
+                                            val finalAcademy = studentAcademyVal.ifBlank { adminAcademy }.trim()
+
                                             val nProfile = StudentProfile(
                                                 registerNumber = registerNum,
                                                 name = enrollmentName,
                                                 address = addressStr,
-                                                mobileNumber = mobileNo,
+                                                mobileNumber = mobileNo.ifBlank { finalUsername },
                                                 parentMobile = parentNo,
                                                 batch = batchStr,
                                                 course = courseStr,
                                                 profilePhoto = "avatar_1",
-                                                academyName = adminAcademy
+                                                academyName = finalAcademy
                                             )
                                             viewModel.saveStudentProfile(nProfile)
                                             viewModel.createOneTimeAccount(
-                                                phone = mobileNo.trim(),
-                                                pass = "password123",
+                                                phone = finalUsername,
+                                                pass = finalPassword,
                                                 role = "STUDENT",
                                                 regNo = registerNum,
-                                                academyName = adminAcademy
+                                                academyName = finalAcademy
                                             ) { _, _ -> }
                                             
-                                            successToast = "Successfully enrolled student record & auto-provisioned password123 credentials: $registerNum"
+                                            successToast = "Successfully registered student '$enrollmentName' with credentials username: '$finalUsername' & pass: '$finalPassword' under academy: '$finalAcademy'!"
                                             registerNum = ""
                                             enrollmentName = ""
                                             addressStr = ""
@@ -3943,8 +5573,11 @@ fun AdminDashboardLayout(
                                             parentNo = ""
                                             batchStr = ""
                                             courseStr = ""
+                                            studentUsernameVal = ""
+                                            studentPasswordVal = "password123"
+                                            studentAcademyVal = adminAcademy
                                         } else {
-                                            successToast = "Validation failed. Register, Name, and Mobile are required fields."
+                                            successToast = "Validation failed. Register and Name are strictly required."
                                         }
                                     },
                                     modifier = Modifier
@@ -4005,6 +5638,32 @@ fun AdminDashboardLayout(
                                                 .fillMaxWidth()
                                                 .padding(14.dp)
                                         ) {
+                                            // Portal Credentials card
+                                            val studentAccount = allAccounts.find { it.registerNumber == s.registerNumber || it.phoneNumber == s.mobileNumber }
+                                            if (studentAccount != null) {
+                                                Card(
+                                                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                                                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF2C190F) else Color(0xFFFFFBEB)),
+                                                    border = BorderStroke(1.dp, Color(0xFFFFB088).copy(0.4f))
+                                                ) {
+                                                    Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                        Text("🔐 PORTAL CREDENTIALS (Give to Student)", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFF7A00))
+                                                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                                            Text("🏫 Academy Name:", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = textPrimary)
+                                                            Text(studentAccount.academyName.ifBlank { s.academyName }, fontSize = 11.sp, color = textSecondary)
+                                                        }
+                                                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                                            Text("👤 Username:", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = textPrimary)
+                                                            Text(studentAccount.phoneNumber, fontSize = 11.sp, color = textSecondary)
+                                                        }
+                                                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                                            Text("🔑 Password:", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = textPrimary)
+                                                            Text(studentAccount.password, fontSize = 11.sp, color = textSecondary)
+                                                        }
+                                                    }
+                                                }
+                                            }
+
                                             // Address Info
                                             Text("📍 Residential Address/Hostel", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = accentColor)
                                             Text(s.address.ifEmpty { "Not specified" }, color = textPrimary, fontSize = 11.sp)
@@ -4065,7 +5724,10 @@ fun AdminDashboardLayout(
                                                                     Text("💤 Sleep: ${record.sleepHours} hrs | 💧 Water: ${String.format(Locale.getDefault(), "%.1f", record.waterIntakeCups * 0.25f)} L", fontSize = 9.sp, color = textPrimary)
                                                                 }
                                                                 Row(modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
-                                                                    Text("🍳 Meals: Breakfast: ${if (record.hadBreakfast) "Yes" else "No"} | Lunch: ${if (record.hadLunch) "Yes" else "No"} | Dinner: ${if (record.hadDinner) "Yes" else "No"}", fontSize = 9.sp, color = textPrimary)
+                                                                    val bDetails = if (record.hadBreakfast && record.breakfastMenu.isNotBlank()) " (${record.breakfastMenu})" else ""
+                                                                    val lDetails = if (record.hadLunch && record.lunchMenu.isNotBlank()) " (${record.lunchMenu})" else ""
+                                                                    val dDetails = if (record.hadDinner && record.dinnerMenu.isNotBlank()) " (${record.dinnerMenu})" else ""
+                                                                    Text("🍳 Meals: Breakfast: ${if (record.hadBreakfast) "Yes" else "No"}$bDetails | Lunch: ${if (record.hadLunch) "Yes" else "No"}$lDetails | Dinner: ${if (record.hadDinner) "Yes" else "No"}$dDetails", fontSize = 9.sp, color = textPrimary)
                                                                 }
                                                                 Row(modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
                                                                     Text("🧠 Mood: ${record.mood}", fontSize = 9.sp, color = textPrimary)
@@ -4134,9 +5796,41 @@ fun AdminDashboardLayout(
                                 Text("Add Academy Coaching Staff", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimary)
 
                                 OutlinedTextField(value = coachName, onValueChange = { coachName = it }, placeholder = { Text("Coach Full Name", color = Color(0xFF64748B)) }, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedTextColor = textPrimary, unfocusedTextColor = textPrimary, focusedBorderColor = accentColor))
-                                OutlinedTextField(value = coachUsername, onValueChange = { coachUsername = it }, placeholder = { Text("Coach Username / Mobile Phone", color = Color(0xFF64748B)) }, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedTextColor = textPrimary, unfocusedTextColor = textPrimary, focusedBorderColor = accentColor))
-                                OutlinedTextField(value = coachPass, onValueChange = { coachPass = it }, placeholder = { Text("Choose Login Password", color = Color(0xFF64748B)) }, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedTextColor = textPrimary, unfocusedTextColor = textPrimary, focusedBorderColor = accentColor))
                                 OutlinedTextField(value = coachSpecialty, onValueChange = { coachSpecialty = it }, placeholder = { Text("Coaching Specialty (e.g. Judo Instructor)", color = Color(0xFF64748B)) }, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedTextColor = textPrimary, unfocusedTextColor = textPrimary, focusedBorderColor = accentColor))
+
+                                Card(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF2C190F) else Color(0xFFFFF7F2)),
+                                    border = BorderStroke(1.dp, accentColor.copy(0.3f))
+                                ) {
+                                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                        Text("🔐 Coach Portal Credentials & Academy", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                                        
+                                        OutlinedTextField(
+                                            value = coachUsername,
+                                            onValueChange = { coachUsername = it },
+                                            placeholder = { Text("Coach Username / Mobile Phone", color = Color(0xFF64748B)) },
+                                            modifier = Modifier.fillMaxWidth(),
+                                            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = textPrimary, unfocusedTextColor = textPrimary, focusedBorderColor = accentColor)
+                                        )
+                                        
+                                        OutlinedTextField(
+                                            value = coachPass,
+                                            onValueChange = { coachPass = it },
+                                            placeholder = { Text("Choose Login Password", color = Color(0xFF64748B)) },
+                                            modifier = Modifier.fillMaxWidth(),
+                                            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = textPrimary, unfocusedTextColor = textPrimary, focusedBorderColor = accentColor)
+                                        )
+                                        
+                                        OutlinedTextField(
+                                            value = coachAcademyVal,
+                                            onValueChange = { coachAcademyVal = it },
+                                            placeholder = { Text("Academy Name (e.g. Springfield Academy)", color = Color(0xFF64748B)) },
+                                            modifier = Modifier.fillMaxWidth(),
+                                            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = textPrimary, unfocusedTextColor = textPrimary, focusedBorderColor = accentColor)
+                                        )
+                                    }
+                                }
 
                                 if (coachSuccessToast.isNotBlank()) {
                                     Text(coachSuccessToast, color = Color(0xFF10B981), fontSize = 12.sp, fontWeight = FontWeight.Bold)
@@ -4145,19 +5839,21 @@ fun AdminDashboardLayout(
                                 Button(
                                     onClick = {
                                         if (coachName.isNotBlank() && coachUsername.isNotBlank() && coachPass.isNotBlank()) {
+                                            val finalAcademy = coachAcademyVal.ifBlank { adminAcademy }.trim()
                                             viewModel.addCoachDetails(
                                                 name = coachName.trim(),
                                                 username = coachUsername.trim(),
                                                 pass = coachPass.trim(),
                                                 specialty = coachSpecialty.ifEmpty { "Chief Coach" },
-                                                academy = adminAcademy,
+                                                academy = finalAcademy,
                                                 hasAccess = true
                                             )
-                                            coachSuccessToast = "Successfully registered Coach: $coachName with full portal authorization!"
+                                            coachSuccessToast = "Successfully registered Coach '$coachName' with credentials username: '${coachUsername.trim()}' & pass: '${coachPass.trim()}' under academy: '$finalAcademy'!"
                                             coachName = ""
                                             coachUsername = ""
                                             coachPass = ""
                                             coachSpecialty = ""
+                                            coachAcademyVal = adminAcademy
                                         } else {
                                             coachSuccessToast = "Name, Username, and Password are required fields."
                                         }
@@ -4185,31 +5881,59 @@ fun AdminDashboardLayout(
                                             colors = CardDefaults.cardColors(containerColor = cardBg),
                                             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                                         ) {
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth().padding(14.dp),
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Column(modifier = Modifier.weight(1f)) {
-                                                    Text(coach.name, color = textPrimary, fontWeight = FontWeight.Bold)
-                                                    Text("Username: ${coach.username} | Specialization: ${coach.specialty}", fontSize = 11.sp, color = textSecondary)
-                                                    Text(
-                                                        text = if (coach.hasAccess) "🟢 PORTAL ACCESS ACTIVE" else "🔴 PORTAL BLOCKED",
-                                                        fontSize = 10.sp,
-                                                        fontWeight = FontWeight.Bold,
-                                                        color = if (coach.hasAccess) Color(0xFF10B981) else Color(0xFFEF4444)
+                                            Column(modifier = Modifier.padding(14.dp)) {
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Column(modifier = Modifier.weight(1f)) {
+                                                        Text(coach.name, color = textPrimary, fontWeight = FontWeight.Bold)
+                                                        Text("Username: ${coach.username} | Specialization: ${coach.specialty}", fontSize = 11.sp, color = textSecondary)
+                                                        Text(
+                                                            text = if (coach.hasAccess) "🟢 PORTAL ACCESS ACTIVE" else "🔴 PORTAL BLOCKED",
+                                                            fontSize = 10.sp,
+                                                            fontWeight = FontWeight.Bold,
+                                                            color = if (coach.hasAccess) Color(0xFF10B981) else Color(0xFFEF4444)
+                                                        )
+                                                    }
+                                                    Switch(
+                                                        checked = coach.hasAccess,
+                                                        onCheckedChange = { isChecked ->
+                                                            viewModel.updateCoachAccess(coach, isChecked)
+                                                        },
+                                                        colors = SwitchDefaults.colors(
+                                                            checkedThumbColor = Color.White,
+                                                            checkedTrackColor = accentColor
+                                                        )
                                                     )
                                                 }
-                                                Switch(
-                                                    checked = coach.hasAccess,
-                                                    onCheckedChange = { isChecked ->
-                                                        viewModel.updateCoachAccess(coach, isChecked)
-                                                    },
-                                                    colors = SwitchDefaults.colors(
-                                                        checkedThumbColor = Color.White,
-                                                        checkedTrackColor = accentColor
-                                                    )
-                                                )
+
+                                                val coachAccount = allAccounts.find { it.phoneNumber == coach.username }
+                                                if (coachAccount != null) {
+                                                    Spacer(modifier = Modifier.height(10.dp))
+                                                    Card(
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF2C190F) else Color(0xFFFFFBEB)),
+                                                        border = BorderStroke(1.dp, Color(0xFFFFB088).copy(0.4f))
+                                                    ) {
+                                                        Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                            Text("🔐 PORTAL CREDENTIALS (Give to Coach)", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFF7A00))
+                                                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                                                Text("🏫 Academy Name:", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = textPrimary)
+                                                                Text(coachAccount.academyName.ifBlank { coach.academyName }, fontSize = 11.sp, color = textSecondary)
+                                                            }
+                                                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                                                Text("👤 Username:", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = textPrimary)
+                                                                Text(coachAccount.phoneNumber, fontSize = 11.sp, color = textSecondary)
+                                                            }
+                                                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                                                Text("🔑 Password:", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = textPrimary)
+                                                                Text(coachAccount.password, fontSize = 11.sp, color = textSecondary)
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -4225,51 +5949,16 @@ fun AdminDashboardLayout(
                             .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        var billingSubTab by remember { mutableStateOf("STUDENTS") } // "STUDENTS" or "PLATFORM"
-                        
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Button(
-                                onClick = { billingSubTab = "STUDENTS" },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (billingSubTab == "STUDENTS") accentColor else (if (isDark) Color(0xFF2E190A) else Color(0xFFFFDFC6))
-                                ),
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text("Student Tuition Fees", color = if (billingSubTab == "STUDENTS") Color.White else textPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                            }
-                            Button(
-                                onClick = { billingSubTab = "PLATFORM" },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (billingSubTab == "PLATFORM") accentColor else (if (isDark) Color(0xFF2E190A) else Color(0xFFFFDFC6))
-                                ),
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text("Platform SaaS Plan", color = if (billingSubTab == "PLATFORM") Color.White else textPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                        
-                        if (billingSubTab == "STUDENTS") {
-                            AdminFeesManagementTab(
-                                viewModel = viewModel,
-                                students = filteredStudents,
-                                allFees = filteredFees,
-                                isDark = isDark,
-                                modifier = Modifier.weight(1f)
-                            )
-                        } else {
-                            AdminSubscriptionBillingTab(
-                                viewModel = viewModel,
-                                students = filteredStudents,
-                                allOrganizations = filteredOrganizations,
-                                isDark = isDark,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
+                        AdminSubscriptionBillingTab(
+                            viewModel = viewModel,
+                            students = filteredStudents,
+                            allOrganizations = filteredOrganizations,
+                            isDark = isDark,
+                            modifier = Modifier.weight(1f)
+                        )
                     }
                 }
+            }
             }
         }
     }
@@ -4772,19 +6461,11 @@ fun AdminSubscriptionBillingTab(
 
     // Tier Plan management
     var selectedPlanName by remember(defaultOrg) {
-        mutableStateOf(
-            if (defaultOrg.subscriptionPlan.contains("Starter", ignoreCase = true)) "Starter Plan"
-            else if (defaultOrg.subscriptionPlan.contains("Enterprise", ignoreCase = true) || defaultOrg.subscriptionPlan.contains("Per Student", ignoreCase = true)) "Enterprise Dynamic Plan"
-            else "Professional Plan"
-        )
+        mutableStateOf("Enterprise Dynamic Plan")
     }
 
     // Dynamic License Price Calculation
-    val basePlanAmount = when (selectedPlanName) {
-        "Starter Plan" -> 1499.0
-        "Professional Plan" -> 4999.0
-        else -> currentStudentsCount * 100.0
-    }
+    val basePlanAmount = currentStudentsCount * 100.0
     
     val taxAmount = basePlanAmount * 0.18
     val grandTotalAmount = basePlanAmount + taxAmount
@@ -4822,9 +6503,9 @@ fun AdminSubscriptionBillingTab(
     // Stateful Billing Logs which prepends dynamically on successful payment capture
     val billingLogs = remember {
         mutableStateListOf(
-            Triple("May 2026", "Professional Plan", "Awaiting Renewal on May 30th"),
-            Triple("Apr 2026", "Professional Plan", "Paid & Settled - Ref: TXN-44919-X"),
-            Triple("Mar 2026", "Professional Plan", "Paid & Settled - Ref: TXN-28311-K")
+            Triple("May 2026", "Enterprise Dynamic Plan", "Awaiting Renewal on May 30th"),
+            Triple("Apr 2026", "Enterprise Dynamic Plan", "Paid & Settled - Ref: TXN-44919-X"),
+            Triple("Mar 2026", "Enterprise Dynamic Plan", "Paid & Settled - Ref: TXN-28311-K")
         )
     }
 
@@ -4958,6 +6639,53 @@ fun AdminSubscriptionBillingTab(
                     )
                 }
 
+                // Dynamic Sandbox Status Tester for evaluation
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(if (isDark) Color(0xFF2C1E18) else Color(0xFFFFECE0))
+                        .border(1.dp, Color(0xFFFF9E7D).copy(0.5f), RoundedCornerShape(8.dp))
+                        .clickable {
+                            val newStatus = if (currentSubscriptionStatus == "Active") "Expired" else "Active"
+                            currentSubscriptionStatus = newStatus
+                            val updatedOrg = defaultOrg.copy(status = newStatus)
+                            viewModel.updateOrganizationDetails(updatedOrg)
+                        }
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Build,
+                            contentDescription = "Test Sandbox Switcher",
+                            tint = accentColor,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Column {
+                            Text("SaaS License Toggle Tester", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                            Text("Click to dynamically simulate active/expired state", fontSize = 9.sp, color = textSecondary)
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(accentColor)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = if (currentSubscriptionStatus == "Active") "Simulate Expiry" else "Restore Active",
+                            color = Color.White,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
                 // Interactive Renewal trigger
                 Button(
                     onClick = {
@@ -5002,15 +6730,13 @@ fun AdminSubscriptionBillingTab(
 
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             val tiers = listOf(
-                Triple("Starter Plan", "₹1,499", "Up to 30 active student profiles standard logs"),
-                Triple("Professional Plan", "₹4,999", "Up to 200 student profiles, full wellness insights (Most Common)"),
                 Triple("Enterprise Dynamic Plan", "₹100/Student/Mo", "Pricing scales dynamic with database enrollment count")
             )
 
             tiers.forEach { (tierName, tierRate, tierDesc) ->
                 val isSelected = selectedPlanName == tierName
                 Card(
-                    modifier = Modifier
+                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { selectedPlanName = tierName },
                     shape = RoundedCornerShape(12.dp),
@@ -5032,16 +6758,6 @@ fun AdminSubscriptionBillingTab(
                         Column(modifier = Modifier.weight(1f)) {
                             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                                 Text(tierName, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = textPrimary)
-                                if (tierName == "Professional Plan") {
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(4.dp))
-                                            .background(accentColor)
-                                            .padding(horizontal = 5.dp, vertical = 2.dp)
-                                    ) {
-                                        Text("POPULAR", color = Color.White, fontSize = 7.sp, fontWeight = FontWeight.ExtraBold)
-                                    }
-                                }
                             }
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(tierDesc, fontSize = 10.sp, color = textSecondary, lineHeight = 13.sp)
@@ -5131,9 +6847,7 @@ fun AdminSubscriptionBillingTab(
                             Text("${bRecord.second} • ${bRecord.third}", fontSize = 10.sp, color = textSecondary)
                         }
                     }
-                    val amountText = if (bRecord.second == "Starter Plan") "₹1,499"
-                    else if (bRecord.second == "Professional Plan") "₹4,999"
-                    else "₹${(currentStudentsCount * 100 * 1.18).toInt()}"
+                    val amountText = "₹${(currentStudentsCount * 100 * 1.18).toInt()}"
                     Text(
                         text = amountText,
                         fontSize = 13.sp,
@@ -5152,19 +6866,35 @@ fun AdminSubscriptionBillingTab(
                 if (!isPaymentProcessing) showPaymentDialog = false 
             },
             title = {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Icon(Icons.Default.Lock, contentDescription = "", tint = Color(0xFF10B981), modifier = Modifier.size(20.dp))
-                    Text(
-                        text = "SECURED STRIPE SaaS PORTAL", 
-                        fontSize = 13.sp, 
-                        fontWeight = FontWeight.ExtraBold, 
-                        color = textPrimary,
-                        letterSpacing = 1.2.sp
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Box(
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .background(Color(0xFF3395FF), RoundedCornerShape(6.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("R", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            }
+                            Text("Razorpay Secure SaaS Portal", fontSize = 14.sp, fontWeight = FontWeight.ExtraBold, color = if (isDark) Color.White else Color(0xFF0F172A))
+                        }
+                        Box(
+                            modifier = Modifier
+                                .background(Color(0xFFFF9E7D).copy(0.15f), RoundedCornerShape(4.dp))
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        ) {
+                            Text("SANDBOX", color = Color(0xFFFF7A00), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                    HorizontalDivider(color = (if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0)).copy(0.5f), modifier = Modifier.padding(top = 8.dp))
                 }
             },
             text = {
@@ -5371,6 +7101,55 @@ fun AdminSubscriptionBillingTab(
                                 },
                                 textStyle = TextStyle(fontSize = 11.sp)
                             )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text("Fast Checkout UPI App:", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                // Google Pay Pill
+                                val isGPay = upiId.endsWith("@okaxis") || upiId.endsWith("@oksbi") || upiId.endsWith("@okicici")
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(if (isGPay) Color(0xFFE8F0FE) else if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9))
+                                        .border(BorderStroke(1.dp, if (isGPay) Color(0xFF1A73E8) else Color.Transparent), RoundedCornerShape(8.dp))
+                                        .clickable {
+                                    val contact = defaultOrg.mobile.ifBlank { "9876543210" }
+                                    upiId = "${contact}@okaxis"
+                                }
+                                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                        Box(modifier = Modifier.size(10.dp).background(Color(0xFF1A73E8), RoundedCornerShape(2.dp)))
+                                        Text("Google Pay", fontSize = 11.sp, color = if (isGPay) Color(0xFF1A73E8) else textPrimary, fontWeight = FontWeight.Bold)
+                                    }
+                                }
+
+                                // PhonePe Pill
+                                val isPhonePe = upiId.endsWith("@ybl") || upiId.endsWith("@ibl") || upiId.endsWith("@axl")
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(if (isPhonePe) Color(0xFFF3E8FF) else if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9))
+                                        .border(BorderStroke(1.dp, if (isPhonePe) Color(0xFF7C3AED) else Color.Transparent), RoundedCornerShape(8.dp))
+                                        .clickable {
+                                            val contact = defaultOrg.mobile.ifBlank { "9876543210" }
+                                            upiId = "${contact}@ybl"
+                                        }
+                                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                        Box(modifier = Modifier.size(10.dp).background(Color(0xFF5F259F), RoundedCornerShape(2.dp)))
+                                        Text("PhonePe", fontSize = 11.sp, color = if (isPhonePe) Color(0xFF7C3AED) else textPrimary, fontWeight = FontWeight.Bold)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -5399,11 +7178,11 @@ fun AdminSubscriptionBillingTab(
                             
                             // Sequential simulation phases using standard CoroutineScope
                             coroutineScope.launch {
-                                paymentProcessingStep = "Establishing encrypted stripe handshake..."
+                                paymentProcessingStep = "Establishing encrypted Razorpay API handshake..."
                                 kotlinx.coroutines.delay(800)
-                                paymentProcessingStep = "Verifying double-factor credentials & security tokens..."
+                                paymentProcessingStep = "Verifying test double-factor credentials..."
                                 kotlinx.coroutines.delay(800)
-                                paymentProcessingStep = "Awaiting institutional banking node authorization..."
+                                paymentProcessingStep = "Confirming automated webhook signature verification..."
                                 kotlinx.coroutines.delay(800)
                                 
                                 isPaymentProcessing = false
@@ -5726,7 +7505,84 @@ fun LegendRow(color: Color, label: String, textColor: Color = Color.White) {
 // PROGRAMMATIC ARTWORK / MINI ILLUSTRATIONS
 // ==========================================
 @Composable
-fun WellnestLogoIllustration(modifier: Modifier = Modifier, isDark: Boolean) {
+fun TrackNestLogo(modifier: Modifier = Modifier, isDark: Boolean = false) {
+    val accentColor = Color(0xFFFF9E1B) // Energetic Warm Orange / Amber
+    val secondaryColor = Color(0xFFFF5D00) // Vibrant Crimson Orange
+    val trackingBlue = Color(0xFF3B82F6) // Electric Blue
+    val trackBg = if (isDark) Color(0xFF2C1C13) else Color(0xFFFFF0E5)
+
+    Box(
+        modifier = modifier
+            .size(90.dp)
+            .clip(RoundedCornerShape(22.dp))
+            .background(trackBg)
+            .border(2.dp, Brush.linearGradient(listOf(accentColor, secondaryColor)), RoundedCornerShape(22.dp))
+            .padding(12.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val width = size.width
+            val height = size.height
+
+            // 1. Draw nested background glowing concentric "nest and tracks" style circle rings
+            drawCircle(
+                color = accentColor.copy(alpha = 0.15f),
+                radius = width * 0.45f
+            )
+            drawCircle(
+                color = secondaryColor.copy(alpha = 0.1f),
+                radius = width * 0.35f
+            )
+
+            // 2. Draw circular tracks (representing athletes performance & wellness monitoring)
+            drawArc(
+                color = trackingBlue.copy(alpha = 0.6f),
+                startAngle = -45f,
+                sweepAngle = 270f,
+                useCenter = false,
+                style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
+            )
+
+            drawArc(
+                brush = Brush.linearGradient(listOf(accentColor, secondaryColor)),
+                startAngle = 135f,
+                sweepAngle = 180f,
+                useCenter = false,
+                style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
+            )
+
+            // 3. Draw programmatic elegant "Nest" shape / layered branches with circular egg/nucleus inside
+            val path = androidx.compose.ui.graphics.Path().apply {
+                // Bottom curved nest cradle
+                moveTo(width * 0.2f, height * 0.65f)
+                quadraticTo(width * 0.5f, height * 0.85f, width * 0.8f, height * 0.65f)
+                
+                // Nest structure layers
+                moveTo(width * 0.25f, height * 0.72f)
+                quadraticTo(width * 0.5f, height * 0.9f, width * 0.75f, height * 0.72f)
+            }
+            drawPath(
+                path = path,
+                color = secondaryColor,
+                style = Stroke(width = 3.5f.dp.toPx(), cap = StrokeCap.Round)
+            )
+
+            // Central golden egg representing student's safety/wellness/health tracking
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(Color.White, accentColor),
+                    center = Offset(width * 0.5f, height * 0.52f),
+                    radius = width * 0.15f
+                ),
+                radius = width * 0.14f,
+                center = Offset(width * 0.5f, height * 0.52f)
+            )
+        }
+    }
+}
+
+@Composable
+fun ArenaPulseLogoIllustration(modifier: Modifier = Modifier, isDark: Boolean) {
     val mainIndigo = Color(0xFF4F70FA)
     val softCyan = Color(0xFF22D3EE)
     val amberGold = Color(0xFFF97316)

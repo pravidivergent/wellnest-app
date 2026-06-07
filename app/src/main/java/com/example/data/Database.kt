@@ -54,6 +54,9 @@ data class WellnessEntry(
     val mood: String, // "Happy", "Tired", "Stressed", "Calm", "Focused"
     val notes: String,
     val improvements: String,
+    val breakfastMenu: String = "",
+    val lunchMenu: String = "",
+    val dinnerMenu: String = "",
     val timestamp: Long = System.currentTimeMillis()
 )
 
@@ -106,6 +109,28 @@ data class UserAccount(
     val hasAccess: Boolean = true
 )
 
+@Entity(tableName = "tournaments")
+data class Tournament(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val title: String,
+    val date: String, // yyyy-MM-dd
+    val location: String,
+    val academyName: String = "",
+    val coachName: String = "",
+    val timestamp: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "student_documents")
+data class StudentDocument(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val registerNumber: String,
+    val documentName: String, // e.g., "Birth Certificate", "Medical Form", "Consent Slip"
+    val fileDetails: String, // e.g. "MyCert.pdf" (or custom text/base64 representation)
+    val status: String = "Submitted", // "Submitted", "Verified", "Pending Updation"
+    val remarks: String = "",
+    val timestamp: Long = System.currentTimeMillis()
+)
+
 // 2. DAOs
 @Dao
 interface UserAccountDao {
@@ -117,6 +142,9 @@ interface UserAccountDao {
 
     @Query("SELECT * FROM user_accounts")
     suspend fun getAllAccountsDirect(): List<UserAccount>
+
+    @Query("SELECT * FROM user_accounts")
+    fun getAllAccountsFlow(): Flow<List<UserAccount>>
 }
 
 // 2. DAOs
@@ -222,6 +250,36 @@ interface CoachDao {
     suspend fun deleteCoach(coach: CoachProfile)
 }
 
+@Dao
+interface TournamentDao {
+    @Query("SELECT * FROM tournaments ORDER BY date ASC")
+    fun getAllTournamentsFlow(): Flow<List<Tournament>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTournament(tournament: Tournament)
+
+    @Delete
+    suspend fun deleteTournament(tournament: Tournament)
+}
+
+@Dao
+interface StudentDocumentDao {
+    @Query("SELECT * FROM student_documents ORDER BY timestamp DESC")
+    fun getAllDocumentsFlow(): Flow<List<StudentDocument>>
+
+    @Query("SELECT * FROM student_documents WHERE registerNumber = :regNo ORDER BY timestamp DESC")
+    fun getStudentDocumentsFlow(regNo: String): Flow<List<StudentDocument>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDocument(document: StudentDocument)
+
+    @Update
+    suspend fun updateDocument(document: StudentDocument)
+
+    @Delete
+    suspend fun deleteDocument(document: StudentDocument)
+}
+
 // 3. Database
 @Database(
     entities = [
@@ -232,9 +290,11 @@ interface CoachDao {
         StudentFee::class,
         Organization::class,
         UserAccount::class,
-        CoachProfile::class
+        CoachProfile::class,
+        Tournament::class,
+        StudentDocument::class
     ],
-    version = 5,
+    version = 7,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -246,4 +306,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun organizationDao(): OrganizationDao
     abstract fun userAccountDao(): UserAccountDao
     abstract fun coachDao(): CoachDao
+    abstract fun tournamentDao(): TournamentDao
+    abstract fun studentDocumentDao(): StudentDocumentDao
 }

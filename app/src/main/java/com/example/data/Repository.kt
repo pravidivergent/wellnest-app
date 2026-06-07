@@ -10,8 +10,40 @@ class AppRepository(
     private val studentFeeDao: StudentFeeDao,
     private val organizationDao: OrganizationDao,
     private val userAccountDao: UserAccountDao,
-    private val coachDao: CoachDao
+    private val coachDao: CoachDao,
+    private val tournamentDao: TournamentDao,
+    private val studentDocumentDao: StudentDocumentDao
 ) {
+    // Tournament Actions
+    val allTournamentsFlow: Flow<List<Tournament>> = tournamentDao.getAllTournamentsFlow()
+
+    suspend fun insertTournament(tournament: Tournament) {
+        tournamentDao.insertTournament(tournament)
+    }
+
+    suspend fun deleteTournament(tournament: Tournament) {
+        tournamentDao.deleteTournament(tournament)
+    }
+
+    // Student Document Actions
+    val allDocumentsFlow: Flow<List<StudentDocument>> = studentDocumentDao.getAllDocumentsFlow()
+
+    fun getStudentDocumentsFlow(regNo: String): Flow<List<StudentDocument>> {
+        return studentDocumentDao.getStudentDocumentsFlow(regNo)
+    }
+
+    suspend fun insertDocument(document: StudentDocument) {
+        studentDocumentDao.insertDocument(document)
+    }
+
+    suspend fun updateDocument(document: StudentDocument) {
+        studentDocumentDao.updateDocument(document)
+    }
+
+    suspend fun deleteDocument(document: StudentDocument) {
+        studentDocumentDao.deleteDocument(document)
+    }
+
     // Coach Actions
     val allCoachesFlow: Flow<List<CoachProfile>> = coachDao.getAllCoachesFlow()
 
@@ -114,6 +146,8 @@ class AppRepository(
     }
 
     // User Account Actions
+    val allAccountsFlow: Flow<List<UserAccount>> = userAccountDao.getAllAccountsFlow()
+
     suspend fun getAccountByPhone(phone: String): UserAccount? {
         return userAccountDao.getAccountByPhoneDirect(phone)
     }

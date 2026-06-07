@@ -1,6 +1,6 @@
 {
-  "name": "Wellnest",
-  "description": "Student Attendance & Wellness Tracking Application. Experience detailed dashboards for Students, Coaches, and Admins alongside leave requests and wellness metrics.",
+  "name": "TrackNest",
+  "description": "Academy Attendance & Health Metrics Tracking Application under TrackNest branding. Track student physical/mental well-being alongside attendance metrics with interactive dashboards.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

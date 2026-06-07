@@ -23,7 +23,7 @@ class GreetingScreenshotTest {
 
   @Test
   fun greeting_screenshot() {
-    composeTestRule.setContent { MyApplicationTheme { Text("Wellnest Dashboard Platform") } }
+    composeTestRule.setContent { MyApplicationTheme { Text("TrackNest Dashboard Platform") } }
 
     composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/greeting.png")
   }
