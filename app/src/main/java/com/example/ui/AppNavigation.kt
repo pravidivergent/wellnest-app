@@ -38,6 +38,13 @@ import kotlinx.coroutines.launch
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.geometry.CornerRadius
 
 val translations = mapOf(
     AppLanguage.EN to mapOf(
@@ -674,7 +681,7 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
-            TrackNestLogo(modifier = Modifier.padding(bottom = 16.dp), isDark = isDark)
+            TrackNestLogo(isDark = isDark, modifier = Modifier.padding(bottom = 24.dp))
 
             Text(
                 text = getTranslation("wellnest_title", viewModel),
@@ -2419,6 +2426,8 @@ fun StudentAttendanceTab(
     viewModel: AppViewModel
 ) {
     val isDark by viewModel.isDarkMode.collectAsState()
+    var selectedDateFilter by remember { mutableStateOf<String?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -2437,38 +2446,84 @@ fun StudentAttendanceTab(
                 }
             }
         } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+            // Render the beautiful custom interactive bar chart on top
+            StudentPersonalAttendanceBarChart(
+                logs = studentLogs,
+                isDark = isDark,
+                selectedDate = selectedDateFilter,
+                onDateSelected = { selectedDateFilter = it },
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            val displayedLogs = remember(studentLogs, selectedDateFilter) {
+                if (selectedDateFilter == null) {
+                    studentLogs
+                } else {
+                    studentLogs.filter { it.date == selectedDateFilter }
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                items(studentLogs) { item ->
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC)),
-                        border = BorderStroke(1.5.dp, if (isDark) Color(0xFFFF7A00).copy(0.7f) else Color(0xFFFF9E7D)),
-                        shape = RoundedCornerShape(10.dp)
+                Text(
+                    text = if (selectedDateFilter == null) "All Registered Logs" else "Logs for $selectedDateFilter",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
+                )
+                if (selectedDateFilter != null) {
+                    TextButton(
+                        onClick = { selectedDateFilter = null },
+                        modifier = Modifier.height(24.dp),
+                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp)
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(14.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        Text("Clear Filter", fontSize = 11.sp, color = Color(0xFFFF7A00))
+                    }
+                }
+            }
+
+            if (displayedLogs.isEmpty()) {
+                Box(modifier = Modifier.fillMaxWidth().height(120.dp), contentAlignment = Alignment.Center) {
+                    Text("No logs found for $selectedDateFilter", color = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00), fontSize = 12.sp)
+                }
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    items(displayedLogs) { item ->
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC)),
+                            border = BorderStroke(1.5.dp, if (isDark) Color(0xFFFF7A00).copy(0.7f) else Color(0xFFFF9E7D)),
+                            shape = RoundedCornerShape(10.dp)
                         ) {
-                            Column {
-                                Text(text = item.date, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
-                                Text(text = getTranslation("shift_label", viewModel).replace("%s", getTranslation(item.shift, viewModel)), fontSize = 11.sp, color = Color(0xFFE65100))
-                            }
-                            val (pillBg, pillText) = when (item.status.uppercase(Locale.US)) {
-                                "PRESENT" -> Color(0xFF10B981).copy(0.15f) to Color(0xFF10B981)
-                                "LATE" -> Color(0xFFF59E0B).copy(0.15f) to Color(0xFFF59E0B)
-                                else -> Color(0xFFEF4444).copy(0.15f) to Color(0xFFEF4444)
-                            }
-                            Box(
+                            Row(
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(pillBg)
-                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                                    .fillMaxWidth()
+                                    .padding(14.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = getTranslation(item.status, viewModel), color = pillText, fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                                Column {
+                                    Text(text = item.date, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                                    Text(text = getTranslation("shift_label", viewModel).replace("%s", getTranslation(item.shift, viewModel)), fontSize = 11.sp, color = Color(0xFFE65100))
+                                }
+                                val (pillBg, pillText) = when (item.status.uppercase(Locale.US)) {
+                                    "PRESENT" -> Color(0xFF10B981).copy(0.15f) to Color(0xFF10B981)
+                                    "LATE" -> Color(0xFFF59E0B).copy(0.15f) to Color(0xFFF59E0B)
+                                    else -> Color(0xFFEF4444).copy(0.15f) to Color(0xFFEF4444)
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(pillBg)
+                                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                                ) {
+                                    Text(text = getTranslation(item.status, viewModel), color = pillText, fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                                }
                             }
                         }
                     }
@@ -2816,6 +2871,7 @@ fun SingleRowChipSelection(
 // ------------------------------------------
 // Student Leaves Apply Tab
 // ------------------------------------------
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentLeavesTab(
     registerNumber: String,
@@ -2831,10 +2887,86 @@ fun StudentLeavesTab(
     var proofName by remember { mutableStateOf("") }
     var wasSubmitted by remember { mutableStateOf(false) }
 
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+
+    val dateFormatter = remember { SimpleDateFormat("yyyy-MM-dd", Locale.US).apply { timeZone = TimeZone.getTimeZone("UTC") } }
+
     val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
     val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
     val cardBg = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC)
     val cardBorder = if (isDark) Color(0xFFFF7A00).copy(0.7f) else Color(0xFFFF9E7D)
+
+    // Date Pickers Dialog Logic
+    if (showStartDatePicker) {
+        val datePickerState = rememberDatePickerState()
+        DatePickerDialog(
+            onDismissRequest = { showStartDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            startDate = dateFormatter.format(Date(it))
+                        }
+                        showStartDatePicker = false
+                    }
+                ) {
+                    Text("OK", color = Color(0xFFFF6F00), fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showStartDatePicker = false }) {
+                    Text("Cancel", color = Color.Gray)
+                }
+            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                colors = DatePickerDefaults.colors(
+                    titleContentColor = textPrimary,
+                    selectedDayContainerColor = Color(0xFFFF6F00),
+                    selectedDayContentColor = Color.White,
+                    todayContentColor = Color(0xFFFF6F00),
+                    todayDateBorderColor = Color(0xFFFF6F00)
+                )
+            )
+        }
+    }
+
+    if (showEndDatePicker) {
+        val datePickerState = rememberDatePickerState()
+        DatePickerDialog(
+            onDismissRequest = { showEndDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            endDate = dateFormatter.format(Date(it))
+                        }
+                        showEndDatePicker = false
+                    }
+                ) {
+                    Text("OK", color = Color(0xFFFF6F00), fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEndDatePicker = false }) {
+                    Text("Cancel", color = Color.Gray)
+                }
+            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                colors = DatePickerDefaults.colors(
+                    titleContentColor = textPrimary,
+                    selectedDayContainerColor = Color(0xFFFF6F00),
+                    selectedDayContentColor = Color.White,
+                    todayContentColor = Color(0xFFFF6F00),
+                    todayDateBorderColor = Color(0xFFFF6F00)
+                )
+            )
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -2856,45 +2988,72 @@ fun StudentLeavesTab(
                 Text("${getTranslation("applicant_label", viewModel)}: $studentName", fontSize = 12.sp, color = Color(0xFFFF7A00), fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(getTranslation("start_date_label", viewModel), color = textPrimary, fontSize = 11.sp)
-                        OutlinedTextField(
-                            value = startDate,
-                            onValueChange = { startDate = it },
-                            placeholder = { Text("2026-06-01", color = if (isDark) Color(0xFFFFB088).copy(0.6f) else Color(0xFF8C3E00).copy(0.6f), fontSize = 11.sp) },
-                            singleLine = true,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = textPrimary, unfocusedTextColor = textPrimary,
-                                focusedBorderColor = Color(0xFFFF7A00), unfocusedBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
-                                focusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB), unfocusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB)
+                        Text(getTranslation("start_date_label", viewModel), color = textPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(bottom = 4.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { showStartDatePicker = true }
+                        ) {
+                            OutlinedTextField(
+                                value = startDate,
+                                onValueChange = {},
+                                placeholder = { Text("Select date", color = if (isDark) Color(0xFFFFB088).copy(0.6f) else Color(0xFF8C3E00).copy(0.6f), fontSize = 11.sp) },
+                                readOnly = true,
+                                enabled = false,
+                                trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Select Start Date", tint = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    disabledTextColor = textPrimary,
+                                    disabledBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
+                                    disabledContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB),
+                                    disabledPlaceholderColor = textSecondary.copy(0.5f)
+                                )
                             )
-                        )
+                        }
                     }
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(getTranslation("end_date_label", viewModel), color = textPrimary, fontSize = 11.sp)
-                        OutlinedTextField(
-                            value = endDate,
-                            onValueChange = { endDate = it },
-                            placeholder = { Text("2026-06-03", color = if (isDark) Color(0xFFFFB088).copy(0.6f) else Color(0xFF8C3E00).copy(0.6f), fontSize = 11.sp) },
-                            singleLine = true,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = textPrimary, unfocusedTextColor = textPrimary,
-                                focusedBorderColor = Color(0xFFFF7A00), unfocusedBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
-                                focusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB), unfocusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB)
+                        Text(getTranslation("end_date_label", viewModel), color = textPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(bottom = 4.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { showEndDatePicker = true }
+                        ) {
+                            OutlinedTextField(
+                                value = endDate,
+                                onValueChange = {},
+                                placeholder = { Text("Select date", color = if (isDark) Color(0xFFFFB088).copy(0.6f) else Color(0xFF8C3E00).copy(0.6f), fontSize = 11.sp) },
+                                readOnly = true,
+                                enabled = false,
+                                trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Select End Date", tint = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    disabledTextColor = textPrimary,
+                                    disabledBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
+                                    disabledContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB),
+                                    disabledPlaceholderColor = textSecondary.copy(0.5f)
+                                )
                             )
-                        )
+                        }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text(getTranslation("absence_reason_label", viewModel), color = textPrimary, fontSize = 11.sp)
+                Text(getTranslation("absence_reason_label", viewModel), color = textPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(bottom = 4.dp))
                 OutlinedTextField(
                     value = reason,
                     onValueChange = { reason = it },
                     placeholder = { Text(getTranslation("absence_reason_placeholder", viewModel), color = if (isDark) Color(0xFFFFB088).copy(0.6f) else Color(0xFF8C3E00).copy(0.6f), fontSize = 12.sp) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(115.dp),
+                    singleLine = false,
+                    leadingIcon = { Icon(Icons.AutoMirrored.Filled.Notes, contentDescription = "Reason Icon", tint = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = textPrimary, unfocusedTextColor = textPrimary,
                         focusedBorderColor = Color(0xFFFF7A00), unfocusedBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
@@ -2904,7 +3063,7 @@ fun StudentLeavesTab(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text(getTranslation("verification_proof_label", viewModel), color = textPrimary, fontSize = 11.sp)
+                Text(getTranslation("verification_proof_label", viewModel), color = textPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(bottom = 4.dp))
                 OutlinedTextField(
                     value = proofName,
                     onValueChange = { proofName = it },
@@ -4313,6 +4472,8 @@ fun CoachDashboardLayout(
     // Counts
     val pendingLeavesCount = filteredLeaves.count { it.status == "Pending" }
     val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+    var selectedAttendanceDate by remember { mutableStateOf(todayStr) }
+    var selectedShiftState by remember { mutableStateOf("Morning") }
     val absentCount = filteredAttendance.filter { it.date == todayStr && it.status == "Absent" }.map { it.registerNumber }.distinct().size
 
     // Wellness alerts count (Students with sleep hours < 5.0)
@@ -4417,7 +4578,7 @@ fun CoachDashboardLayout(
                                         Text(getTranslation("switch_role_desc", viewModel), fontSize = 13.sp, color = textSecondary)
                                         Spacer(modifier = Modifier.height(4.dp))
                                         listOf(
-                                            "STUDENT" to getTranslation("student_portal", viewModel),
+                                            
                                             "COACH" to getTranslation("coach_portal", viewModel),
                                             "ADMIN" to getTranslation("admin_portal", viewModel)
                                         ).forEach { (roleCode, label) ->
@@ -4496,6 +4657,13 @@ fun CoachDashboardLayout(
                 }
             }
 
+            InteractiveAttendanceBarChart(
+                attendanceRecords = filteredAttendance,
+                isDark = isDark,
+                selectedDate = selectedAttendanceDate,
+                onDateSelected = { selectedAttendanceDate = it }
+            )
+
             // Daily Attendance Management Panel
             Card(
                 colors = CardDefaults.cardColors(containerColor = cardBg),
@@ -4516,9 +4684,6 @@ fun CoachDashboardLayout(
                         color = textSecondary,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
-
-                    var selectedAttendanceDate by remember { mutableStateOf(todayStr) }
-                    var selectedShiftState by remember { mutableStateOf("Morning") }
 
                     // Date and Shift Selection Row
                     Row(
@@ -7303,6 +7468,14 @@ fun AdminAnalyticsTab(
     val cardBg = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC)
     val cardBorder = if (isDark) Color(0xFFFF7A00).copy(0.7f) else Color(0xFFFF9E7D)
 
+    var selectedDateForInspector by remember { mutableStateOf("") }
+    val latestDate = remember(attendance) {
+        attendance.map { it.date }.maxOrNull() ?: SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+    }
+    if (selectedDateForInspector.isBlank()) {
+        selectedDateForInspector = latestDate
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -7410,6 +7583,162 @@ fun AdminAnalyticsTab(
             }
         }
 
+        InteractiveAttendanceBarChart(
+            attendanceRecords = attendance,
+            isDark = isDark,
+            selectedDate = selectedDateForInspector,
+            onDateSelected = { selectedDateForInspector = it }
+        )
+
+        // Interactive Day Inspector for Admin
+        var searchKeyword by remember { mutableStateOf("") }
+        var selectedStatusFilter by remember { mutableStateOf("All") }
+
+        val logsForSelectedDate = remember(attendance, selectedDateForInspector) {
+            attendance.filter { it.date == selectedDateForInspector }
+        }
+
+        val filteredInspectorLogs = remember(logsForSelectedDate, searchKeyword, selectedStatusFilter) {
+            logsForSelectedDate.filter { log ->
+                val matchesKeyword = if (searchKeyword.isBlank()) true else {
+                    val sName = students.find { it.registerNumber == log.registerNumber }?.name ?: log.registerNumber
+                    sName.contains(searchKeyword, ignoreCase = true) || log.registerNumber.contains(searchKeyword, ignoreCase = true)
+                }
+                val matchesStatus = if (selectedStatusFilter == "All") true else {
+                    log.status.uppercase(Locale.US) == selectedStatusFilter.uppercase(Locale.US)
+                }
+                matchesKeyword && matchesStatus
+            }
+        }
+
+        Card(
+            colors = CardDefaults.cardColors(containerColor = cardBg),
+            border = BorderStroke(1.5.dp, cardBorder),
+            shape = RoundedCornerShape(14.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "🔍 Date Details Inspector: $selectedDateForInspector",
+                        color = textPrimary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp
+                    )
+                    Text(
+                        text = "${filteredInspectorLogs.size} logs shown",
+                        color = textSecondary,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Search Box
+                OutlinedTextField(
+                    value = searchKeyword,
+                    onValueChange = { searchKeyword = it },
+                    placeholder = { Text("Search by student name or register number", fontSize = 11.sp, color = textSecondary) },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    textStyle = TextStyle(fontSize = 11.sp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = textPrimary,
+                        unfocusedTextColor = textPrimary,
+                        focusedBorderColor = Color(0xFFFF7A00),
+                        unfocusedBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
+                        focusedLabelColor = Color(0xFFFF7A00),
+                        unfocusedLabelColor = textSecondary
+                    ),
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Filter Buttons Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    val states = listOf("All", "Present", "Late", "Absent")
+                    states.forEach { st ->
+                        val isSelected = selectedStatusFilter == st
+                        val chipColor = when (st) {
+                            "Present" -> Color(0xFF10B981)
+                            "Late" -> Color(0xFFF59E0B)
+                            "Absent" -> Color(0xFFEF4444)
+                            else -> Color(0xFFFF7A00)
+                        }
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(if (isSelected) chipColor else (if (isDark) Color(0xFF2C190D) else Color(0xFFFFEBE3)))
+                                .border(0.5.dp, if (isSelected) Color.Transparent else chipColor.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                                .clickable { selectedStatusFilter = st }
+                                .padding(horizontal = 10.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = st,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isSelected) Color.White else textPrimary
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                if (filteredInspectorLogs.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxWidth().height(80.dp), contentAlignment = Alignment.Center) {
+                        Text("No logs match filters for this inspection date", fontSize = 11.sp, color = textSecondary)
+                    }
+                } else {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 200.dp)
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        filteredInspectorLogs.forEach { log ->
+                            val sName = students.find { it.registerNumber == log.registerNumber }?.name ?: "Student ${log.registerNumber}"
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(if (isDark) Color(0xFF24150C) else Color(0xFFFFF9F5))
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(sName, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                                    Text("Reg: ${log.registerNumber} • Shift: ${log.shift}", fontSize = 9.sp, color = textSecondary)
+                                }
+                                val statusColor = when (log.status.uppercase(Locale.US)) {
+                                    "PRESENT" -> Color(0xFF10B981)
+                                    "LATE" -> Color(0xFFF59E0B)
+                                    else -> Color(0xFFEF4444)
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(statusColor.copy(alpha = 0.15f))
+                                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                                ) {
+                                    Text(log.status, color = statusColor, fontSize = 9.sp, fontWeight = FontWeight.ExtraBold)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // Custom drawn sleep hours average graph
         Card(
             colors = CardDefaults.cardColors(containerColor = cardBg),
@@ -7509,73 +7838,115 @@ fun TrackNestLogo(modifier: Modifier = Modifier, isDark: Boolean = false) {
     val accentColor = Color(0xFFFF9E1B) // Energetic Warm Orange / Amber
     val secondaryColor = Color(0xFFFF5D00) // Vibrant Crimson Orange
     val trackingBlue = Color(0xFF3B82F6) // Electric Blue
-    val trackBg = if (isDark) Color(0xFF2C1C13) else Color(0xFFFFF0E5)
+    val neonTeal = Color(0xFF10B981) // Neon Teal
 
     Box(
         modifier = modifier
-            .size(90.dp)
-            .clip(RoundedCornerShape(22.dp))
-            .background(trackBg)
-            .border(2.dp, Brush.linearGradient(listOf(accentColor, secondaryColor)), RoundedCornerShape(22.dp))
-            .padding(12.dp),
+            .size(110.dp)
+            .clip(RoundedCornerShape(30.dp))
+            .background(
+                Brush.linearGradient(
+                    colors = if (isDark) {
+                        listOf(Color(0xFF2E190E), Color(0xFF140A05))
+                    } else {
+                        listOf(Color(0xFFFFF3EC), Color(0xFFFFE6D5))
+                    }
+                )
+            )
+            .border(
+                2.dp,
+                Brush.sweepGradient(
+                    listOf(accentColor, secondaryColor, trackingBlue, neonTeal, accentColor)
+                ),
+                RoundedCornerShape(30.dp)
+            )
+            .padding(14.dp),
         contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val width = size.width
-            val height = size.height
+            val w = size.width
+            val h = size.height
 
-            // 1. Draw nested background glowing concentric "nest and tracks" style circle rings
+            // 1. Background radial glow
             drawCircle(
-                color = accentColor.copy(alpha = 0.15f),
-                radius = width * 0.45f
-            )
-            drawCircle(
-                color = secondaryColor.copy(alpha = 0.1f),
-                radius = width * 0.35f
+                brush = Brush.radialGradient(
+                    colors = listOf(accentColor.copy(alpha = 0.2f), Color.Transparent),
+                    center = Offset(w * 0.5f, h * 0.5f),
+                    radius = w * 0.6f
+                )
             )
 
-            // 2. Draw circular tracks (representing athletes performance & wellness monitoring)
+            // 2. Overlapping racing lanes
             drawArc(
-                color = trackingBlue.copy(alpha = 0.6f),
-                startAngle = -45f,
-                sweepAngle = 270f,
+                color = trackingBlue.copy(alpha = 0.4f),
+                startAngle = -220f,
+                sweepAngle = 140f,
+                useCenter = false,
+                style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
+            )
+            drawArc(
+                brush = Brush.linearGradient(listOf(trackingBlue, neonTeal)),
+                startAngle = -60f,
+                sweepAngle = 160f,
                 useCenter = false,
                 style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
             )
 
+            // 3. Inner track representing Nest boundaries
             drawArc(
                 brush = Brush.linearGradient(listOf(accentColor, secondaryColor)),
-                startAngle = 135f,
-                sweepAngle = 180f,
+                startAngle = 120f,
+                sweepAngle = 210f,
                 useCenter = false,
-                style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
+                style = Stroke(width = 5.dp.toPx(), cap = StrokeCap.Round)
             )
 
-            // 3. Draw programmatic elegant "Nest" shape / layered branches with circular egg/nucleus inside
-            val path = androidx.compose.ui.graphics.Path().apply {
-                // Bottom curved nest cradle
-                moveTo(width * 0.2f, height * 0.65f)
-                quadraticTo(width * 0.5f, height * 0.85f, width * 0.8f, height * 0.65f)
-                
-                // Nest structure layers
-                moveTo(width * 0.25f, height * 0.72f)
-                quadraticTo(width * 0.5f, height * 0.9f, width * 0.75f, height * 0.72f)
+            // 4. Dynamic Logo Icon inside: Combining Nest structure
+            val nestBranch1 = androidx.compose.ui.graphics.Path().apply {
+                moveTo(w * 0.25f, h * 0.62f)
+                quadraticTo(w * 0.5f, h * 0.82f, w * 0.75f, h * 0.62f)
             }
+            val nestBranch2 = androidx.compose.ui.graphics.Path().apply {
+                moveTo(w * 0.32f, h * 0.7f)
+                quadraticTo(w * 0.5f, h * 0.88f, w * 0.68f, h * 0.7f)
+            }
+            
             drawPath(
-                path = path,
+                path = nestBranch1,
                 color = secondaryColor,
                 style = Stroke(width = 3.5f.dp.toPx(), cap = StrokeCap.Round)
             )
+            drawPath(
+                path = nestBranch2,
+                color = accentColor,
+                style = Stroke(width = 2.5f.dp.toPx(), cap = StrokeCap.Round)
+            )
 
-            // Central golden egg representing student's safety/wellness/health tracking
+            // 5. Kinetic wings of flight/athletes soaring
+            val wingPath = androidx.compose.ui.graphics.Path().apply {
+                moveTo(w * 0.35f, h * 0.48f)
+                cubicTo(w * 0.45f, h * 0.35f, w * 0.6f, h * 0.35f, w * 0.72f, h * 0.25f)
+                cubicTo(w * 0.62f, h * 0.45f, w * 0.52f, h * 0.5f, w * 0.45f, h * 0.52f)
+            }
+            drawPath(
+                path = wingPath,
+                brush = Brush.verticalGradient(listOf(Color.White, accentColor))
+            )
+
+            // Glowing central pulse egg
+            drawCircle(
+                color = Color.White,
+                radius = 5.dp.toPx(),
+                center = Offset(w * 0.5f, h * 0.48f)
+            )
             drawCircle(
                 brush = Brush.radialGradient(
-                    colors = listOf(Color.White, accentColor),
-                    center = Offset(width * 0.5f, height * 0.52f),
-                    radius = width * 0.15f
+                    colors = listOf(neonTeal.copy(alpha = 0.8f), neonTeal.copy(alpha = 0.1f), Color.Transparent),
+                    center = Offset(w * 0.5f, h * 0.48f),
+                    radius = 12.dp.toPx()
                 ),
-                radius = width * 0.14f,
-                center = Offset(width * 0.5f, height * 0.52f)
+                radius = 11.dp.toPx(),
+                center = Offset(w * 0.5f, h * 0.48f)
             )
         }
     }
@@ -7772,6 +8143,668 @@ fun FinAndSaaSIllustration(modifier: Modifier = Modifier) {
             // Floating coin/star
             drawCircle(color = amberGold, radius = 4.dp.toPx(), center = Offset(cx + 32.dp.toPx(), h * 0.25f))
             drawCircle(color = Color.White, radius = 2.dp.toPx(), center = Offset(cx - 30.dp.toPx(), h * 0.5f))
+        }
+    }
+}
+
+@Composable
+fun TrackNestPremiumHeroBanner(isDark: Boolean, modifier: Modifier = Modifier) {
+    val accentColor = Color(0xFFFF9E1B) // Energetic Warm Orange / Amber
+    val secondaryColor = Color(0xFFFF5D00) // Vibrant Crimson Orange
+    val trackingBlue = Color(0xFF3B82F6) // Electric Blue
+    val mainIndigo = Color(0xFF4F70FA)
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(105.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                Brush.verticalGradient(
+                    colors = if (isDark) {
+                        listOf(Color(0xFF23120A), Color(0xFF110702))
+                    } else {
+                        listOf(Color(0xFFFFF9F5), Color(0xFFFFE6D5))
+                    }
+                )
+            )
+            .border(
+                1.dp, 
+                Brush.horizontalGradient(listOf(accentColor.copy(alpha = 0.5f), mainIndigo.copy(alpha = 0.5f))), 
+                RoundedCornerShape(16.dp)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val w = size.width
+            val h = size.height
+
+            // 1. Draw elegant glowing concentric arcs (radial radar waves representing tracking/nest)
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(accentColor.copy(alpha = 0.12f), Color.Transparent),
+                    center = Offset(w * 0.25f, h * 0.5f),
+                    radius = w * 0.35f
+                )
+            )
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(mainIndigo.copy(alpha = 0.12f), Color.Transparent),
+                    center = Offset(w * 0.75f, h * 0.5f),
+                    radius = w * 0.35f
+                )
+            )
+
+            // 2. Draw curved racing athletic tracks running from bottom right to top left
+            val trackPath1 = androidx.compose.ui.graphics.Path().apply {
+                moveTo(w * 0.1f, h * 0.9f)
+                cubicTo(w * 0.3f, h * 0.85f, w * 0.6f, h * 0.4f, w * 0.9f, h * 0.1f)
+            }
+            val trackPath2 = androidx.compose.ui.graphics.Path().apply {
+                moveTo(w * 0.15f, h * 0.95f)
+                cubicTo(w * 0.35f, h * 0.9f, w * 0.65f, h * 0.45f, w * 0.95f, h * 0.15f)
+            }
+            val trackPath3 = androidx.compose.ui.graphics.Path().apply {
+                moveTo(w * 0.05f, h * 0.85f)
+                cubicTo(w * 0.25f, h * 0.8f, w * 0.55f, h * 0.35f, w * 0.85f, h * 0.05f)
+            }
+            drawPath(
+                path = trackPath1,
+                color = if (isDark) Color(0xFF4B230E) else Color(0xFFFFDEC9),
+                style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
+            )
+            drawPath(
+                path = trackPath2,
+                color = if (isDark) Color(0xFF4B230E).copy(alpha = 0.6f) else Color(0xFFFFDEC9).copy(alpha = 0.6f),
+                style = Stroke(width = 2.5f.dp.toPx(), cap = StrokeCap.Round)
+            )
+            drawPath(
+                path = trackPath3,
+                color = if (isDark) Color(0xFF4B230E).copy(alpha = 0.6f) else Color(0xFFFFDEC9).copy(alpha = 0.6f),
+                style = Stroke(width = 2.5f.dp.toPx(), cap = StrokeCap.Round)
+            )
+
+            // 3. Draw a sleek minimalist athlete running silhouette (geometric stylized lines)
+            val athletePath = androidx.compose.ui.graphics.Path().apply {
+                // Head
+                val headRadius = 4.5f.dp.toPx()
+                val headX = w * 0.52f
+                val headY = h * 0.31f
+                
+                // Torso / Spine
+                moveTo(headX, headY + headRadius)
+                lineTo(w * 0.49f, h * 0.52f)
+                
+                // Left arm (pumping forward)
+                moveTo(w * 0.5f, h * 0.42f)
+                lineTo(w * 0.56f, h * 0.44f)
+                lineTo(w * 0.6f, h * 0.37f)
+                
+                // Right arm (pumping backwards)
+                moveTo(w * 0.5f, h * 0.42f)
+                lineTo(w * 0.44f, h * 0.47f)
+                lineTo(w * 0.42f, h * 0.54f)
+
+                // Left Leg (extended back)
+                moveTo(w * 0.49f, h * 0.52f)
+                lineTo(w * 0.42f, h * 0.67f)
+                lineTo(w * 0.36f, h * 0.64f)
+
+                // Right Leg (leaping forward, high knee)
+                moveTo(w * 0.49f, h * 0.52f)
+                lineTo(w * 0.54f, h * 0.6f)
+                lineTo(w * 0.58f, h * 0.74f)
+            }
+            
+            // Draw athlete head as circle
+            drawCircle(
+                brush = Brush.linearGradient(listOf(accentColor, secondaryColor)),
+                radius = 4.5f.dp.toPx(),
+                center = Offset(w * 0.52f, h * 0.28f)
+            )
+            // Draw athlete body bones as dynamic neon tubes
+            drawPath(
+                path = athletePath,
+                brush = Brush.linearGradient(listOf(accentColor, secondaryColor)),
+                style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round)
+            )
+
+            // 4. Draw glowing telemetry charts (sine-wave pulse + data ring indicator)
+            val chartPath = androidx.compose.ui.graphics.Path().apply {
+                moveTo(w * 0.12f, h * 0.65f)
+                lineTo(w * 0.16f, h * 0.65f)
+                lineTo(w * 0.18f, h * 0.55f)
+                lineTo(w * 0.21f, h * 0.75f)
+                lineTo(w * 0.24f, h * 0.6f)
+                lineTo(w * 0.26f, h * 0.65f)
+                lineTo(w * 0.35f, h * 0.65f)
+            }
+            drawPath(
+                path = chartPath,
+                color = trackingBlue,
+                style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round)
+            )
+            drawCircle(
+                color = trackingBlue.copy(alpha = 0.2f),
+                radius = 8.dp.toPx(),
+                center = Offset(w * 0.21f, h * 0.65f)
+            )
+
+            // 5. Draw concentric Ring on the right side representing Wellness index target
+            val rightRingCenter = Offset(w * 0.82f, h * 0.55f)
+            drawCircle(
+                color = mainIndigo.copy(alpha = 0.15f),
+                radius = 16.dp.toPx(),
+                center = rightRingCenter
+            )
+            drawArc(
+                brush = Brush.linearGradient(listOf(trackingBlue, mainIndigo)),
+                startAngle = -90f,
+                sweepAngle = 285f,
+                useCenter = false,
+                style = Stroke(width = 3f.dp.toPx(), cap = StrokeCap.Round),
+                size = Size(24.dp.toPx(), 24.dp.toPx()),
+                topLeft = Offset(rightRingCenter.x - 12.dp.toPx(), rightRingCenter.y - 12.dp.toPx())
+            )
+            
+            // Central heart rate or star representing healthy student life
+            drawCircle(
+                color = secondaryColor,
+                radius = 3.dp.toPx(),
+                center = rightRingCenter
+            )
+
+            // 6. Draw subtle sport icons, coordinates + crosshairs representing precise tracking
+            drawCircle(color = accentColor, radius = 1.5f.dp.toPx(), center = Offset(w * 0.15f, h * 0.25f))
+            drawCircle(color = mainIndigo, radius = 2.dp.toPx(), center = Offset(w * 0.85f, h * 0.25f))
+            drawCircle(color = trackingBlue, radius = 1.5f.dp.toPx(), center = Offset(w * 0.08f, h * 0.55f))
+            drawCircle(color = secondaryColor, radius = 2.dp.toPx(), center = Offset(w * 0.9f, h * 0.75f))
+        }
+        
+        // Let's add a neat, high-tech text block in the center bottom
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 6.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .background(if (isDark) Color.Black.copy(0.4f) else Color.White.copy(0.6f))
+                .border(0.5.dp, if (isDark) Color.White.copy(0.15f) else Color.Black.copy(0.08f), RoundedCornerShape(6.dp))
+                .padding(horizontal = 8.dp, vertical = 3.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(5.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF10B981)) // Green active dot
+                )
+                Text(
+                    text = "LIVE PERFORMANCE & WELLNESS RADAR",
+                    fontSize = 7.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = if (isDark) Color(0xFFFFDEC9) else Color(0xFFE65100),
+                    letterSpacing = 0.8.sp
+                )
+            }
+        }
+    }
+}
+
+// --------------------------------------------------
+// INTERACTIVE DAILY ATTENDANCE BAR CHART SYSTEM
+// --------------------------------------------------
+@Composable
+fun InteractiveAttendanceBarChart(
+    attendanceRecords: List<AttendanceRecord>,
+    isDark: Boolean,
+    selectedDate: String,
+    onDateSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    // Group all records by date
+    val datesGrouped = remember(attendanceRecords) { attendanceRecords.groupBy { it.date } }
+    // Take the last 7 dates that have any attendance marked, sorted chronologically
+    val uniqueDates = remember(datesGrouped) { datesGrouped.keys.sorted().takeLast(7) }
+
+    val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
+    val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
+
+    if (uniqueDates.isEmpty()) {
+        Card(
+            colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC)),
+            modifier = modifier.fillMaxWidth().height(140.dp),
+            shape = RoundedCornerShape(12.dp),
+            border = BorderStroke(1.dp, if (isDark) Color(0xFFFF7A00).copy(0.4f) else Color(0xFFFF9E7D))
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
+                    Icon(
+                        imageVector = Icons.Default.BarChart,
+                        contentDescription = "No data",
+                        tint = textSecondary.copy(alpha = 0.5f),
+                        modifier = Modifier.size(36.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("No attendance database entries available to chart.", color = textSecondary, fontSize = 12.sp, textAlign = TextAlign.Center)
+                }
+            }
+        }
+        return
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(if (isDark) Color(0xFF1E1107) else Color(0xFFFFF5EC))
+            .border(1.5.dp, if (isDark) Color(0xFFFF7A00).copy(0.5f) else Color(0xFFFF9E7D), RoundedCornerShape(16.dp))
+            .padding(14.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "📊 Daily Attendance Metrics Tracker",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = textPrimary
+                )
+                Text(
+                    text = "Select any column to view check-in student profiles",
+                    fontSize = 10.sp,
+                    color = textSecondary
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp)
+                .background(if (isDark) Color(0xFF140A05) else Color(0xFFFFF0E6), RoundedCornerShape(10.dp))
+                .border(0.5.dp, if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6), RoundedCornerShape(10.dp))
+                .padding(top = 16.dp, bottom = 8.dp, start = 12.dp, end = 12.dp)
+        ) {
+            var canvasWidth by remember { mutableStateOf(1f) }
+            var canvasHeight by remember { mutableStateOf(1f) }
+
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(uniqueDates) {
+                        detectTapGestures { offset ->
+                            if (uniqueDates.isNotEmpty()) {
+                                val colWidth = canvasWidth / uniqueDates.size
+                                val tappedIndex = (offset.x / colWidth).toInt().coerceIn(0, uniqueDates.size - 1)
+                                val tappedDate = uniqueDates[tappedIndex]
+                                onDateSelected(tappedDate)
+                            }
+                        }
+                    }
+                    .onSizeChanged {
+                        canvasWidth = it.width.toFloat()
+                        canvasHeight = it.height.toFloat()
+                    }
+            ) {
+                val w = size.width
+                val h = size.height
+
+                // Custom grid
+                val gridLines = 3
+                val gridColor = if (isDark) Color(0xFF2C190D) else Color(0xFFFFE3D1)
+                val chartBottom = h - 22.dp.toPx()
+                val chartTop = 8.dp.toPx()
+                val chartYHeight = chartBottom - chartTop
+
+                for (i in 0..gridLines) {
+                    val y = chartBottom - chartYHeight * (i.toFloat() / gridLines)
+                    drawLine(
+                        color = gridColor,
+                        start = Offset(0f, y),
+                        end = Offset(w, y),
+                        strokeWidth = 0.5.dp.toPx()
+                    )
+                }
+
+                val numBars = uniqueDates.size
+                val colWidth = w / numBars
+                val barSpacing = 16.dp.toPx()
+                val actualBarWidth = (colWidth - barSpacing).coerceAtLeast(8.dp.toPx())
+
+                // Max count of attendance logs on any single date to normalize bar height
+                var maxCount = 1
+                uniqueDates.forEach { date ->
+                    val logs = datesGrouped[date] ?: emptyList()
+                    val count = logs.size
+                    if (count > maxCount) maxCount = count
+                }
+
+                val normalizeFactor = chartYHeight / maxCount.toFloat()
+
+                uniqueDates.forEachIndexed { index, date ->
+                    val logs = datesGrouped[date] ?: emptyList()
+                    val presentCount = logs.count { it.status.uppercase(Locale.US) == "PRESENT" }
+                    val lateCount = logs.count { it.status.uppercase(Locale.US) == "LATE" }
+                    val absentCount = logs.count { it.status.uppercase(Locale.US) == "ABSENT" }
+                    val totalLogs = logs.size
+
+                    val isSelected = date == selectedDate
+                    val colLeft = index * colWidth
+
+                    // Draw highlighting card backing behind clicked column
+                    if (isSelected) {
+                        drawRoundRect(
+                            color = if (isDark) Color(0xFFFF7A00).copy(0.16f) else Color(0xFFFF7A00).copy(0.1f),
+                            topLeft = Offset(colLeft + 1.dp.toPx(), 0f),
+                            size = Size(colWidth - 2.dp.toPx(), h),
+                            cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
+                        )
+                        drawLine(
+                            color = Color(0xFFFF7A00),
+                            start = Offset(colLeft + 1.dp.toPx(), 0f),
+                            end = Offset(colLeft + colWidth - 2.dp.toPx(), 0f),
+                            strokeWidth = 2.dp.toPx()
+                        )
+                    }
+
+                    // Stack heights
+                    val presH = presentCount * normalizeFactor
+                    val lateH = lateCount * normalizeFactor
+                    val absH = absentCount * normalizeFactor
+
+                    val barLeft = colLeft + (barSpacing / 2f)
+
+                    // Draw Stacked Bars
+                    if (presentCount > 0) {
+                        drawRoundRect(
+                            color = Color(0xFF10B981),
+                            topLeft = Offset(barLeft, chartBottom - presH),
+                            size = Size(actualBarWidth, presH),
+                            cornerRadius = CornerRadius(3.dp.toPx(), 3.dp.toPx())
+                        )
+                    }
+                    if (lateCount > 0) {
+                        val lateTop = chartBottom - presH - lateH
+                        drawRoundRect(
+                            color = Color(0xFFF59E0B),
+                            topLeft = Offset(barLeft, lateTop),
+                            size = Size(actualBarWidth, lateH),
+                            cornerRadius = CornerRadius(3.dp.toPx(), 3.dp.toPx())
+                        )
+                        if (presentCount > 0) {
+                            drawLine(
+                                color = if (isDark) Color.Black.copy(0.2f) else Color.White.copy(0.3f),
+                                start = Offset(barLeft, chartBottom - presH),
+                                end = Offset(barLeft + actualBarWidth, chartBottom - presH),
+                                strokeWidth = 0.5.dp.toPx()
+                            )
+                        }
+                    }
+                    if (absentCount > 0) {
+                        val absTop = chartBottom - presH - lateH - absH
+                        drawRoundRect(
+                            color = Color(0xFFEF4444),
+                            topLeft = Offset(barLeft, absTop),
+                            size = Size(actualBarWidth, absH),
+                            cornerRadius = CornerRadius(3.dp.toPx(), 3.dp.toPx())
+                        )
+                        if (lateCount > 0 || presentCount > 0) {
+                            val dividerY = chartBottom - presH - lateH
+                            drawLine(
+                                color = if (isDark) Color.Black.copy(0.2f) else Color.White.copy(0.3f),
+                                start = Offset(barLeft, dividerY),
+                                end = Offset(barLeft + actualBarWidth, dividerY),
+                                strokeWidth = 0.5.dp.toPx()
+                            )
+                        }
+                    }
+
+                    if (totalLogs == 0) {
+                        val dummyH = 4.dp.toPx()
+                        drawRoundRect(
+                            color = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
+                            topLeft = Offset(barLeft, chartBottom - dummyH),
+                            size = Size(actualBarWidth, dummyH),
+                            cornerRadius = CornerRadius(2.dp.toPx(), 2.dp.toPx())
+                        )
+                    }
+
+                    // Date text
+                    val formattedDate = try {
+                        val parts = date.split("-")
+                        if (parts.size >= 3) "${parts[1]}/${parts[2]}" else date
+                    } catch (e: Exception) {
+                        date
+                    }
+
+                    drawIntoCanvas { canvas ->
+                        val paint = android.graphics.Paint().apply {
+                            color = if (isSelected) {
+                                if (isDark) android.graphics.Color.WHITE else 0xFFE65100.toInt()
+                            } else {
+                                if (isDark) 0xFFFFA270.toInt() else 0xFF8C3E00.toInt()
+                            }
+                            textSize = 8.5f.dp.toPx()
+                            textAlign = android.graphics.Paint.Align.CENTER
+                            isAntiAlias = true
+                            typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+                        }
+                        val textX = colLeft + (colWidth / 2f)
+                        val textY = h - 2.dp.toPx()
+                        canvas.nativeCanvas.drawText(formattedDate, textX, textY, paint)
+                    }
+                }
+            }
+        }
+
+        // Legends
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LegendRowItem(color = Color(0xFF10B981), label = "Present", textColor = textSecondary)
+            Spacer(modifier = Modifier.width(16.dp))
+            LegendRowItem(color = Color(0xFFF59E0B), label = "Late", textColor = textSecondary)
+            Spacer(modifier = Modifier.width(16.dp))
+            LegendRowItem(color = Color(0xFFEF4444), label = "Absent", textColor = textSecondary)
+        }
+    }
+}
+
+@Composable
+fun LegendRowItem(color: Color, label: String, textColor: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Box(modifier = Modifier.size(9.dp).background(color, CircleShape))
+        Text(text = label, color = textColor, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+    }
+}
+
+// --------------------------------------------------
+// STUDENT PERSONAL ATTENDANCE BAR CHART VIEW
+// --------------------------------------------------
+@Composable
+fun StudentPersonalAttendanceBarChart(
+    logs: List<AttendanceRecord>,
+    isDark: Boolean,
+    selectedDate: String?,
+    onDateSelected: (String?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
+    val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
+    
+    // Sort student logs by date and take last 7 logs
+    val recentLogs = remember(logs) { logs.sortedBy { it.date }.takeLast(7) }
+    
+    if (recentLogs.isEmpty()) return
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(if (isDark) Color(0xFF1E1107) else Color(0xFFFFF5EC))
+            .border(1.5.dp, if (isDark) Color(0xFFFF7A00).copy(0.5f) else Color(0xFFFF9E7D), RoundedCornerShape(16.dp))
+            .padding(14.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "📊 Interactive Performance Chart",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = textPrimary
+                )
+                Text(
+                    text = "Tap a column to filter the list below",
+                    fontSize = 9.sp,
+                    color = textSecondary
+                )
+            }
+            if (selectedDate != null) {
+                TextButton(
+                    onClick = { onDateSelected(null) },
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
+                    modifier = Modifier.height(24.dp)
+                ) {
+                    Text("Show All Logs ×", fontSize = 10.sp, color = Color(0xFFFF7A00), fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(115.dp)
+                .background(if (isDark) Color(0xFF140A05) else Color(0xFFFFF0E6), RoundedCornerShape(8.dp))
+                .border(0.5.dp, if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6), RoundedCornerShape(8.dp))
+                .padding(top = 12.dp, bottom = 6.dp, start = 10.dp, end = 10.dp)
+        ) {
+            var canvasWidth by remember { mutableStateOf(1f) }
+            var canvasHeight by remember { mutableStateOf(1f) }
+
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(recentLogs) {
+                        detectTapGestures { offset ->
+                            if (recentLogs.isNotEmpty()) {
+                                val colWidth = canvasWidth / recentLogs.size
+                                val tappedIndex = (offset.x / colWidth).toInt().coerceIn(0, recentLogs.size - 1)
+                                val tappedLog = recentLogs[tappedIndex]
+                                if (selectedDate == tappedLog.date) {
+                                    onDateSelected(null) // toggle
+                                } else {
+                                    onDateSelected(tappedLog.date)
+                                }
+                            }
+                        }
+                    }
+                    .onSizeChanged {
+                        canvasWidth = it.width.toFloat()
+                        canvasHeight = it.height.toFloat()
+                    }
+            ) {
+                val w = size.width
+                val h = size.height
+
+                // Grid background lines
+                val gridLines = 2
+                val gridColor = if (isDark) Color(0xFF2C190D) else Color(0xFFFFE3D1)
+                val chartBottom = h - 20.dp.toPx()
+                val chartTop = 6.dp.toPx()
+                val chartYHeight = chartBottom - chartTop
+
+                for (i in 0..gridLines) {
+                    val y = chartBottom - chartYHeight * (i.toFloat() / gridLines)
+                    drawLine(
+                        color = gridColor,
+                        start = Offset(0f, y),
+                        end = Offset(w, y),
+                        strokeWidth = 0.5.dp.toPx()
+                    )
+                }
+
+                val numBars = recentLogs.size
+                val colWidth = w / numBars
+                val barSpacing = 20.dp.toPx()
+                val actualBarWidth = (colWidth - barSpacing).coerceAtLeast(8.dp.toPx())
+
+                recentLogs.forEachIndexed { index, record ->
+                    val isSelected = record.date == selectedDate
+                    val colLeft = index * colWidth
+
+                    if (isSelected) {
+                        drawRoundRect(
+                            color = if (isDark) Color(0xFFFF7A00).copy(0.18f) else Color(0xFFFF7A00).copy(0.1f),
+                            topLeft = Offset(colLeft + 1.dp.toPx(), 0f),
+                            size = Size(colWidth - 2.dp.toPx(), h),
+                            cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
+                        )
+                        drawLine(
+                            color = Color(0xFFFF7A00),
+                            start = Offset(colLeft + 1.dp.toPx(), 0f),
+                            end = Offset(colLeft + colWidth - 2.dp.toPx(), 0f),
+                            strokeWidth = 1.5.dp.toPx()
+                        )
+                    }
+
+                    // Bar colors and height based on status
+                    val (barColor, scoreFactor) = when (record.status.uppercase(Locale.US)) {
+                        "PRESENT" -> Color(0xFF10B981) to 1.0f
+                        "LATE" -> Color(0xFFF59E0B) to 0.6f
+                        else -> Color(0xFFEF4444) to 0.25f
+                    }
+
+                    val barH = chartYHeight * scoreFactor
+                    val barLeft = colLeft + (barSpacing / 2f)
+
+                    drawRoundRect(
+                        color = barColor,
+                        topLeft = Offset(barLeft, chartBottom - barH),
+                        size = Size(actualBarWidth, barH),
+                        cornerRadius = CornerRadius(3.dp.toPx(), 3.dp.toPx())
+                    )
+
+                    // Compact date label
+                    val compactLabel = try {
+                        val parts = record.date.split("-")
+                        if (parts.size >= 3) "${parts[1]}/${parts[2]}" else record.date
+                    } catch (e: Exception) {
+                        record.date
+                    }
+
+                    drawIntoCanvas { canvas ->
+                        val paint = android.graphics.Paint().apply {
+                            color = if (isSelected) {
+                                if (isDark) android.graphics.Color.WHITE else 0xFFE65100.toInt()
+                            } else {
+                                if (isDark) 0xFFFFA270.toInt() else 0xFF8C3E00.toInt()
+                            }
+                            textSize = 8.dp.toPx()
+                            textAlign = android.graphics.Paint.Align.CENTER
+                            isAntiAlias = true
+                            typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+                        }
+                        canvas.nativeCanvas.drawText(compactLabel, colLeft + (colWidth / 2f), h - 2.dp.toPx(), paint)
+                    }
+                }
+            }
         }
     }
 }

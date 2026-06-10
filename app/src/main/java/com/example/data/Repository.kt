@@ -12,17 +12,27 @@ class AppRepository(
     private val userAccountDao: UserAccountDao,
     private val coachDao: CoachDao,
     private val tournamentDao: TournamentDao,
-    private val studentDocumentDao: StudentDocumentDao
+    private val studentDocumentDao: StudentDocumentDao,
+    private var firestoreSyncManager: FirestoreSyncManager? = null
 ) {
+    // Inject sync manager dynamically
+    fun setSyncManager(manager: FirestoreSyncManager) {
+        this.firestoreSyncManager = manager
+    }
+
     // Tournament Actions
     val allTournamentsFlow: Flow<List<Tournament>> = tournamentDao.getAllTournamentsFlow()
 
     suspend fun insertTournament(tournament: Tournament) {
         tournamentDao.insertTournament(tournament)
+        val docId = if (tournament.id == 0) "${tournament.title}_${tournament.date}" else tournament.id.toString()
+        firestoreSyncManager?.uploadToCloud("tournaments", docId, tournament)
     }
 
     suspend fun deleteTournament(tournament: Tournament) {
         tournamentDao.deleteTournament(tournament)
+        val docId = if (tournament.id == 0) "${tournament.title}_${tournament.date}" else tournament.id.toString()
+        firestoreSyncManager?.deleteFromCloud("tournaments", docId)
     }
 
     // Student Document Actions
@@ -34,14 +44,20 @@ class AppRepository(
 
     suspend fun insertDocument(document: StudentDocument) {
         studentDocumentDao.insertDocument(document)
+        val docId = if (document.id == 0) "${document.registerNumber}_${document.documentName}" else document.id.toString()
+        firestoreSyncManager?.uploadToCloud("student_documents", docId, document)
     }
 
     suspend fun updateDocument(document: StudentDocument) {
         studentDocumentDao.updateDocument(document)
+        val docId = if (document.id == 0) "${document.registerNumber}_${document.documentName}" else document.id.toString()
+        firestoreSyncManager?.uploadToCloud("student_documents", docId, document)
     }
 
     suspend fun deleteDocument(document: StudentDocument) {
         studentDocumentDao.deleteDocument(document)
+        val docId = if (document.id == 0) "${document.registerNumber}_${document.documentName}" else document.id.toString()
+        firestoreSyncManager?.deleteFromCloud("student_documents", docId)
     }
 
     // Coach Actions
@@ -49,14 +65,17 @@ class AppRepository(
 
     suspend fun insertCoach(coach: CoachProfile) {
         coachDao.insertCoach(coach)
+        firestoreSyncManager?.uploadToCloud("coach_profiles", coach.username, coach)
     }
 
     suspend fun updateCoach(coach: CoachProfile) {
         coachDao.updateCoach(coach)
+        firestoreSyncManager?.uploadToCloud("coach_profiles", coach.username, coach)
     }
 
     suspend fun deleteCoach(coach: CoachProfile) {
         coachDao.deleteCoach(coach)
+        firestoreSyncManager?.deleteFromCloud("coach_profiles", coach.username)
     }
 
     // Student Actions
@@ -72,6 +91,7 @@ class AppRepository(
 
     suspend fun insertStudentProfile(student: StudentProfile) {
         studentDao.insertStudentProfile(student)
+        firestoreSyncManager?.uploadToCloud("student_profiles", student.registerNumber, student)
     }
 
     suspend fun getAllStudentsDirect(): List<StudentProfile> {
@@ -87,6 +107,8 @@ class AppRepository(
 
     suspend fun insertAttendance(record: AttendanceRecord) {
         attendanceDao.insertAttendance(record)
+        val docId = "${record.registerNumber}_${record.date}_${record.shift}"
+        firestoreSyncManager?.uploadToCloud("attendance_records", docId, record)
     }
 
     // Leave Actions
@@ -98,10 +120,14 @@ class AppRepository(
 
     suspend fun insertLeave(leave: LeaveApplication) {
         leaveDao.insertLeave(leave)
+        val docId = "${leave.studentRegister}_${leave.startDate}"
+        firestoreSyncManager?.uploadToCloud("leave_applications", docId, leave)
     }
 
     suspend fun updateLeave(leave: LeaveApplication) {
         leaveDao.updateLeave(leave)
+        val docId = "${leave.studentRegister}_${leave.startDate}"
+        firestoreSyncManager?.uploadToCloud("leave_applications", docId, leave)
     }
 
     // Wellness Actions
@@ -113,6 +139,8 @@ class AppRepository(
 
     suspend fun insertWellnessEntry(entry: WellnessEntry) {
         wellnessDao.insertWellnessEntry(entry)
+        val docId = "${entry.registerNumber}_${entry.date}"
+        firestoreSyncManager?.uploadToCloud("wellness_entries", docId, entry)
     }
 
     // Student Fees Actions
@@ -124,14 +152,20 @@ class AppRepository(
 
     suspend fun insertFee(fee: StudentFee) {
         studentFeeDao.insertFee(fee)
+        val docId = "${fee.studentRegister}_${fee.month}_${fee.year}"
+        firestoreSyncManager?.uploadToCloud("student_fees", docId, fee)
     }
 
     suspend fun updateFee(fee: StudentFee) {
         studentFeeDao.updateFee(fee)
+        val docId = "${fee.studentRegister}_${fee.month}_${fee.year}"
+        firestoreSyncManager?.uploadToCloud("student_fees", docId, fee)
     }
 
     suspend fun deleteFee(fee: StudentFee) {
         studentFeeDao.deleteFee(fee)
+        val docId = "${fee.studentRegister}_${fee.month}_${fee.year}"
+        firestoreSyncManager?.deleteFromCloud("student_fees", docId)
     }
 
     // Organization Actions
@@ -139,10 +173,12 @@ class AppRepository(
 
     suspend fun insertOrganization(org: Organization) {
         organizationDao.insertOrganization(org)
+        firestoreSyncManager?.uploadToCloud("organizations", org.organizationName, org)
     }
 
     suspend fun updateOrganization(org: Organization) {
         organizationDao.updateOrganization(org)
+        firestoreSyncManager?.uploadToCloud("organizations", org.organizationName, org)
     }
 
     // User Account Actions
@@ -154,5 +190,6 @@ class AppRepository(
 
     suspend fun insertUserAccount(account: UserAccount) {
         userAccountDao.insertAccount(account)
+        firestoreSyncManager?.uploadToCloud("user_accounts", account.phoneNumber, account)
     }
 }

@@ -17,6 +17,8 @@ import com.example.viewmodel.AppViewModelFactory
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.lifecycleScope
+import com.example.data.FirestoreSyncManager
 
 class MainActivity : ComponentActivity() {
     
@@ -48,6 +50,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Initialize Cloud Synchronization Layer
+        val syncManager = FirestoreSyncManager(applicationContext, database)
+        repository.setSyncManager(syncManager)
+        
+        // Trigger background real-time bidirectional synchronization
+        if (syncManager.isCloudAvailable()) {
+            syncManager.startRealtimeSync(lifecycleScope)
+        }
 
         setContent {
             // Simple DI Factory definition inside Content context

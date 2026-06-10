@@ -4,6 +4,7 @@ plugins {
   alias(libs.plugins.google.devtools.ksp)
   alias(libs.plugins.roborazzi)
   alias(libs.plugins.secrets)
+  alias(libs.plugins.google.services) apply false
 }
 
 android {
@@ -56,6 +57,15 @@ android {
     buildConfig = true
   }
   testOptions { unitTests { isIncludeAndroidResources = true } }
+
+  sourceSets {
+    getByName("main") {
+      java.srcDirs("build/generated/ksp/main/kotlin", "build/generated/ksp/main/java")
+    }
+    getByName("debug") {
+      java.srcDirs("build/generated/ksp/debug/kotlin", "build/generated/ksp/debug/java")
+    }
+  }
 }
 
 // Configure the Secrets Gradle Plugin to use .env and .env.example files
@@ -93,6 +103,7 @@ dependencies {
   // implementation(libs.coil.compose)
   implementation(libs.converter.moshi)
   // implementation(libs.firebase.ai)
+  implementation(libs.firebase.firestore)
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.logging.interceptor)
@@ -119,3 +130,8 @@ dependencies {
   "ksp"(libs.androidx.room.compiler)
   "ksp"(libs.moshi.kotlin.codegen)
 }
+
+if (file("google-services.json").exists()) {
+  apply(plugin = "com.google.gms.google-services")
+}
+

@@ -778,8 +778,8 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
             } else if (account.role == "COACH" && !account.hasAccess) {
                 onResult(false, "Access Denied: Your access is turned off by Academy Admin.")
             } else {
-                // If role argument is passed as blank, auto-resolve it from the database account!
-                val resolvedRole = if (role.isNotBlank()) role else account.role
+                // If database role is COACH, force COACH role. Otherwise auto-resolve as requested.
+                val resolvedRole = if (account.role == "COACH") "COACH" else if (role.isNotBlank()) role else account.role
                 val userAcademy = if (account.academyName.isNotBlank()) account.academyName else "Springfield Academy"
                 
                 val studentReg = if (resolvedRole == "STUDENT") {
