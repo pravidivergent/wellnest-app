@@ -3350,6 +3350,7 @@ fun StudentBillingTab(
     val myFees = allFees.filter { it.studentRegister == state.registerNumber }
     val allStudents by viewModel.allStudents.collectAsState()
     val allOrgs by viewModel.allOrganizations.collectAsState()
+    val allAccounts by viewModel.allAccounts.collectAsState()
 
     val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
     val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
@@ -3438,7 +3439,7 @@ fun StudentBillingTab(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Academy Subscription SaaS Contribution Card
+        // Student SaaS Subscription Card
         val studentAcademy = studentProfile?.academyName?.ifBlank { state.academyName } ?: state.academyName
         val defaultOrg = allOrgs.firstOrNull { it.organizationName == studentAcademy } ?: allOrgs.firstOrNull() ?: Organization(
             organizationName = studentAcademy.ifBlank { "Springfield Academy" },
@@ -3446,7 +3447,7 @@ fun StudentBillingTab(
             mobile = "9876543210",
             email = "skinner@springfield.edu",
             activeStudentCount = allStudents.filter { it.academyName == studentAcademy }.size.coerceAtLeast(1),
-            monthlyAmount = allStudents.filter { it.academyName == studentAcademy }.size.coerceAtLeast(1) * 100.0,
+            monthlyAmount = 500.0, // Admin's subscription
             status = "Active"
         )
         val orgEndDate = if (defaultOrg.subscriptionEndDate.isNotBlank()) defaultOrg.subscriptionEndDate else "June 30, 2026"
@@ -3465,8 +3466,8 @@ fun StudentBillingTab(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("ACADEMY PLATFORM SUBSCRIPTION", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = accentColor)
-                        Text("TrackNest SaaS License", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                        Text("STUDENT PLATFORM SUBSCRIPTION", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                        Text("TrackNest Student SaaS License", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
                     }
                     Box(
                         modifier = Modifier
@@ -3484,8 +3485,7 @@ fun StudentBillingTab(
                 Spacer(modifier = Modifier.height(10.dp))
                 
                 Text(
-                    text = "This academy uses TrackNest SaaS on a dynamic licensing model. " +
-                           "As a registered student of ${defaultOrg.organizationName}, you can view and pay/renew the client infrastructure subscription directly from this portal to avoid service disruption.",
+                    text = "As a student of ${defaultOrg.organizationName}, you can view and pay your individual monthly student platform subscription directly from your portal to maintain full access to coaching schedules, wellness metrics, and performance trackers.",
                     fontSize = 11.sp,
                     color = textSecondary,
                     lineHeight = 15.sp
@@ -3493,8 +3493,7 @@ fun StudentBillingTab(
                 
                 Spacer(modifier = Modifier.height(12.dp))
                 
-                val orgStudentsCount = allStudents.filter { it.academyName == studentAcademy }.size.coerceAtLeast(1)
-                val orgBaseAmount = orgStudentsCount * 100.0
+                val orgBaseAmount = 100.0
                 val orgTax = orgBaseAmount * 0.18
                 val orgGrandTotal = orgBaseAmount + orgTax
                 
@@ -3505,8 +3504,8 @@ fun StudentBillingTab(
                 ) {
                     Column {
                         Text("ACTIVE LICENSE TIER", fontSize = 9.sp, color = textSecondary, fontWeight = FontWeight.Bold)
-                        Text("Enterprise Dynamic Plan", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
-                        Text("₹100/student/mo ($orgStudentsCount students)", fontSize = 10.sp, color = textSecondary)
+                        Text("Student SaaS Plan", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                        Text("₹100/month flat", fontSize = 10.sp, color = textSecondary)
                     }
                     Column(horizontalAlignment = Alignment.End) {
                         Text("PLATFORM CHARGE", fontSize = 9.sp, color = textSecondary, fontWeight = FontWeight.Bold)
@@ -3542,7 +3541,7 @@ fun StudentBillingTab(
                         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("Pay SaaS Renewal", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                        Text("Pay Student SaaS Renewal", fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -4037,8 +4036,7 @@ fun StudentBillingTab(
         }
 
         if (showOrgSubscriptionDialog) {
-            val orgStudentsCount = allStudents.filter { it.academyName == studentAcademy }.size.coerceAtLeast(1)
-            val orgBaseAmount = orgStudentsCount * 100.0
+            val orgBaseAmount = 100.0
             val orgTax = orgBaseAmount * 0.18
             val orgGrandTotal = orgBaseAmount + orgTax
 
@@ -4151,9 +4149,9 @@ fun StudentBillingTab(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Column {
-                                        Text("TRACKNEST PLATFORM SAAS", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
-                                        Text("Enterprise Dynamic Plan SaaS", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color.White else Color(0xFF0F172A))
-                                        Text("Institutional subscription for ${defaultOrg.organizationName}", fontSize = 9.sp, color = textSecondary)
+                                        Text("TRACKNEST STUDENT SAAS", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3395FF))
+                                        Text("Student SaaS Plan License", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = if (isDark) Color.White else Color(0xFF0F172A))
+                                        Text("Individual student platform subscription fee", fontSize = 9.sp, color = textSecondary)
                                     }
                                     Text("₹${orgGrandTotal.toInt()}", fontSize = 18.sp, fontWeight = FontWeight.Black, color = if (isDark) Color.White else Color(0xFF0F172A))
                                 }
@@ -4376,14 +4374,14 @@ fun StudentBillingTab(
                         Button(
                             onClick = {
                                 val updatedOrg = defaultOrg.copy(
-                                    subscriptionPlan = "Enterprise Dynamic Plan",
-                                    monthlyAmount = orgBaseAmount,
+                                    subscriptionPlan = "Enterprise Admin Plan",
+                                    monthlyAmount = 500.0,
                                     subscriptionStartDate = "June 30, 2026",
                                     subscriptionEndDate = "August 30, 2026",
                                     status = "Active"
                                 )
                                 viewModel.updateOrganizationDetails(updatedOrg)
-                                successMessage = "Paid & Renewed Academy SaaS Subscription for ₹${orgGrandTotal.toInt()} successfully!"
+                                successMessage = "Paid & Renewed Student SaaS Subscription for ₹${orgGrandTotal.toInt()} successfully!"
                                 showOrgSubscriptionDialog = false
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981))
@@ -6611,13 +6609,16 @@ fun AdminSubscriptionBillingTab(
     var editOrgMobile by remember { mutableStateOf("") }
     var editOrgEmail by remember { mutableStateOf("") }
 
+    val allAccounts by viewModel.allAccounts.collectAsState()
+    val adminsCount = allAccounts.filter { it.role == "ADMIN" && it.academyName.equals(allOrganizations.firstOrNull()?.organizationName ?: "Springfield Academy", ignoreCase = true) }.size.coerceAtLeast(1)
+
     val defaultOrg = allOrganizations.firstOrNull() ?: Organization(
         organizationName = "Springfield Academy",
         contactPerson = "Principal Skinner",
         mobile = "9876543210",
         email = "skinner@springfield.edu",
         activeStudentCount = students.size,
-        monthlyAmount = students.size * 100.0,
+        monthlyAmount = 500.0,
         status = "Active"
     )
 
@@ -6626,11 +6627,11 @@ fun AdminSubscriptionBillingTab(
 
     // Tier Plan management
     var selectedPlanName by remember(defaultOrg) {
-        mutableStateOf("Enterprise Dynamic Plan")
+        mutableStateOf("Enterprise Admin Plan")
     }
 
-    // Dynamic License Price Calculation
-    val basePlanAmount = currentStudentsCount * 100.0
+    // Dynamic License Price Calculation (flat ₹500 per admin monthly)
+    val basePlanAmount = 500.0
     
     val taxAmount = basePlanAmount * 0.18
     val grandTotalAmount = basePlanAmount + taxAmount
@@ -6895,11 +6896,11 @@ fun AdminSubscriptionBillingTab(
 
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             val tiers = listOf(
-                Triple("Enterprise Dynamic Plan", "₹100/Student/Mo", "Pricing scales dynamic with database enrollment count")
+                Triple("Enterprise Admin Plan", "₹500 / Month", "Flat rate pricing for complete administrative portal and cloud dashboard access")
             )
 
             tiers.forEach { (tierName, tierRate, tierDesc) ->
-                val isSelected = selectedPlanName == tierName
+                val isSelected = selectedPlanName == "Enterprise Admin Plan"
                 Card(
                      modifier = Modifier
                         .fillMaxWidth()
@@ -6947,13 +6948,13 @@ fun AdminSubscriptionBillingTab(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Total Enrolled Database Actives", fontSize = 11.sp, color = textSecondary)
-                    Text("$currentStudentsCount active students", fontSize = 11.sp, color = textPrimary, fontWeight = FontWeight.Bold)
+                    Text("Admin Platform Access Fee", fontSize = 11.sp, color = textSecondary)
+                    Text("1 Administrator Portal • ₹500/mo", fontSize = 11.sp, color = textPrimary, fontWeight = FontWeight.SemiBold)
                 }
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Plan Selected Rate", fontSize = 11.sp, color = textSecondary)
                     Text(
-                        text = if (selectedPlanName == "Enterprise Dynamic Plan") "₹100.00 / Student" else selectedPlanName,
+                        text = selectedPlanName,
                         fontSize = 11.sp,
                         color = textPrimary,
                         fontWeight = FontWeight.Bold
@@ -7012,7 +7013,7 @@ fun AdminSubscriptionBillingTab(
                             Text("${bRecord.second} • ${bRecord.third}", fontSize = 10.sp, color = textSecondary)
                         }
                     }
-                    val amountText = "₹${(currentStudentsCount * 100 * 1.18).toInt()}"
+                    val amountText = "₹${grandTotalAmount.toInt()}"
                     Text(
                         text = amountText,
                         fontSize = 13.sp,

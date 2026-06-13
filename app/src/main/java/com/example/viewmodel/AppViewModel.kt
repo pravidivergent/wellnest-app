@@ -290,9 +290,9 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
                 contactPerson = "Principal Skinner",
                 mobile = "9876543210",
                 email = "skinner@springfield.edu",
-                subscriptionPlan = "Per Student (₹100/mo)",
+                subscriptionPlan = "Enterprise Admin Plan",
                 activeStudentCount = 2, // Springfield has Alex & Siddharth
-                monthlyAmount = 200.0,
+                monthlyAmount = 500.0, // Admin flat monthly billing
                 subscriptionStartDate = "2026-01-01",
                 subscriptionEndDate = "2026-12-31",
                 status = "Active"
@@ -304,9 +304,9 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
                 contactPerson = "Principal Stamford",
                 mobile = "9876543212",
                 email = "stamford@academy.edu",
-                subscriptionPlan = "Per Student (₹100/mo)",
+                subscriptionPlan = "Enterprise Admin Plan",
                 activeStudentCount = 1, // Stamford has Cynthia
-                monthlyAmount = 100.0,
+                monthlyAmount = 500.0, // Admin flat monthly billing
                 subscriptionStartDate = "2026-01-01",
                 subscriptionEndDate = "2026-12-31",
                 status = "Active"
@@ -472,16 +472,15 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
         status: String = "Active"
     ) {
         viewModelScope.launch {
-            val amount = activeStudentCount * 100.0
             repository.insertOrganization(
                 Organization(
                     organizationName = name,
                     contactPerson = contactPerson,
                     mobile = mobile,
                     email = email,
-                    subscriptionPlan = "Per Student (₹100/mo)",
+                    subscriptionPlan = "Enterprise Admin Plan",
                     activeStudentCount = activeStudentCount,
-                    monthlyAmount = amount,
+                    monthlyAmount = 500.0, // Admin flat monthly billing
                     subscriptionStartDate = subscriptionStartDate,
                     subscriptionEndDate = subscriptionEndDate,
                     status = status
