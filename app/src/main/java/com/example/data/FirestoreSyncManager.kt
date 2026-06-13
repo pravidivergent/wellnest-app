@@ -21,8 +21,14 @@ class FirestoreSyncManager(
             if (FirebaseApp.getApps(context).isEmpty()) {
                 FirebaseApp.initializeApp(context)
             }
-            firestore = FirebaseFirestore.getInstance()
-            Log.d("FirestoreSyncManager", "Firebase Firestore initialized!")
+            val fs = FirebaseFirestore.getInstance()
+            val settings = com.google.firebase.firestore.FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(true)
+                .setCacheSizeBytes(com.google.firebase.firestore.FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
+                .build()
+            fs.firestoreSettings = settings
+            firestore = fs
+            Log.d("FirestoreSyncManager", "Firebase Firestore initialized with secure offline persistence!")
         } catch (e: Exception) {
             Log.e("FirestoreSyncManager", "Firebase initialization failed: ${e.message}. Falling back to local database.")
         }

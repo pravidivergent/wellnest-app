@@ -174,10 +174,13 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
             repository.insertAttendance(AttendanceRecord(registerNumber = "2026CS501", date = day, shift = "Morning", status = "Present"))
             repository.insertAttendance(AttendanceRecord(registerNumber = "2026CS501", date = day, shift = "Evening", status = "Present"))
 
-            // Siddharth: Late some days, Absent on 28th
+            // Siddharth: Late some days, Absent on 28th, Leave on 27th
             if (day == "2026-05-28") {
                 repository.insertAttendance(AttendanceRecord(registerNumber = "2026CS502", date = day, shift = "Morning", status = "Absent"))
                 repository.insertAttendance(AttendanceRecord(registerNumber = "2026CS502", date = day, shift = "Evening", status = "Absent"))
+            } else if (day == "2026-05-27") {
+                repository.insertAttendance(AttendanceRecord(registerNumber = "2026CS502", date = day, shift = "Morning", status = "Leave"))
+                repository.insertAttendance(AttendanceRecord(registerNumber = "2026CS502", date = day, shift = "Evening", status = "Leave"))
             } else if (day == "2026-05-26") {
                 repository.insertAttendance(AttendanceRecord(registerNumber = "2026CS502", date = day, shift = "Morning", status = "Late"))
                 repository.insertAttendance(AttendanceRecord(registerNumber = "2026CS502", date = day, shift = "Evening", status = "Present"))
@@ -216,37 +219,66 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
             )
         )
 
-        // 4. Seed Wellness entries
-        repository.insertWellnessEntry(
-            WellnessEntry(
-                registerNumber = "2026CS501",
-                date = "2026-05-28",
-                sleepHours = 7.5f,
-                hadBreakfast = true,
-                hadLunch = true,
-                hadDinner = true,
-                waterIntakeCups = 8,
-                energyLevel = 8,
-                mood = "Calm",
-                notes = "Felt active, completed assignments.",
-                improvements = "Will sleep slightly earlier."
+        // 4. Seed Wellness entries dynamically for the last 30 days
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val cal = Calendar.getInstance()
+        for (i in 0..29) {
+            cal.time = Date()
+            cal.add(Calendar.DAY_OF_YEAR, -i)
+            val dateStr = sdf.format(cal.time)
+            
+            // Student 1: 2026CS501 (Healthy pattern)
+            val s1Sleep = 6f + (Math.random() * 3.5).toFloat() // 6 to 9.5 hrs
+            val s1Breakfast = Math.random() > 0.15
+            val s1Lunch = Math.random() > 0.05
+            val s1Dinner = Math.random() > 0.1
+            val s1Water = 6 + (Math.random() * 5).toInt() // 6 to 10 cups
+            val s1Energy = 7 + (Math.random() * 4).toInt() // 7 to 10
+            val s1Moods = listOf("Calm", "Happy", "Focused")
+            val s1Mood = s1Moods[(Math.random() * s1Moods.size).toInt()]
+            
+            repository.insertWellnessEntry(
+                WellnessEntry(
+                    registerNumber = "2026CS501",
+                    date = dateStr,
+                    sleepHours = s1Sleep,
+                    hadBreakfast = s1Breakfast,
+                    hadLunch = s1Lunch,
+                    hadDinner = s1Dinner,
+                    waterIntakeCups = s1Water,
+                    energyLevel = s1Energy,
+                    mood = s1Mood,
+                    notes = "Self-care tracker updates. Feeling highly motivated and positive.",
+                    improvements = "Maintain current training intensity."
+                )
             )
-        )
-        repository.insertWellnessEntry(
-            WellnessEntry(
-                registerNumber = "2026CS502",
-                date = "2026-05-28",
-                sleepHours = 4.5f,
-                hadBreakfast = false,
-                hadLunch = true,
-                hadDinner = false,
-                waterIntakeCups = 3,
-                energyLevel = 3,
-                mood = "Tired",
-                notes = "Slept very late preparing for coding exam, skipped lunch/dinner routine.",
-                improvements = "Must maintain meal times."
+
+            // Student 2: 2026CS502 (Stressed/Fluctuating pattern)
+            val s2Sleep = 4.5f + (Math.random() * 4f).toFloat() // 4.5 to 8.5 hrs
+            val s2Breakfast = Math.random() > 0.35
+            val s2Lunch = Math.random() > 0.15
+            val s2Dinner = Math.random() > 0.25
+            val s2Water = 3 + (Math.random() * 5).toInt() // 3 to 7 cups
+            val s2Energy = 3 + (Math.random() * 5).toInt() // 3 to 7
+            val s2Moods = listOf("Tired", "Stressed", "Calm", "Focused")
+            val s2Mood = s2Moods[(Math.random() * s2Moods.size).toInt()]
+
+            repository.insertWellnessEntry(
+                WellnessEntry(
+                    registerNumber = "2026CS502",
+                    date = dateStr,
+                    sleepHours = s2Sleep,
+                    hadBreakfast = s2Breakfast,
+                    hadLunch = s2Lunch,
+                    hadDinner = s2Dinner,
+                    waterIntakeCups = s2Water,
+                    energyLevel = s2Energy,
+                    mood = s2Mood,
+                    notes = "Exhausting schedule. Balancing technical lectures & intensive field drills.",
+                    improvements = "Aim for consistent hydration and sleep intervals."
+                )
             )
-        )
+        }
 
         // 5. Seed Student Fees
         repository.insertFee(

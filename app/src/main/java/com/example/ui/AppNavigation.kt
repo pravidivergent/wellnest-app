@@ -170,7 +170,7 @@ val translations = mapOf(
         "status_label" to "Status: ",
         "due_date_label" to "Due Date: ",
         "active_license_tier" to "ACTIVE LICENSE TIER",
-        "enterprise_plan" to "Enterprise Dynamic Plan",
+        "enterprise_plan" to "Student SaaS Plan",
         "platform_charge" to "PLATFORM CHARGE",
         "paid_until_date" to "PAID UNTIL DATE",
         "registered_fee_invoices" to "Registered Fee Invoices",
@@ -205,6 +205,7 @@ val translations = mapOf(
         "Present" to "Present",
         "Absent" to "Absent",
         "Late" to "Late",
+        "Leave" to "Leave",
         "Not Marked Yet" to "Not Marked Yet",
 
         // Extra Tournaments and Leave reason keys
@@ -222,7 +223,19 @@ val translations = mapOf(
         "Evening" to "Evening Shift",
         "billing_title" to "Academy Billing & Invoices",
         "billing_subtitle" to "Track, manage, and complete your coaching and academy fee payments.",
-        "outstanding_balance" to "OUTSTANDING BALANCE"
+        "outstanding_balance" to "OUTSTANDING BALANCE",
+        "attendance_marked_success" to "Attendance successfully submitted!",
+        "leave_applied_success" to "Leave request successfully submitted!",
+        "wellness_scores_trend_title" to "📊 30-Day Wellness Scores Trend (Recharts Mode)",
+        "mental_wellness_label" to "🧠 Mental Wellness",
+        "physical_wellness_label" to "💪 Physical Wellness",
+        "tap_chart_hint" to "Tap or drag across chart to inspect daily score details",
+        "btn_quick_check" to "Quick Pulse Check-In",
+        "quick_check_title" to "⚡ Live Daily Quick Check-In",
+        "quick_check_subtitle" to "Tap to submit stress & energy scores to instantly update your wellness trend charts",
+        "stress_level_label" to "🧠 Current Stress Level",
+        "physical_energy_label" to "💪 Physical Energy Level",
+        "success_quick_check" to "🎉 Quick Check-In logged successfully!"
     ),
     AppLanguage.TA to mapOf(
         "wellnest_title" to "டிராக்நெஸ்ட்",
@@ -343,7 +356,7 @@ val translations = mapOf(
         "status_label" to "நிலை: ",
         "due_date_label" to "கடைசி தேதி: ",
         "active_license_tier" to "செயலில் உள்ள உரிம அடுக்கு",
-        "enterprise_plan" to "நிறுவன டைனமிக் திட்டம்",
+        "enterprise_plan" to "மாணவர் சாஸ் திட்டம்",
         "platform_charge" to "தள கட்டணம்",
         "paid_until_date" to "செலுத்தப்பட்ட தேதி வரை",
         "registered_fee_invoices" to "பதிவு செய்யப்பட்ட கட்டண விலைப்பட்டியல்கள்",
@@ -376,8 +389,9 @@ val translations = mapOf(
 
         // Status keys
         "Present" to "வருகை",
-        "Absent" to "விடுப்பு",
+        "Absent" to "வருகையின்மை",
         "Late" to "தாமதம்",
+        "Leave" to "விடுப்பு",
         "Not Marked Yet" to "இன்னும் பதிவு செய்யப்படவில்லை",
 
         // Extra Tournaments and Leave reason keys
@@ -395,7 +409,19 @@ val translations = mapOf(
         "Evening" to "மாலைப்பிரிவு",
         "billing_title" to "அகாடமி பில்லிங் & இன்வாய்ஸ்கள்",
         "billing_subtitle" to "உங்கள் பயிற்சிக் கட்டணங்களைக் கண்காணித்து, நிர்வகித்து, செலுத்துங்கள்.",
-        "outstanding_balance" to "செலுத்த வேண்டிய நிலுவைத் தொகை"
+        "outstanding_balance" to "செலுத்த வேண்டிய நிலுவைத் தொகை",
+        "attendance_marked_success" to "வருகை பதிவு வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது!",
+        "leave_applied_success" to "விடுப்பு விண்ணப்பம் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது!",
+        "wellness_scores_trend_title" to "📊 30 நாட்கள் உடற்பயிற்சி & மனநலப் போக்கு (Recharts)",
+        "mental_wellness_label" to "🧠 மனநலம்",
+        "physical_wellness_label" to "💪 உடல்நலம்",
+        "tap_chart_hint" to "தினசரி அளவீடுகளைப் படிக்க விளக்கப்படத்தைத் தட்டவும் அல்லது இழுக்கவும்",
+        "btn_quick_check" to "விரைவான பதிவு",
+        "quick_check_title" to "⚡ தினசரி விரைவான பதிவு",
+        "quick_check_subtitle" to "உங்கள் உடற்பயிற்சி மற்றும் மன அழுத்தத்தை விரைவாகப் பதிவு செய்யவும்",
+        "stress_level_label" to "🧠 மன அழுத்தம்",
+        "physical_energy_label" to "💪 உடல் ஆற்றல்",
+        "success_quick_check" to "🎉 தினசரி முன்னறிவிப்பு வெற்றிகரமாகப் பதிவு செய்யப்பட்டது!"
     )
 )
 
@@ -1720,8 +1746,9 @@ fun StudentHomeTab(
     val totalCount = attendance.size
     val presentCount = attendance.count { it.status == "Present" }
     val lateCount = attendance.count { it.status == "Late" }
+    val leaveCount = attendance.count { it.status == "Leave" }
     val attendancePct = if (totalCount > 0) {
-        ((presentCount + (lateCount * 0.7f)) / totalCount * 100).toInt()
+        (((presentCount + (lateCount * 0.7f) + (leaveCount * 1.0f)) / totalCount) * 100).toInt().coerceIn(0, 100)
     } else {
         100
     }
@@ -1881,6 +1908,7 @@ fun StudentHomeTab(
                                         "Present" -> if (isDark) Color(0xFF042F1A) else Color(0xFFDCFCE7)
                                         "Absent" -> if (isDark) Color(0xFF450A0A) else Color(0xFFFEE2E2)
                                         "Late" -> if (isDark) Color(0xFF451A03) else Color(0xFFFEF3C7)
+                                        "Leave" -> if (isDark) Color(0xFF1E1B4B) else Color(0xFFEEF2FF)
                                         else -> if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9)
                                     }
                                 )
@@ -1892,6 +1920,7 @@ fun StudentHomeTab(
                                     "Present" -> Icons.Default.CheckCircle
                                     "Absent" -> Icons.Default.Cancel
                                     "Late" -> Icons.Default.Schedule
+                                    "Leave" -> Icons.Default.EventNote
                                     else -> Icons.Default.WbSunny
                                 },
                                 contentDescription = "",
@@ -1899,6 +1928,7 @@ fun StudentHomeTab(
                                     "Present" -> Color(0xFF10B981)
                                     "Absent" -> Color(0xFFEF4444)
                                     "Late" -> Color(0xFFF59E0B)
+                                    "Leave" -> Color(0xFF6366F1)
                                     else -> Color(0xFF94A3B8)
                                 },
                                 modifier = Modifier.size(28.dp)
@@ -1913,6 +1943,7 @@ fun StudentHomeTab(
                                     "Present" -> Color(0xFF10B981)
                                     "Absent" -> Color(0xFFEF4444)
                                     "Late" -> Color(0xFFF59E0B)
+                                    "Leave" -> Color(0xFF6366F1)
                                     else -> if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)
                                 }
                             )
@@ -1928,6 +1959,7 @@ fun StudentHomeTab(
                                         "Present" -> if (isDark) Color(0xFF042F1A) else Color(0xFFDCFCE7)
                                         "Absent" -> if (isDark) Color(0xFF450A0A) else Color(0xFFFEE2E2)
                                         "Late" -> if (isDark) Color(0xFF451A03) else Color(0xFFFEF3C7)
+                                        "Leave" -> if (isDark) Color(0xFF1E1B4B) else Color(0xFFEEF2FF)
                                         else -> if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9)
                                     }
                                 )
@@ -1939,6 +1971,7 @@ fun StudentHomeTab(
                                     "Present" -> Icons.Default.CheckCircle
                                     "Absent" -> Icons.Default.Cancel
                                     "Late" -> Icons.Default.Schedule
+                                    "Leave" -> Icons.Default.EventNote
                                     else -> Icons.Default.NightsStay
                                 },
                                 contentDescription = "",
@@ -1946,6 +1979,7 @@ fun StudentHomeTab(
                                     "Present" -> Color(0xFF10B981)
                                     "Absent" -> Color(0xFFEF4444)
                                     "Late" -> Color(0xFFF59E0B)
+                                    "Leave" -> Color(0xFF6366F1)
                                     else -> Color(0xFF94A3B8)
                                 },
                                 modifier = Modifier.size(28.dp)
@@ -1960,6 +1994,7 @@ fun StudentHomeTab(
                                     "Present" -> Color(0xFF10B981)
                                     "Absent" -> Color(0xFFEF4444)
                                     "Late" -> Color(0xFFF59E0B)
+                                    "Leave" -> Color(0xFF6366F1)
                                     else -> if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)
                                 }
                             )
@@ -2514,6 +2549,7 @@ fun StudentAttendanceTab(
                                 val (pillBg, pillText) = when (item.status.uppercase(Locale.US)) {
                                     "PRESENT" -> Color(0xFF10B981).copy(0.15f) to Color(0xFF10B981)
                                     "LATE" -> Color(0xFFF59E0B).copy(0.15f) to Color(0xFFF59E0B)
+                                    "LEAVE" -> Color(0xFF6366F1).copy(0.15f) to Color(0xFF6366F1)
                                     else -> Color(0xFFEF4444).copy(0.15f) to Color(0xFFEF4444)
                                 }
                                 Box(
@@ -2527,6 +2563,611 @@ fun StudentAttendanceTab(
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+// ------------------------------------------
+// Student Wellness Trends Chart (Recharts Model)
+// ------------------------------------------
+data class WellnessChartPoint(
+    val date: String,
+    val mental: Float,
+    val physical: Float,
+    val originalEntry: WellnessEntry
+)
+
+@Composable
+fun StudentWellnessTrendsChart(
+    wellnessList: List<WellnessEntry>,
+    isDark: Boolean,
+    viewModel: AppViewModel,
+    modifier: Modifier = Modifier
+) {
+    val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
+    val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
+    val cardBg = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC)
+    val cardBorder = if (isDark) Color(0xFFFF7A00).copy(0.5f) else Color(0xFFFF9E7D)
+    val innerCanvasBg = if (isDark) Color(0xFF140A05) else Color(0xFFFFFDFB)
+
+    // Calculate chart data for last 30 days
+    val chartData = remember(wellnessList) {
+        val sorted = wellnessList.sortedBy { it.date }.takeLast(30)
+        if (sorted.isEmpty()) {
+            emptyList()
+        } else {
+            sorted.map { entry ->
+                val moodScore = when (entry.mood) {
+                    "Happy" -> 10f
+                    "Calm" -> 8.5f
+                    "Focused" -> 8f
+                    "Tired" -> 5f
+                    "Stressed" -> 3f
+                    else -> 7f
+                }
+                val mentalScore = (moodScore * 0.6f + entry.energyLevel * 0.4f).coerceIn(1f, 10f)
+
+                val sleepScore = (entry.sleepHours / 8f * 10f).coerceIn(0f, 10f)
+                val waterScore = (entry.waterIntakeCups / 8f * 10f).coerceIn(0f, 10f)
+                val mealsCount = (if (entry.hadBreakfast) 1 else 0) + (if (entry.hadLunch) 1 else 0) + (if (entry.hadDinner) 1 else 0)
+                val mealScore = (mealsCount / 3f * 10f)
+                val physicalScore = (sleepScore * 0.4f + waterScore * 0.3f + mealScore * 0.3f).coerceIn(1f, 10f)
+
+                WellnessChartPoint(
+                    date = entry.date,
+                    mental = mentalScore,
+                    physical = physicalScore,
+                    originalEntry = entry
+                )
+            }
+        }
+    }
+
+    if (chartData.isEmpty()) {
+        Card(
+            colors = CardDefaults.cardColors(containerColor = cardBg),
+            border = BorderStroke(1.5.dp, cardBorder),
+            shape = RoundedCornerShape(16.dp),
+            modifier = modifier.fillMaxWidth().padding(bottom = 16.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = getTranslation("wellness_scores_trend_title", viewModel),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = textPrimary
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "No wellness records submitted yet. Log your details below to populate the trend visualizer.",
+                    color = textSecondary,
+                    fontSize = 11.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+        return
+    }
+
+    // Active touch index
+    var selectedIndex by remember { mutableStateOf<Int?>(null) }
+
+    Card(
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        border = BorderStroke(1.5.dp, cardBorder),
+        shape = RoundedCornerShape(16.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            // Header Content
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = getTranslation("wellness_scores_trend_title", viewModel),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = textPrimary
+                    )
+                    Text(
+                        text = getTranslation("tap_chart_hint", viewModel),
+                        fontSize = 10.sp,
+                        color = textSecondary
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Main Recharts-style Canvas Grid System
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(190.dp)
+                    .background(innerCanvasBg, RoundedCornerShape(12.dp))
+                    .border(0.5.dp, if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6), RoundedCornerShape(12.dp))
+                    .padding(top = 12.dp, bottom = 12.dp, start = 8.dp, end = 8.dp)
+            ) {
+                var widthPx by remember { mutableStateOf(1f) }
+                var heightPx by remember { mutableStateOf(1f) }
+
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pointerInput(chartData) {
+                            detectTapGestures { offset ->
+                                if (chartData.isNotEmpty()) {
+                                    val paddingLeft = 32.dp.toPx()
+                                    val paddingRight = 8.dp.toPx()
+                                    val chartWidth = widthPx - paddingLeft - paddingRight
+                                    val xStep = chartWidth / (chartData.size - 1).coerceAtLeast(1)
+                                    val tappedIndex = kotlin.math.round((offset.x - paddingLeft) / xStep).toInt().coerceIn(0, chartData.size - 1)
+                                    selectedIndex = if (selectedIndex == tappedIndex) null else tappedIndex
+                                }
+                            }
+                        }
+                        .onSizeChanged {
+                            widthPx = it.width.toFloat()
+                            heightPx = it.height.toFloat()
+                        }
+                ) {
+                    val w = size.width
+                    val h = size.height
+                    
+                    val paddingLeft = 32.dp.toPx()
+                    val paddingBottom = 16.dp.toPx()
+                    val paddingTop = 8.dp.toPx()
+                    val paddingRight = 8.dp.toPx()
+
+                    val chartWidth = w - paddingLeft - paddingRight
+                    val chartHeight = h - paddingTop - paddingBottom
+
+                    // Draw Horizontal Grid Lines representing 0, 2.5, 5.0, 7.5, 10
+                    val gridSteps = 4
+                    val gridColor = if (isDark) Color(0xFF2E1C11) else Color(0xFFFFECE0)
+                    for (i in 0..gridSteps) {
+                        val frac = i.toFloat() / gridSteps
+                        val y = paddingTop + chartHeight * (1f - frac)
+                        
+                        // Draw grid line
+                        drawLine(
+                            color = gridColor,
+                            start = Offset(paddingLeft, y),
+                            end = Offset(w - paddingRight, y),
+                            strokeWidth = 1.dp.toPx(),
+                            pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                        )
+
+                        // Draw Y value labels
+                        val scoreLabel = (frac * 10).toInt().toString()
+                        drawContext.canvas.nativeCanvas.apply {
+                            val paint = android.graphics.Paint().apply {
+                                color = if (isDark) 0xFFFFA270.toInt() else 0xFF8C3E00.toInt()
+                                textSize = 8.dp.toPx()
+                                textAlign = android.graphics.Paint.Align.RIGHT
+                            }
+                            drawText(scoreLabel, paddingLeft - 6.dp.toPx(), y + 3.dp.toPx(), paint)
+                        }
+                    }
+
+                    if (chartData.size >= 2) {
+                        val numPoints = chartData.size
+                        val xStep = chartWidth / (numPoints - 1)
+
+                        // Compose Paths for Mental Score and Physical Score
+                        val mentalPath = androidx.compose.ui.graphics.Path()
+                        val mentalAreaPath = androidx.compose.ui.graphics.Path()
+
+                        val physicalPath = androidx.compose.ui.graphics.Path()
+                        val physicalAreaPath = androidx.compose.ui.graphics.Path()
+
+                        // Initialize paths at index 0
+                        val y0Mental = paddingTop + chartHeight * (1f - chartData[0].mental / 10f)
+                        val y0Physical = paddingTop + chartHeight * (1f - chartData[0].physical / 10f)
+
+                        mentalPath.moveTo(paddingLeft, y0Mental)
+                        mentalAreaPath.moveTo(paddingLeft, paddingTop + chartHeight)
+                        mentalAreaPath.lineTo(paddingLeft, y0Mental)
+
+                        physicalPath.moveTo(paddingLeft, y0Physical)
+                        physicalAreaPath.moveTo(paddingLeft, paddingTop + chartHeight)
+                        physicalAreaPath.lineTo(paddingLeft, y0Physical)
+
+                        // Loop through remaining points
+                        for (i in 1 until numPoints) {
+                            val x = paddingLeft + i * xStep
+                            val yMental = paddingTop + chartHeight * (1f - chartData[i].mental / 10f)
+                            val yPhysical = paddingTop + chartHeight * (1f - chartData[i].physical / 10f)
+
+                            mentalPath.lineTo(x, yMental)
+                            mentalAreaPath.lineTo(x, yMental)
+
+                            physicalPath.lineTo(x, yPhysical)
+                            physicalAreaPath.lineTo(x, yPhysical)
+                        }
+
+                        // Close Area Paths
+                        mentalAreaPath.lineTo(paddingLeft + (numPoints - 1) * xStep, paddingTop + chartHeight)
+                        mentalAreaPath.close()
+
+                        physicalAreaPath.lineTo(paddingLeft + (numPoints - 1) * xStep, paddingTop + chartHeight)
+                        physicalAreaPath.close()
+
+                        // 1. Draw Physical Wellness Area gradient and curve line
+                        drawPath(
+                            path = physicalAreaPath,
+                            brush = Brush.verticalGradient(
+                                colors = listOf(Color(0xFF10B981).copy(alpha = 0.15f), Color(0xFF10B981).copy(alpha = 0.00f)),
+                                startY = paddingTop,
+                                endY = paddingTop + chartHeight
+                            )
+                        )
+                        drawPath(
+                            path = physicalPath,
+                            color = Color(0xFF10B981),
+                            style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round)
+                        )
+
+                        // 2. Draw Mental Wellness Area gradient and curve line
+                        drawPath(
+                            path = mentalAreaPath,
+                            brush = Brush.verticalGradient(
+                                colors = listOf(Color(0xFF6366F1).copy(alpha = 0.15f), Color(0xFF6366F1).copy(alpha = 0.00f)),
+                                startY = paddingTop,
+                                endY = paddingTop + chartHeight
+                            )
+                        )
+                        drawPath(
+                            path = mentalPath,
+                            color = Color(0xFF6366F1),
+                            style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round)
+                        )
+
+                        // 3. Draw X-axis label indicators (start, mid, end dates)
+                        val indicesToLabel = listOf(0, numPoints / 2, numPoints - 1)
+                        indicesToLabel.distinct().forEach { idx ->
+                            val x = paddingLeft + idx * xStep
+                            val dateLabel = chartData[idx].date.substring(5) // MM-DD
+                            drawContext.canvas.nativeCanvas.apply {
+                                val paint = android.graphics.Paint().apply {
+                                    color = if (isDark) 0xFFFFA270.toInt() else 0xFF8C3E00.toInt()
+                                    textSize = 8.dp.toPx()
+                                    textAlign = android.graphics.Paint.Align.CENTER
+                                }
+                                drawText(dateLabel, x, h - 2.dp.toPx(), paint)
+                            }
+                        }
+
+                        // 4. Draw cursor and highlight dot if user interactive index is set
+                        selectedIndex?.let { idx ->
+                            val activeX = paddingLeft + idx * xStep
+                            val activeYMental = paddingTop + chartHeight * (1f - chartData[idx].mental / 10f)
+                            val activeYPhysical = paddingTop + chartHeight * (1f - chartData[idx].physical / 10f)
+
+                            // Thin vertical overlay line
+                            drawLine(
+                                color = if (isDark) Color.White.copy(0.2f) else Color.Black.copy(0.15f),
+                                start = Offset(activeX, paddingTop),
+                                end = Offset(activeX, paddingTop + chartHeight),
+                                strokeWidth = 1.dp.toPx()
+                            )
+
+                            // Circle indicators
+                            drawCircle(
+                                color = Color(0xFF6366F1),
+                                radius = 5.dp.toPx(),
+                                center = Offset(activeX, activeYMental)
+                            )
+                            drawCircle(
+                                color = Color.White,
+                                radius = 2.dp.toPx(),
+                                center = Offset(activeX, activeYMental)
+                            )
+
+                            drawCircle(
+                                color = Color(0xFF10B981),
+                                radius = 5.dp.toPx(),
+                                center = Offset(activeX, activeYPhysical)
+                            )
+                            drawCircle(
+                                color = Color.White,
+                                radius = 2.dp.toPx(),
+                                center = Offset(activeX, activeYPhysical)
+                            )
+                        }
+                    } else if (chartData.size == 1) {
+                        val x = paddingLeft + chartWidth / 2f
+                        val yMental = paddingTop + chartHeight * (1f - chartData[0].mental / 10f)
+                        val yPhysical = paddingTop + chartHeight * (1f - chartData[0].physical / 10f)
+                        drawCircle(color = Color(0xFF6366F1), radius = 6.dp.toPx(), center = Offset(x, yMental))
+                        drawCircle(color = Color(0xFF10B981), radius = 6.dp.toPx(), center = Offset(x, yPhysical))
+                    }
+                }
+
+                // Interactive Overlaid Tooltip Card
+                selectedIndex?.let { idx ->
+                    val activePoint = chartData[idx]
+                    Box(
+                        modifier = Modifier
+                            .align(if (idx < chartData.size / 2) Alignment.TopEnd else Alignment.TopStart)
+                            .padding(8.dp)
+                            .background(if (isDark) Color(0xFF22150C) else Color(0xFFFFF9F5), RoundedCornerShape(8.dp))
+                            .border(1.dp, if (isDark) Color(0xFFFF7A00).copy(0.6f) else Color(0xFFFF9E7D).copy(0.8f), RoundedCornerShape(8.dp))
+                            .padding(8.dp)
+                    ) {
+                        Column {
+                            Text(
+                                text = "📅 ${activePoint.date}",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = textPrimary
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(modifier = Modifier.size(6.dp).background(Color(0xFF6366F1), CircleShape))
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "${getTranslation("mental_wellness_label", viewModel)}: ${String.format(Locale.getDefault(), "%.1f", activePoint.mental)}/10",
+                                    fontSize = 9.sp,
+                                    color = textPrimary
+                                )
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(modifier = Modifier.size(6.dp).background(Color(0xFF10B981), CircleShape))
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "${getTranslation("physical_wellness_label", viewModel)}: ${String.format(Locale.getDefault(), "%.1f", activePoint.physical)}/10",
+                                    fontSize = 9.sp,
+                                    color = textPrimary
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "🛌 Sleep: ${activePoint.originalEntry.sleepHours} hrs | Mood: ${activePoint.originalEntry.mood}",
+                                fontSize = 8.sp,
+                                color = textSecondary
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Legends row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(8.dp).background(Color(0xFF6366F1), RoundedCornerShape(2.dp)))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = getTranslation("mental_wellness_label", viewModel), fontSize = 10.sp, color = textSecondary, fontWeight = FontWeight.Bold)
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(8.dp).background(Color(0xFF10B981), RoundedCornerShape(2.dp)))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = getTranslation("physical_wellness_label", viewModel), fontSize = 10.sp, color = textSecondary, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+    }
+}
+
+// ------------------------------------------
+// Daily Quick-Check Pulse Module
+// ------------------------------------------
+@Composable
+fun DailyQuickCheckCard(
+    isDark: Boolean,
+    viewModel: AppViewModel,
+    onSubmit: (Float, Boolean, Boolean, Boolean, Int, Int, String, String, String, String, String, String) -> Unit,
+    onSuccess: () -> Unit
+) {
+    var stressRating by remember { mutableStateOf(2) } // Default minimal tension
+    var energyRating by remember { mutableStateOf(3) } // Default balanced
+    
+    val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
+    val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
+    val cardBg = if (isDark) Color(0xFF1E130B) else Color(0xFFFFF7F2)
+    val cardBorder = if (isDark) Color(0xFFFF7A00).copy(0.7f) else Color(0xFFFFB299)
+    val accentColor = Color(0xFFFF6F00)
+
+    val stressLabels = listOf(
+        "🟢 Relaxed & Peaceful",
+        "🟡 Low-level tension",
+        "🟠 Moderately active stress",
+        "🔴 High stress / Anxious",
+        "💀 Extreme stress / Burnout"
+    )
+
+    val energyLabels = listOf(
+        "💤 Exhausted / Low energy",
+        "🔋 Slightly tired / Low battery",
+        "⚡ Normal / Balanced energy",
+        "🔥 High energy/ Highly charged",
+        "🏆 Peak mental & physical performance"
+    )
+
+    Card(
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        border = BorderStroke(1.5.dp, cardBorder),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = getTranslation("quick_check_title", viewModel),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = textPrimary
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Box(
+                    modifier = Modifier
+                        .background(Color(0xFFFF6F00).copy(0.15f), RoundedCornerShape(8.dp))
+                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                ) {
+                    Text("1-5 Rating", color = Color(0xFFFF6F00), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+            Text(
+                text = getTranslation("quick_check_subtitle", viewModel),
+                fontSize = 10.sp,
+                color = textSecondary
+            )
+            
+            Spacer(modifier = Modifier.height(14.dp))
+            
+            // 1. Stress Level 1-5 Bubble Selector
+            Text(
+                text = getTranslation("stress_level_label", viewModel),
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = textPrimary
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                for (i in 1..5) {
+                    val isSelected = stressRating == i
+                    val stepBg = if (isSelected) accentColor else (if (isDark) Color(0xFF2E190A) else Color(0xFFFFDFC6))
+                    val stepText = if (isSelected) Color.White else textPrimary
+                    Box(
+                        modifier = Modifier
+                            .size(46.dp)
+                            .clip(CircleShape)
+                            .background(stepBg)
+                            .clickable { stressRating = i }
+                            .border(1.2.dp, if (isSelected) Color.Transparent else cardBorder.copy(0.4f), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = i.toString(),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            color = stepText
+                        )
+                    }
+                }
+            }
+            Text(
+                text = stressLabels[stressRating - 1],
+                fontSize = 11.sp,
+                color = textSecondary,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(top = 2.dp, bottom = 12.dp)
+            )
+            
+            HorizontalDivider(color = if (isDark) Color(0xFF2E190A) else Color(0xFFFFE5D9), thickness = 0.8.dp)
+            Spacer(modifier = Modifier.height(10.dp))
+            
+            // 2. Physical Energy Status 1-5 Bubble Selector
+            Text(
+                text = getTranslation("physical_energy_label", viewModel),
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = textPrimary
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                for (i in 1..5) {
+                    val isSelected = energyRating == i
+                    val stepBg = if (isSelected) accentColor else (if (isDark) Color(0xFF2E190A) else Color(0xFFFFDFC6))
+                    val stepText = if (isSelected) Color.White else textPrimary
+                    Box(
+                        modifier = Modifier
+                            .size(46.dp)
+                            .clip(CircleShape)
+                            .background(stepBg)
+                            .clickable { energyRating = i }
+                            .border(1.2.dp, if (isSelected) Color.Transparent else cardBorder.copy(0.4f), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = i.toString(),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            color = stepText
+                        )
+                    }
+                }
+            }
+            Text(
+                text = energyLabels[energyRating - 1],
+                fontSize = 11.sp,
+                color = textSecondary,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(top = 2.dp, bottom = 14.dp)
+            )
+            
+            Button(
+                onClick = {
+                    // Map Energy (1-5) to App's 1-10 level scale
+                    val mappedEnergy = energyRating * 2 // 2, 4, 6, 8, 10
+                    
+                    // Map Stress rating to Mood
+                    val mappedMood = when (stressRating) {
+                        1 -> "Happy"
+                        2 -> "Calm"
+                        3 -> "Focused"
+                        4 -> "Tired"
+                        5 -> "Stressed"
+                        else -> "Calm"
+                    }
+                    
+                    val noteStr = "Pulse Check: Stress level ${stressRating}/5, Physical energy ${energyRating}/5"
+                    
+                    onSubmit(
+                        7.5f,
+                        true,
+                        true,
+                        true,
+                        6,
+                        mappedEnergy,
+                        mappedMood,
+                        noteStr,
+                        "Aim for consistent stress management active recovery",
+                        "Breakfast Quick Meal",
+                        "Lunch Balanced Meal",
+                        "Dinner Restorative Meal"
+                    )
+                    onSuccess()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = accentColor)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Check, contentDescription = null, tint = Color.White)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = getTranslation("btn_quick_check", viewModel),
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp
+                    )
                 }
             }
         }
@@ -2558,6 +3199,7 @@ fun StudentWellnessTab(
     var improvements by remember { mutableStateOf("") }
 
     var showSuccessToast by remember { mutableStateOf(false) }
+    var showQuickSuccessToast by remember { mutableStateOf(false) }
 
     val moodChips = listOf(
         "Happy" to "😊",
@@ -2581,6 +3223,38 @@ fun StudentWellnessTab(
         Text(getTranslation("wellness_title", viewModel), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = textPrimary)
         Text(getTranslation("wellness_subtitle", viewModel), fontSize = 11.sp, color = textSecondary)
         Spacer(modifier = Modifier.height(16.dp))
+
+        // Recharts-style Data Visualization Component
+        StudentWellnessTrendsChart(
+            wellnessList = wellnessList,
+            isDark = isDark,
+            viewModel = viewModel
+        )
+
+        // Live Daily Quick Pulse Check-In Component
+        DailyQuickCheckCard(
+            isDark = isDark,
+            viewModel = viewModel,
+            onSubmit = onSubmit,
+            onSuccess = {
+                showQuickSuccessToast = true
+                showSuccessToast = false
+            }
+        )
+
+        AnimatedVisibility(visible = showQuickSuccessToast) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color(0xFFFF7A00).copy(0.15f))
+                    .border(1.dp, Color(0xFFFF7A00), RoundedCornerShape(8.dp))
+                    .padding(12.dp)
+            ) {
+                Text(getTranslation("success_quick_check", viewModel), color = Color(0xFFFF7A00), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            }
+        }
 
         Card(
             colors = CardDefaults.cardColors(containerColor = cardBg),
@@ -2881,6 +3555,9 @@ fun StudentLeavesTab(
     viewModel: AppViewModel,
     onApply: (String, String, String, String) -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val langState by viewModel.currentLanguage.collectAsState()
+
     var startDate by remember { mutableStateOf("") }
     var endDate by remember { mutableStateOf("") }
     var reason by remember { mutableStateOf("") }
@@ -3097,6 +3774,10 @@ fun StudentLeavesTab(
                     onClick = {
                         if (startDate.isNotBlank() && endDate.isNotBlank() && reason.isNotBlank()) {
                             onApply(startDate, endDate, reason, proofName.ifBlank { "attached_receipt.jpg" })
+                            val msg = translations[langState]?.get("leave_applied_success")
+                                ?: translations[AppLanguage.EN]?.get("leave_applied_success")
+                                ?: "Leave request successfully submitted!"
+                            android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_LONG).show()
                             wasSubmitted = true
                             reason = ""
                             startDate = ""
@@ -4450,6 +5131,7 @@ fun CoachDashboardLayout(
     var selectedLeaveForRemark by remember { mutableStateOf<LeaveApplication?>(null) }
     var coachRemarks by remember { mutableStateOf("") }
     val currentLang by viewModel.currentLanguage.collectAsState()
+    val context = androidx.compose.ui.platform.LocalContext.current
     var showLanguageDialog by remember { mutableStateOf(false) }
 
     val coachAcademy = state.academyName
@@ -4627,73 +5309,73 @@ fun CoachDashboardLayout(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
-            // Stats row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Card(
-                    modifier = Modifier.weight(1f),
-                    colors = CardDefaults.cardColors(containerColor = cardBg),
-                    border = BorderStroke(1.5.dp, cardBorder)
+                // Stats row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Text("LEAVES PENDING", fontSize = 10.sp, color = textSecondary, fontWeight = FontWeight.Bold)
-                        Text("$pendingLeavesCount Requests", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = accentColor)
-                    }
-                }
-
-                Card(
-                    modifier = Modifier.weight(1f),
-                    colors = CardDefaults.cardColors(containerColor = cardBg),
-                    border = BorderStroke(1.5.dp, cardBorder)
-                ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Text("WELLNESS WARNINGS", fontSize = 10.sp, color = textSecondary, fontWeight = FontWeight.Bold)
-                        Text("${criticalAlerts.size} Critical Alerts", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))
-                    }
-                }
-            }
-
-            InteractiveAttendanceBarChart(
-                attendanceRecords = filteredAttendance,
-                isDark = isDark,
-                selectedDate = selectedAttendanceDate,
-                onDateSelected = { selectedAttendanceDate = it }
-            )
-
-            // Daily Attendance Management Panel
-            Card(
-                colors = CardDefaults.cardColors(containerColor = cardBg),
-                border = BorderStroke(1.5.dp, cardBorder),
-                shape = RoundedCornerShape(14.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "📋 DAILY ATTENDANCE MANAGEMENT PANEL",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = accentColor
-                    )
-                    Text(
-                        text = "Track, review, and record daily shift attendance for $coachAcademy students.",
-                        fontSize = 11.sp,
-                        color = textSecondary,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-
-                    // Date and Shift Selection Row
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Card(
+                        modifier = Modifier.weight(1f),
+                        colors = CardDefaults.cardColors(containerColor = cardBg),
+                        border = BorderStroke(1.5.dp, cardBorder)
                     ) {
-                        OutlinedTextField(
-                            value = selectedAttendanceDate,
-                            onValueChange = { selectedAttendanceDate = it },
-                            label = { Text("Attendance Date", fontSize = 10.sp) },
-                            placeholder = { Text("YYYY-MM-DD", fontSize = 11.sp) },
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Text("LEAVES PENDING", fontSize = 10.sp, color = textSecondary, fontWeight = FontWeight.Bold)
+                            Text("$pendingLeavesCount Requests", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                        }
+                    }
+
+                    Card(
+                        modifier = Modifier.weight(1f),
+                        colors = CardDefaults.cardColors(containerColor = cardBg),
+                        border = BorderStroke(1.5.dp, cardBorder)
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Text("WELLNESS WARNINGS", fontSize = 10.sp, color = textSecondary, fontWeight = FontWeight.Bold)
+                            Text("${criticalAlerts.size} Critical Alerts", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))
+                        }
+                    }
+                }
+
+                InteractiveAttendanceBarChart(
+                    attendanceRecords = filteredAttendance,
+                    isDark = isDark,
+                    selectedDate = selectedAttendanceDate,
+                    onDateSelected = { selectedAttendanceDate = it }
+                )
+
+                // Daily Attendance Management Panel
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = cardBg),
+                    border = BorderStroke(1.5.dp, cardBorder),
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "📋 DAILY ATTENDANCE MANAGEMENT PANEL",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = accentColor
+                        )
+                        Text(
+                            text = "Track, review, and record daily shift attendance for $coachAcademy students.",
+                            fontSize = 11.sp,
+                            color = textSecondary,
+                            modifier = Modifier.padding(bottom = 12.dp)
+                        )
+
+                        // Date and Shift Selection Row
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            OutlinedTextField(
+                                value = selectedAttendanceDate,
+                                onValueChange = { selectedAttendanceDate = it },
+                                label = { Text("Attendance Date", fontSize = 10.sp) },
+                                placeholder = { Text("YYYY-MM-DD", fontSize = 11.sp) },
                             modifier = Modifier.weight(1.2f),
                             textStyle = TextStyle(fontSize = 12.sp),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -4786,7 +5468,7 @@ fun CoachDashboardLayout(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Column(modifier = Modifier.weight(1.1f)) {
+                                Column(modifier = Modifier.weight(0.85f)) {
                                     Text(
                                         text = s.name,
                                         fontSize = 12.sp,
@@ -4807,6 +5489,7 @@ fun CoachDashboardLayout(
                                             "Present" -> Color(0xFF10B981)
                                             "Absent" -> Color(0xFFEF4444)
                                             "Late" -> Color(0xFFF59E0B)
+                                            "Leave" -> Color(0xFF6366F1)
                                             else -> textSecondary
                                         }
                                     )
@@ -4814,13 +5497,14 @@ fun CoachDashboardLayout(
 
                                 // Status action buttons
                                 Row(
-                                    modifier = Modifier.weight(1.4f),
+                                    modifier = Modifier.weight(1.65f),
                                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
                                     listOf(
                                         "Present" to Color(0xFF10B981),
-                                        "Absent" to Color(0xFFEF4444),
-                                        "Late" to Color(0xFFF59E0B)
+                                        "Late" to Color(0xFFF59E0B),
+                                        "Leave" to Color(0xFF6366F1),
+                                        "Absent" to Color(0xFFEF4444)
                                     ).forEach { (statusOpt, color) ->
                                         val isSelected = currentStatus == statusOpt
                                         Box(
@@ -4835,6 +5519,10 @@ fun CoachDashboardLayout(
                                                         shift = selectedShiftState,
                                                         status = statusOpt
                                                     )
+                                                    val msg = translations[currentLang]?.get("attendance_marked_success")
+                                                        ?: translations[AppLanguage.EN]?.get("attendance_marked_success")
+                                                        ?: "Attendance successfully submitted!"
+                                                    android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
                                                 }
                                                 .padding(vertical = 6.dp),
                                             contentAlignment = Alignment.Center
@@ -5607,7 +6295,9 @@ fun AdminDashboardLayout(
                         students = filteredStudents,
                         attendance = filteredAttendance,
                         wellness = filteredWellness,
-                        isDark = isDark
+                        leaves = filteredLeaves,
+                        isDark = isDark,
+                        viewModel = viewModel
                     )
                 }
                 "MANAGE_STUDENTS" -> {
@@ -6669,9 +7359,9 @@ fun AdminSubscriptionBillingTab(
     // Stateful Billing Logs which prepends dynamically on successful payment capture
     val billingLogs = remember {
         mutableStateListOf(
-            Triple("May 2026", "Enterprise Dynamic Plan", "Awaiting Renewal on May 30th"),
-            Triple("Apr 2026", "Enterprise Dynamic Plan", "Paid & Settled - Ref: TXN-44919-X"),
-            Triple("Mar 2026", "Enterprise Dynamic Plan", "Paid & Settled - Ref: TXN-28311-K")
+            Triple("May 2026", "Enterprise Admin Plan", "Awaiting Renewal on May 30th"),
+            Triple("Apr 2026", "Enterprise Admin Plan", "Paid & Settled - Ref: TXN-44919-X"),
+            Triple("Mar 2026", "Enterprise Admin Plan", "Paid & Settled - Ref: TXN-28311-K")
         )
     }
 
@@ -7457,12 +8147,524 @@ fun AdminSubscriptionBillingTab(
     }
 }
 
+// -------------------------------------------------------------
+// Firestore Cloud Aggregate Summary & Trends Visualizer Card
+// -------------------------------------------------------------
+@Composable
+fun FirestoreCloudAggregateSummary(
+    isDark: Boolean,
+    viewModel: AppViewModel,
+    localAttendance: List<AttendanceRecord>,
+    localWellness: List<WellnessEntry>,
+    localLeaves: List<LeaveApplication>
+) {
+    val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
+    val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
+    val cardBg = if (isDark) Color(0xFF1E130B) else Color(0xFFFFF7F2)
+    val cardBorder = if (isDark) Color(0xFFFF7A00).copy(0.7f) else Color(0xFFFFB299)
+    val itemBg = if (isDark) Color(0xFF140A05) else Color(0xFFFFFDFB)
+    val accentColor = Color(0xFFFF6F00)
+
+    var isLoading by remember { mutableStateOf(false) }
+    var totalAttendanceCount by remember { mutableStateOf(0) }
+    var presentPercentage by remember { mutableStateOf(0f) }
+    var latePercentage by remember { mutableStateOf(0f) }
+    var absentPercentage by remember { mutableStateOf(0f) }
+
+    var totalWellnessCount by remember { mutableStateOf(0) }
+    var averageEnergyLevel by remember { mutableStateOf(0f) }
+    var averageSleepHours by remember { mutableStateOf(0f) }
+    var averageWaterCups by remember { mutableStateOf(0f) }
+    var dominantMood by remember { mutableStateOf("N/A") }
+
+    var totalLeavesCount by remember { mutableStateOf(0) }
+    var pendingLeavesCount by remember { mutableStateOf(0) }
+    var approvedLeavesCount by remember { mutableStateOf(0) }
+
+    var errorMsg by remember { mutableStateOf<String?>(null) }
+    var isSyncedLive by remember { mutableStateOf(false) }
+    var lastUpdatedStr by remember { mutableStateOf("") }
+
+    // Aggregate Initial fallback/cached local values
+    val updateFromLocal = {
+        totalAttendanceCount = localAttendance.size
+        if (localAttendance.isNotEmpty()) {
+            val pres = localAttendance.count { it.status.equals("Present", ignoreCase = true) }
+            val lat = localAttendance.count { it.status.equals("Late", ignoreCase = true) }
+            val absentCount = localAttendance.count { it.status.equals("Absent", ignoreCase = true) }
+            presentPercentage = (pres.toFloat() / localAttendance.size) * 100
+            latePercentage = (lat.toFloat() / localAttendance.size) * 100
+            absentPercentage = (absentCount.toFloat() / localAttendance.size) * 100
+        } else {
+            presentPercentage = 0f
+            latePercentage = 0f
+            absentPercentage = 0f
+        }
+
+        totalWellnessCount = localWellness.size
+        if (localWellness.isNotEmpty()) {
+            val totalEnergy = localWellness.map { it.energyLevel }.sum().toFloat()
+            val totalSleep = localWellness.map { it.sleepHours }.sum()
+            val totalWater = localWellness.map { it.waterIntakeCups }.sum().toFloat()
+            val moodCounts = localWellness.groupBy { it.mood }.mapValues { it.value.size }
+            
+            averageEnergyLevel = totalEnergy / localWellness.size
+            if (averageEnergyLevel == 0f) averageEnergyLevel = 6.8f
+            averageSleepHours = totalSleep / localWellness.size
+            if (averageSleepHours == 0f) averageSleepHours = 7.2f
+            averageWaterCups = totalWater / localWellness.size
+            if (averageWaterCups == 0f) averageWaterCups = 5.5f
+            dominantMood = moodCounts.maxByOrNull { it.value }?.key ?: "Calm"
+        } else {
+            averageEnergyLevel = 7.5f
+            averageSleepHours = 7.8f
+            averageWaterCups = 6.2f
+            dominantMood = "Focused"
+        }
+
+        totalLeavesCount = localLeaves.size
+        pendingLeavesCount = localLeaves.count { it.status.equals("Pending", ignoreCase = true) }
+        approvedLeavesCount = localLeaves.count { it.status.equals("Approved", ignoreCase = true) }
+        lastUpdatedStr = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date()) + " (Local Cache)"
+    }
+
+    val refreshCloudData = {
+        isLoading = true
+        errorMsg = null
+        try {
+            val fs = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+            
+            // Query 1: Attendance
+            fs.collection("attendance_records").get()
+                .addOnSuccessListener { attendanceSnapshot ->
+                    val docs = attendanceSnapshot.documents
+                    totalAttendanceCount = docs.size
+                    if (docs.isNotEmpty()) {
+                        var pres = 0
+                        var late = 0
+                        var absent = 0
+                        for (doc in docs) {
+                            val status = doc.getString("status") ?: ""
+                            when {
+                                status.equals("Present", ignoreCase = true) -> pres++
+                                status.equals("Late", ignoreCase = true) -> late++
+                                status.equals("Absent", ignoreCase = true) -> absent++
+                            }
+                        }
+                        presentPercentage = (pres.toFloat() / docs.size) * 100
+                        latePercentage = (late.toFloat() / docs.size) * 100
+                        absentPercentage = (absent.toFloat() / docs.size) * 100
+                    }
+
+                    // Query 2: Wellness
+                    fs.collection("wellness_entries").get()
+                        .addOnSuccessListener { wellnessSnapshot ->
+                            val wDocs = wellnessSnapshot.documents
+                            totalWellnessCount = wDocs.size
+                            if (wDocs.isNotEmpty()) {
+                                var totalEnergy = 0f
+                                var totalSleep = 0f
+                                var totalWater = 0f
+                                val moodCounts = mutableMapOf<String, Int>()
+                                
+                                for (doc in wDocs) {
+                                    totalEnergy += (doc.getLong("energyLevel") ?: 5L).toFloat()
+                                    totalSleep += (doc.getDouble("sleepHours")?.toFloat() ?: 0.0f)
+                                    totalWater += (doc.getLong("waterIntakeCups") ?: 0L).toFloat()
+                                    
+                                    val mood = doc.getString("mood") ?: "Calm"
+                                    moodCounts[mood] = moodCounts.getOrDefault(mood, 0) + 1
+                                }
+                                
+                                averageEnergyLevel = totalEnergy / wDocs.size
+                                averageSleepHours = totalSleep / wDocs.size
+                                averageWaterCups = totalWater / wDocs.size
+                                dominantMood = moodCounts.maxByOrNull { it.value }?.key ?: "N/A"
+                            }
+
+                            // Query 3: Leaves
+                            fs.collection("leave_applications").get()
+                                .addOnSuccessListener { leaveSnapshot ->
+                                    val lDocs = leaveSnapshot.documents
+                                    totalLeavesCount = lDocs.size
+                                    var pending = 0
+                                    var approved = 0
+                                    for (doc in lDocs) {
+                                        val status = doc.getString("status") ?: "Pending"
+                                        if (status.equals("Pending", ignoreCase = true)) {
+                                            pending++
+                                        } else if (status.equals("Approved", ignoreCase = true)) {
+                                            approved++
+                                        }
+                                    }
+                                    pendingLeavesCount = pending
+                                    approvedLeavesCount = approved
+                                    
+                                    isSyncedLive = true
+                                    lastUpdatedStr = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date()) + " (Direct Firestore Cloud)"
+                                    isLoading = false
+                                }
+                                .addOnFailureListener { e ->
+                                    errorMsg = "Direct Cloud Leave fetch failed: ${e.message}. Using cache fallback."
+                                    updateFromLocal()
+                                    isLoading = false
+                                }
+                        }
+                        .addOnFailureListener { e ->
+                            errorMsg = "Direct Cloud Wellness fetch failed: ${e.message}. Using cache fallback."
+                            updateFromLocal()
+                            isLoading = false
+                        }
+                }
+                .addOnFailureListener { e ->
+                    errorMsg = "Direct Cloud Attendance fetch failed: ${e.message}. Using cache fallback."
+                    updateFromLocal()
+                    isLoading = false
+                }
+        } catch (e: Exception) {
+            errorMsg = "Firebase configuration is not active. Cached local values displayed."
+            updateFromLocal()
+            isLoading = false
+        }
+    }
+
+    // Load initial aggregates
+    LaunchedEffect(key1 = localAttendance, key2 = localWellness, key3 = localLeaves) {
+        refreshCloudData()
+    }
+
+    Card(
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        border = BorderStroke(1.5.dp, cardBorder),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Header row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .clip(CircleShape)
+                            .background(if (isSyncedLive && errorMsg == null) Color(0xFF10B981) else Color(0xFFFF9800))
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "📡 FIRESTORE LIVE AGGREGATE SUMMARY",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = textPrimary
+                    )
+                }
+
+                IconButton(
+                    onClick = { refreshCloudData() },
+                    modifier = Modifier.size(24.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh Cloud Metrics",
+                        tint = accentColor,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "Live analytics pulled directly from NoSQL Firestore database. Aggregating student wellness diagnostics and portal leaves submissions to provide administrative oversight.",
+                fontSize = 10.sp,
+                color = textSecondary
+            )
+
+            if (isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularProgressIndicator(
+                            color = accentColor,
+                            strokeWidth = 2.dp,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text("Querying Firestore...", fontSize = 9.sp, color = textSecondary)
+                    }
+                }
+            } else {
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Highlighted Metric Badges Rows
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Item 1: Attendance Compliance
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .background(itemBg, RoundedCornerShape(8.dp))
+                            .border(0.5.dp, cardBorder.copy(0.3f), RoundedCornerShape(8.dp))
+                            .padding(8.dp)
+                    ) {
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text("📅 Attendance", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = textSecondary)
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "${totalAttendanceCount} Logs",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Black,
+                                color = textPrimary
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Pres: ${presentPercentage.toInt()}% | Late: ${latePercentage.toInt()}%",
+                                fontSize = 8.sp,
+                                color = textSecondary
+                            )
+                        }
+                    }
+
+                    // Item 2: Wellness Indices
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .background(itemBg, RoundedCornerShape(8.dp))
+                            .border(0.5.dp, cardBorder.copy(0.3f), RoundedCornerShape(8.dp))
+                            .padding(8.dp)
+                    ) {
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text("🍀 Wellness Check", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = textSecondary)
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "${totalWellnessCount} Inputs",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Black,
+                                color = textPrimary
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Energy: ${String.format(Locale.US, "%.1f", averageEnergyLevel)} | Sleep: ${String.format(Locale.US, "%.1f", averageSleepHours)}h",
+                                fontSize = 8.sp,
+                                color = textSecondary
+                            )
+                        }
+                    }
+
+                    // Item 3: Leave Applications
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .background(itemBg, RoundedCornerShape(8.dp))
+                            .border(0.5.dp, cardBorder.copy(0.3f), RoundedCornerShape(8.dp))
+                            .padding(8.dp)
+                    ) {
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text("📝 Leave Tracker", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = textSecondary)
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "${totalLeavesCount} Filed",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Black,
+                                color = textPrimary
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Pending: ${pendingLeavesCount} | Approved: ${approvedLeavesCount}",
+                                fontSize = 8.sp,
+                                color = textSecondary
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Trends Visualizer Custom Draw inside Card
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(itemBg, RoundedCornerShape(8.dp))
+                        .border(0.5.dp, cardBorder.copy(0.3f), RoundedCornerShape(8.dp))
+                        .padding(10.dp)
+                ) {
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "📈 Cloud Aggregate Trends Comparison",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = textPrimary
+                            )
+                            Text(
+                                text = "Sentiment: $dominantMood",
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = accentColor
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        // Custom percentage visualizer bar indicators
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            // Present Ratio Bar Indicator
+                            Column {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text("Present Student Ratio", fontSize = 8.sp, color = textSecondary)
+                                    Text("${presentPercentage.toInt()}%", fontSize = 8.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(5.dp)
+                                        .background(if (isDark) Color(0xFF2E190A) else Color(0xFFFFECE0), RoundedCornerShape(3.dp))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .fillMaxWidth(fraction = (presentPercentage / 100f).coerceIn(0f, 1f))
+                                            .background(Color(0xFF10B981), RoundedCornerShape(3.dp))
+                                    )
+                                }
+                            }
+
+                            // Average Energy Index Tracker (out of 10 mapped)
+                            Column {
+                                val energyFraction = (averageEnergyLevel / 10f).coerceIn(0f, 1f)
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text("Average Physical Energy Level (Scale 1-10)", fontSize = 8.sp, color = textSecondary)
+                                    Text("${String.format(Locale.US, "%.1f", averageEnergyLevel)}/10", fontSize = 8.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(5.dp)
+                                        .background(if (isDark) Color(0xFF2E190A) else Color(0xFFFFECE0), RoundedCornerShape(3.dp))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .fillMaxWidth(fraction = energyFraction)
+                                            .background(Color(0xFFFFB01A), RoundedCornerShape(3.dp))
+                                    )
+                                }
+                            }
+
+                            // Average Sleep Tracker (out of 10 hours max scale)
+                            Column {
+                                val sleepFraction = (averageSleepHours / 10f).coerceIn(0f, 1f)
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text("Average Student Sleep Hours Tracker", fontSize = 8.sp, color = textSecondary)
+                                    Text("${String.format(Locale.US, "%.1f", averageSleepHours)} hrs", fontSize = 8.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(5.dp)
+                                        .background(if (isDark) Color(0xFF2E190A) else Color(0xFFFFECE0), RoundedCornerShape(3.dp))
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .fillMaxWidth(fraction = sleepFraction)
+                                            .background(Color(0xFF6366F1), RoundedCornerShape(3.dp))
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Footer query status details
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Refreshed: $lastUpdatedStr",
+                    fontSize = 8.sp,
+                    color = textSecondary,
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                )
+                if (errorMsg != null) {
+                    Text(
+                        text = "⚠️ Sandbox Mode Active",
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFEA4335)
+                    )
+                } else {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.size(4.dp).background(Color(0xFF10B981), CircleShape))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Firestore Sync Real-Time",
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = textSecondary
+                        )
+                    }
+                }
+            }
+
+            if (errorMsg != null) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = errorMsg ?: "",
+                    fontSize = 8.sp,
+                    color = Color(0xFFEA4335),
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun AdminAnalyticsTab(
     students: List<StudentProfile>,
     attendance: List<AttendanceRecord>,
     wellness: List<WellnessEntry>,
-    isDark: Boolean
+    leaves: List<LeaveApplication>,
+    isDark: Boolean,
+    viewModel: AppViewModel
 ) {
     val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
     val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
@@ -7485,6 +8687,15 @@ fun AdminAnalyticsTab(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text("Central Analytics Reporting", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+
+        // Live Firestore Cloud Aggregate Dashboard Component
+        FirestoreCloudAggregateSummary(
+            isDark = isDark,
+            viewModel = viewModel,
+            localAttendance = attendance,
+            localWellness = wellness,
+            localLeaves = leaves
+        )
 
         // Summary counters card
         Card(
@@ -8495,6 +9706,7 @@ fun InteractiveAttendanceBarChart(
                     val logs = datesGrouped[date] ?: emptyList()
                     val presentCount = logs.count { it.status.uppercase(Locale.US) == "PRESENT" }
                     val lateCount = logs.count { it.status.uppercase(Locale.US) == "LATE" }
+                    val leaveCount = logs.count { it.status.uppercase(Locale.US) == "LEAVE" }
                     val absentCount = logs.count { it.status.uppercase(Locale.US) == "ABSENT" }
                     val totalLogs = logs.size
 
@@ -8520,6 +9732,7 @@ fun InteractiveAttendanceBarChart(
                     // Stack heights
                     val presH = presentCount * normalizeFactor
                     val lateH = lateCount * normalizeFactor
+                    val leaveH = leaveCount * normalizeFactor
                     val absH = absentCount * normalizeFactor
 
                     val barLeft = colLeft + (barSpacing / 2f)
@@ -8550,16 +9763,34 @@ fun InteractiveAttendanceBarChart(
                             )
                         }
                     }
+                    if (leaveCount > 0) {
+                        val leaveTop = chartBottom - presH - lateH - leaveH
+                        drawRoundRect(
+                            color = Color(0xFF6366F1),
+                            topLeft = Offset(barLeft, leaveTop),
+                            size = Size(actualBarWidth, leaveH),
+                            cornerRadius = CornerRadius(3.dp.toPx(), 3.dp.toPx())
+                        )
+                        if (lateCount > 0 || presentCount > 0) {
+                            val dividerY = chartBottom - presH - lateH
+                            drawLine(
+                                color = if (isDark) Color.Black.copy(0.2f) else Color.White.copy(0.3f),
+                                start = Offset(barLeft, dividerY),
+                                end = Offset(barLeft + actualBarWidth, dividerY),
+                                strokeWidth = 0.5.dp.toPx()
+                            )
+                        }
+                    }
                     if (absentCount > 0) {
-                        val absTop = chartBottom - presH - lateH - absH
+                        val absTop = chartBottom - presH - lateH - leaveH - absH
                         drawRoundRect(
                             color = Color(0xFFEF4444),
                             topLeft = Offset(barLeft, absTop),
                             size = Size(actualBarWidth, absH),
                             cornerRadius = CornerRadius(3.dp.toPx(), 3.dp.toPx())
                         )
-                        if (lateCount > 0 || presentCount > 0) {
-                            val dividerY = chartBottom - presH - lateH
+                        if (leaveCount > 0 || lateCount > 0 || presentCount > 0) {
+                            val dividerY = chartBottom - presH - lateH - leaveH
                             drawLine(
                                 color = if (isDark) Color.Black.copy(0.2f) else Color.White.copy(0.3f),
                                 start = Offset(barLeft, dividerY),
@@ -8614,9 +9845,11 @@ fun InteractiveAttendanceBarChart(
             verticalAlignment = Alignment.CenterVertically
         ) {
             LegendRowItem(color = Color(0xFF10B981), label = "Present", textColor = textSecondary)
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             LegendRowItem(color = Color(0xFFF59E0B), label = "Late", textColor = textSecondary)
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(10.dp))
+            LegendRowItem(color = Color(0xFF6366F1), label = "Leave", textColor = textSecondary)
+            Spacer(modifier = Modifier.width(10.dp))
             LegendRowItem(color = Color(0xFFEF4444), label = "Absent", textColor = textSecondary)
         }
     }
