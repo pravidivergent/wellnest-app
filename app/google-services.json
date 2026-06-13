@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "999261144041",
+    "project_id": "wellnest-9e75f",
+    "storage_bucket": "wellnest-9e75f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999261144041:android:f5882bba71931966c5c178",
+        "android_client_info": {
+          "package_name": "com.aistudio.welltrack.trkzjpa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrg8JaA8PRmXGfDm1VYwmxS4AnEceOZi0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
