@@ -23,13 +23,7 @@ import com.example.data.FirestoreSyncManager
 class MainActivity : ComponentActivity() {
     
     private val database by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "attend_well_database"
-        )
-        .fallbackToDestructiveMigration()
-        .build()
+        AppDatabase.getInstance(applicationContext)
     }
 
     private val repository by lazy {
@@ -43,13 +37,25 @@ class MainActivity : ComponentActivity() {
             userAccountDao = database.userAccountDao(),
             coachDao = database.coachDao(),
             tournamentDao = database.tournamentDao(),
-            studentDocumentDao = database.studentDocumentDao()
+            studentDocumentDao = database.studentDocumentDao(),
+            automatedEmailAlertDao = database.automatedEmailAlertDao()
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Ask for Notification Permissions on Android 13+ (API 33)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            val permissionCheck = checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+            if (permissionCheck != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
+        }
+
+        // Schedule Daily Recovery / Wellness Check-In reminders
+        DailyWellnessReminderReceiver.scheduleDailyReminder(applicationContext)
 
         // Initialize Cloud Synchronization Layer
         val syncManager = FirestoreSyncManager(applicationContext, database)
@@ -62,7 +68,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             // Simple DI Factory definition inside Content context
-            val viewModelFactory = AppViewModelFactory(repository)
+            val viewModelFactory = AppViewModelFactory(repository, applicationContext)
             val viewModel = androidx.lifecycle.viewmodel.compose.viewModel<AppViewModel>(factory = viewModelFactory)
             val isDark by viewModel.isDarkMode.collectAsState()
 

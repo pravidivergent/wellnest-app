@@ -30,18 +30,25 @@ enum class AppLanguage(val code: String, val displayName: String) {
     TA("ta", "தமிழ்")
 }
 
-class AppViewModel(private val repository: AppRepository) : ViewModel() {
+class AppViewModel(
+    private val repository: AppRepository,
+    private val context: android.content.Context
+) : ViewModel() {
+
+    private val prefs = context.getSharedPreferences("AthlePulsePrefs", android.content.Context.MODE_PRIVATE)
 
     // Authentication States
     private val _authState = MutableStateFlow<AuthState>(AuthState.Unauthenticated)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     // Dark/Light Mode Setting State
-    private val _isDarkMode = MutableStateFlow(false)
+    private val _isDarkMode = MutableStateFlow(prefs.getBoolean("isDarkMode", false))
     val isDarkMode: StateFlow<Boolean> = _isDarkMode.asStateFlow()
 
     fun toggleDarkMode() {
-        _isDarkMode.value = !_isDarkMode.value
+        val nextVal = !_isDarkMode.value
+        _isDarkMode.value = nextVal
+        prefs.edit().putBoolean("isDarkMode", nextVal).apply()
     }
 
     // Language state
@@ -100,6 +107,12 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
     )
 
     val allTournaments = repository.allTournamentsFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+    val allAlerts = repository.allAlertsFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
@@ -693,6 +706,8 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
         dinnerMenu: String = ""
     ) {
         val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        val isCritical = sleepHours <= 5f || energy <= 3 || mood == "Tired" || mood == "Stressed" || waterCups < 4 || !brekkie
+        
         viewModelScope.launch {
             repository.insertWellnessEntry(
                 WellnessEntry(
@@ -712,6 +727,108 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
                     dinnerMenu = dinnerMenu
                 )
             )
+
+            if (isCritical) {
+                // Find student profile to get name and academy
+                val studentProfile = repository.getStudentProfileDirect(registerNumber)
+                val studentName = studentProfile?.name ?: "Student ($registerNumber)"
+                val studentAcademyName = studentProfile?.academyName ?: ""
+
+                // Fetch all registered coaches and match by academy
+                val matchedCoaches = allCoaches.value.filter {
+                    it.academyName.equals(studentAcademyName, ignoreCase = true)
+                }
+
+                if (matchedCoaches.isNotEmpty()) {
+                    matchedCoaches.forEach { coach ->
+                        val coachEmail = "${coach.name.replace(" ", "").lowercase()}@academy.com"
+                        val alertSubject = "⚠️ [CRITICAL WELLNESS ALERT] At-Risk Athlete Status: $studentName"
+                        val alertBody = """
+                            Dear ${coach.name},
+
+                            This is an automated wellness notification dispatched from the AthlePulse Live Performance Center.
+
+                            Student-athlete $studentName (Register: $registerNumber) has logged a daily wellness score that triggers our 'Critical Sports Health Intervention' threshold.
+
+                            🔴 FLAGGED PARAMETERS:
+                            ${if (sleepHours <= 5f) "❌ Insufficient Rest: $sleepHours hrs of sleep (Requires >= 6.0 hrs)" else "✅ Sufficient Rest: $sleepHours hrs"}
+                            ${if (energy <= 3) "❌ Low Physical Energy: $energy/10 (Requires >= 4/10)" else "✅ Normal Physical Energy: $energy/10"}
+                            ${if (mood == "Tired" || mood == "Stressed") "❌ Poor Mental/Emotional State: $mood (Concern status)" else "✅ Positive Emotional State: $mood"}
+                            ${if (waterCups < 4) "❌ Dehydration Risk: $waterCups cups of water (Requires >= 4 cups)" else "✅ Satisfactory Hydration: $waterCups cups"}
+                            ${if (!brekkie) "❌ Nutrition Gap: Skipped Breakfast today" else "✅ Nutritious Start: Had breakfast"}
+
+                            📝 Athlete's Personal Remarks & Notes:
+                            "$notes"
+
+                            💡 Aspirational Improvement / Goals:
+                            "$improvements"
+
+                            🎯 REQUIRED INTERVENTION ACTION:
+                            We recommend opening your Coaching Portal Command Desk to coordinate an intervention, adjust today's training intensity, schedule a counseling check, or adjust their nutritional/water intake plans.
+
+                            This automated email notification was dispatched with SSL/SMTPS encryption to ${coach.name}.
+
+                            Sincerely,
+                            AthlePulse Live Performance Wellness System
+                        """.trimIndent()
+
+                        repository.insertAlert(
+                            AutomatedEmailAlert(
+                                studentRegisterNumber = registerNumber,
+                                studentName = studentName,
+                                coachName = coach.name,
+                                coachEmail = coachEmail,
+                                subject = alertSubject,
+                                body = alertBody,
+                                status = "Sent",
+                                sleepHours = sleepHours,
+                                energyLevel = energy,
+                                mood = mood
+                            )
+                        )
+                    }
+                } else {
+                    // Fallback to default coaching address
+                    val coachEmailVal = "coaching.desk@springfield.edu"
+                    val alertSubject = "⚠️ [CRITICAL WELLNESS ALERT] At-Risk Athlete Status: $studentName"
+                    val alertBody = """
+                        Dear Academy Coaching Desk,
+
+                        This is an automated wellness notification dispatched from the AthlePulse Live Performance Center.
+
+                        Student-athlete $studentName (Register: $registerNumber) has checked in a critical sports wellness score.
+
+                        🔴 FLAGGED PARAMETERS:
+                        - Sleep Duration: $sleepHours hrs
+                        - Physical Energy: $energy / 10
+                        - Mood Status: $mood
+                        - Hydration Level: $waterCups cups (Had breakfast: ${if (brekkie) "Yes" else "No"})
+
+                        Athlete Personal Remarks:
+                        "$notes"
+
+                        Please coordinate with the physical training and recovery lead to review their performance metrics.
+
+                        Sincerely,
+                        AthlePulse Live Performance Wellness System
+                    """.trimIndent()
+
+                    repository.insertAlert(
+                        AutomatedEmailAlert(
+                            studentRegisterNumber = registerNumber,
+                            studentName = studentName,
+                            coachName = "Academy Coaching Team",
+                            coachEmail = coachEmailVal,
+                            subject = alertSubject,
+                            body = alertBody,
+                            status = "Sent",
+                            sleepHours = sleepHours,
+                            energyLevel = energy,
+                            mood = mood
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -956,11 +1073,14 @@ class AppViewModel(private val repository: AppRepository) : ViewModel() {
     }
 }
 
-class AppViewModelFactory(private val repository: AppRepository) : ViewModelProvider.Factory {
+class AppViewModelFactory(
+    private val repository: AppRepository,
+    private val context: android.content.Context
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AppViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return AppViewModel(repository) as T
+            return AppViewModel(repository, context) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

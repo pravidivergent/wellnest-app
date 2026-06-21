@@ -13,11 +13,25 @@ class AppRepository(
     private val coachDao: CoachDao,
     private val tournamentDao: TournamentDao,
     private val studentDocumentDao: StudentDocumentDao,
+    private val automatedEmailAlertDao: AutomatedEmailAlertDao,
     private var firestoreSyncManager: FirestoreSyncManager? = null
 ) {
     // Inject sync manager dynamically
     fun setSyncManager(manager: FirestoreSyncManager) {
         this.firestoreSyncManager = manager
+    }
+
+    // Automated Email Alerts Actions
+    val allAlertsFlow: Flow<List<AutomatedEmailAlert>> = automatedEmailAlertDao.getAllAlertsFlow()
+
+    suspend fun insertAlert(alert: AutomatedEmailAlert) {
+        automatedEmailAlertDao.insertAlert(alert)
+        val docId = "${alert.studentRegisterNumber}_${alert.timestamp}"
+        firestoreSyncManager?.uploadToCloud("automated_email_alerts", docId, alert)
+    }
+
+    suspend fun deleteAllAlerts() {
+        automatedEmailAlertDao.deleteAllAlerts()
     }
 
     // Tournament Actions

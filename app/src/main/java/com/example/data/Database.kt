@@ -131,6 +131,22 @@ data class StudentDocument(
     val timestamp: Long = System.currentTimeMillis()
 )
 
+@Entity(tableName = "automated_email_alerts")
+data class AutomatedEmailAlert(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val studentRegisterNumber: String,
+    val studentName: String,
+    val coachName: String,
+    val coachEmail: String,
+    val subject: String,
+    val body: String,
+    val timestamp: Long = System.currentTimeMillis(),
+    val status: String, // "Sent" or "Failed" / "Pending"
+    val sleepHours: Float,
+    val energyLevel: Int,
+    val mood: String
+)
+
 // 2. DAOs
 @Dao
 interface UserAccountDao {
@@ -200,6 +216,9 @@ interface WellnessDao {
 
     @Query("SELECT * FROM wellness_entries ORDER BY date DESC")
     fun getAllWellnessEntriesFlow(): Flow<List<WellnessEntry>>
+
+    @Query("SELECT * FROM wellness_entries WHERE registerNumber = :regNo AND date = :todayLimit LIMIT 1")
+    suspend fun getWellnessEntryForDateDirect(regNo: String, todayLimit: String): WellnessEntry?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWellnessEntry(entry: WellnessEntry)
@@ -280,6 +299,18 @@ interface StudentDocumentDao {
     suspend fun deleteDocument(document: StudentDocument)
 }
 
+@Dao
+interface AutomatedEmailAlertDao {
+    @Query("SELECT * FROM automated_email_alerts ORDER BY timestamp DESC")
+    fun getAllAlertsFlow(): kotlinx.coroutines.flow.Flow<List<AutomatedEmailAlert>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAlert(alert: AutomatedEmailAlert)
+
+    @Query("DELETE FROM automated_email_alerts")
+    suspend fun deleteAllAlerts()
+}
+
 // 3. Database
 @Database(
     entities = [
@@ -292,9 +323,10 @@ interface StudentDocumentDao {
         UserAccount::class,
         CoachProfile::class,
         Tournament::class,
-        StudentDocument::class
+        StudentDocument::class,
+        AutomatedEmailAlert::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -308,4 +340,24 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun coachDao(): CoachDao
     abstract fun tournamentDao(): TournamentDao
     abstract fun studentDocumentDao(): StudentDocumentDao
+    abstract fun automatedEmailAlertDao(): AutomatedEmailAlertDao
+
+    companion object {
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+
+        fun getInstance(context: android.content.Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = androidx.room.Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "attend_well_database"
+                )
+                .fallbackToDestructiveMigration()
+                .build()
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
 }
