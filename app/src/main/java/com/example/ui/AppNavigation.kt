@@ -693,7 +693,7 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
     var hasError by remember { mutableStateOf(false) }
     val isDark by viewModel.isDarkMode.collectAsState()
     val currentLang by viewModel.currentLanguage.collectAsState()
-    var showLanguageDialog by remember { mutableStateOf(false) }
+    var showSettingsDialog by remember { mutableStateOf(false) }
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -706,54 +706,20 @@ fun RoleSelectionAndLoginScreen(viewModel: AppViewModel) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            IconButton(onClick = { viewModel.toggleDarkMode() }) {
+            IconButton(onClick = { showSettingsDialog = true }) {
                 Icon(
-                    imageVector = if (isDark) Icons.Default.LightMode else Icons.Default.DarkMode,
-                    contentDescription = "Toggle Theme",
-                    tint = if (isDark) Color(0xFFFF7A00) else Color(0xFF2E190A)
-                )
-            }
-            IconButton(onClick = { showLanguageDialog = true }) {
-                Icon(
-                    imageVector = Icons.Default.Language,
-                    contentDescription = "Change Language",
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "App Settings",
                     tint = if (isDark) Color(0xFFFF7A00) else Color(0xFF2E190A)
                 )
             }
         }
 
-        if (showLanguageDialog) {
-            AlertDialog(
-                onDismissRequest = { showLanguageDialog = false },
-                title = { Text(getTranslation("switch_lang_title", viewModel), fontWeight = FontWeight.Bold, color = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)) },
-                text = {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text(getTranslation("switch_lang_desc", viewModel), fontSize = 13.sp, color = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00))
-                        Spacer(modifier = Modifier.height(4.dp))
-                        AppLanguage.values().forEach { lang ->
-                            Button(
-                                onClick = {
-                                    viewModel.setLanguage(lang)
-                                    showLanguageDialog = false
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (currentLang == lang) Color(0xFFFF7A00) else (if (isDark) Color(0xFF2E190A) else Color(0xFFFFDFC6))
-                                )
-                            ) {
-                                Text(lang.displayName, color = if (currentLang == lang) Color.White else (if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)), fontWeight = FontWeight.Bold)
-                            }
-                        }
-                    }
-                },
-                confirmButton = {},
-                dismissButton = {
-                    TextButton(onClick = { showLanguageDialog = false }) {
-                        Text(getTranslation("cancel", viewModel), color = Color(0xFFFF7A00))
-                    }
-                },
-                containerColor = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC),
-                modifier = Modifier.border(1.5.dp, if (isDark) Color(0xFFFF7A00).copy(0.7f) else Color(0xFFFF9E7D), RoundedCornerShape(28.dp))
+        if (showSettingsDialog) {
+            AppSettingsDialog(
+                viewModel = viewModel,
+                isDark = isDark,
+                onDismiss = { showSettingsDialog = false }
             )
         }
 
@@ -1554,7 +1520,7 @@ fun StudentDashboardLayout(
     var showEditProfile by remember { mutableStateOf(false) }
     val isDark by viewModel.isDarkMode.collectAsState()
     val currentLang by viewModel.currentLanguage.collectAsState()
-    var showLanguageDialog by remember { mutableStateOf(false) }
+    var showSettingsDialog by remember { mutableStateOf(false) }
     val topBarBg = if (isDark) Color(0xFF16112C) else Color(0xFFFCF5F7)
     val textPrimary = if (isDark) Color.White else Color(0xFF180A22)
     val textSecondary = if (isDark) Color(0xFFE2E0FF).copy(0.7f) else Color(0xFF331B47)
@@ -1626,17 +1592,10 @@ fun StudentDashboardLayout(
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = { viewModel.toggleDarkMode() }) {
+                        IconButton(onClick = { showSettingsDialog = true }) {
                             Icon(
-                                imageVector = if (isDark) Icons.Default.LightMode else Icons.Default.DarkMode,
-                                contentDescription = "Toggle Theme",
-                                tint = if (isDark) Color(0xFFFF7A00) else Color(0xFF2E190A)
-                            )
-                        }
-                        IconButton(onClick = { showLanguageDialog = true }) {
-                            Icon(
-                                imageVector = Icons.Default.Language,
-                                contentDescription = "Change Language",
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "App Settings",
                                 tint = if (isDark) Color(0xFFFF7A00) else Color(0xFF2E190A)
                             )
                         }
@@ -1649,38 +1608,11 @@ fun StudentDashboardLayout(
                             )
                         }
 
-                        if (showLanguageDialog) {
-                            AlertDialog(
-                                onDismissRequest = { showLanguageDialog = false },
-                                title = { Text(getTranslation("switch_lang_title", viewModel), fontWeight = FontWeight.Bold, color = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)) },
-                                text = {
-                                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                        Text(getTranslation("switch_lang_desc", viewModel), fontSize = 13.sp, color = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00))
-                                        Spacer(modifier = Modifier.height(4.dp))
-                                        AppLanguage.values().forEach { lang ->
-                                            Button(
-                                                onClick = {
-                                                    viewModel.setLanguage(lang)
-                                                    showLanguageDialog = false
-                                                },
-                                                modifier = Modifier.fillMaxWidth(),
-                                                colors = ButtonDefaults.buttonColors(
-                                                    containerColor = if (currentLang == lang) Color(0xFFFF7A00) else (if (isDark) Color(0xFF2E190A) else Color(0xFFFFDFC6))
-                                                )
-                                            ) {
-                                                Text(lang.displayName, color = if (currentLang == lang) Color.White else (if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)), fontWeight = FontWeight.Bold)
-                                            }
-                                        }
-                                    }
-                                },
-                                confirmButton = {},
-                                dismissButton = {
-                                    TextButton(onClick = { showLanguageDialog = false }) {
-                                        Text(getTranslation("cancel", viewModel), color = Color(0xFFFF7A00))
-                                    }
-                                },
-                                containerColor = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC),
-                                modifier = Modifier.border(1.5.dp, if (isDark) Color(0xFFFF7A00).copy(0.7f) else Color(0xFFFF9E7D), RoundedCornerShape(28.dp))
+                        if (showSettingsDialog) {
+                            AppSettingsDialog(
+                                viewModel = viewModel,
+                                isDark = isDark,
+                                onDismiss = { showSettingsDialog = false }
                             )
                         }
                     }
@@ -4701,6 +4633,11 @@ fun StudentLeavesTab(
     var showStartDatePicker by remember { mutableStateOf(false) }
     var showEndDatePicker by remember { mutableStateOf(false) }
 
+    // Client-side validation states
+    var startDateError by remember { mutableStateOf<String?>(null) }
+    var endDateError by remember { mutableStateOf<String?>(null) }
+    var reasonError by remember { mutableStateOf<String?>(null) }
+
     if (showConfirmation) {
         SubmissionConfirmationDialog(
             isDark = isDark,
@@ -4725,6 +4662,9 @@ fun StudentLeavesTab(
                 startDate = ""
                 endDate = ""
                 proofName = ""
+                startDateError = null
+                endDateError = null
+                reasonError = null
             },
             onDismiss = {
                 showConfirmation = false
@@ -4749,6 +4689,16 @@ fun StudentLeavesTab(
                     onClick = {
                         datePickerState.selectedDateMillis?.let {
                             startDate = dateFormatter.format(Date(it))
+                            startDateError = null
+                            if (endDate.isNotBlank()) {
+                                try {
+                                    val startParsed = dateFormatter.parse(startDate)
+                                    val endParsed = dateFormatter.parse(endDate)
+                                    if (startParsed != null && endParsed != null && !endParsed.before(startParsed)) {
+                                        endDateError = null
+                                    }
+                                } catch (e: Exception) {}
+                            }
                         }
                         showStartDatePicker = false
                     }
@@ -4784,6 +4734,18 @@ fun StudentLeavesTab(
                     onClick = {
                         datePickerState.selectedDateMillis?.let {
                             endDate = dateFormatter.format(Date(it))
+                            endDateError = null
+                            if (startDate.isNotBlank()) {
+                                try {
+                                    val startParsed = dateFormatter.parse(startDate)
+                                    val endParsed = dateFormatter.parse(endDate)
+                                    if (startParsed != null && endParsed != null && endParsed.before(startParsed)) {
+                                        endDateError = "End date cannot be before start date"
+                                    } else {
+                                        endDateError = null
+                                    }
+                                } catch (e: Exception) {}
+                            }
                         }
                         showEndDatePicker = false
                     }
@@ -4840,6 +4802,7 @@ fun StudentLeavesTab(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable { showStartDatePicker = true }
+                                .testTag("start_date_box")
                         ) {
                             OutlinedTextField(
                                 value = startDate,
@@ -4847,14 +4810,24 @@ fun StudentLeavesTab(
                                 placeholder = { Text("Select date", color = if (isDark) Color(0xFFFFB088).copy(0.6f) else Color(0xFF8C3E00).copy(0.6f), fontSize = 11.sp) },
                                 readOnly = true,
                                 enabled = false,
-                                trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Select Start Date", tint = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)) },
-                                modifier = Modifier.fillMaxWidth(),
+                                isError = startDateError != null,
+                                trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Select Start Date", tint = if (startDateError != null) Color(0xFFEF4444) else (if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00))) },
+                                modifier = Modifier.fillMaxWidth().testTag("start_date_input"),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     disabledTextColor = textPrimary,
-                                    disabledBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
-                                    disabledContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB),
+                                    disabledBorderColor = if (startDateError != null) Color(0xFFEF4444) else (if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6)),
+                                    disabledContainerColor = if (startDateError != null) (if (isDark) Color(0xFF261214) else Color(0xFFFFF5F5)) else (if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB)),
                                     disabledPlaceholderColor = textSecondary.copy(0.5f)
                                 )
+                            )
+                        }
+                        if (startDateError != null) {
+                            Text(
+                                text = startDateError!!,
+                                color = Color(0xFFEF4444),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.padding(top = 4.dp).testTag("start_date_error")
                             )
                         }
                     }
@@ -4864,6 +4837,7 @@ fun StudentLeavesTab(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable { showEndDatePicker = true }
+                                .testTag("end_date_box")
                         ) {
                             OutlinedTextField(
                                 value = endDate,
@@ -4871,14 +4845,24 @@ fun StudentLeavesTab(
                                 placeholder = { Text("Select date", color = if (isDark) Color(0xFFFFB088).copy(0.6f) else Color(0xFF8C3E00).copy(0.6f), fontSize = 11.sp) },
                                 readOnly = true,
                                 enabled = false,
-                                trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Select End Date", tint = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)) },
-                                modifier = Modifier.fillMaxWidth(),
+                                isError = endDateError != null,
+                                trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Select End Date", tint = if (endDateError != null) Color(0xFFEF4444) else (if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00))) },
+                                modifier = Modifier.fillMaxWidth().testTag("end_date_input"),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     disabledTextColor = textPrimary,
-                                    disabledBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
-                                    disabledContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB),
+                                    disabledBorderColor = if (endDateError != null) Color(0xFFEF4444) else (if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6)),
+                                    disabledContainerColor = if (endDateError != null) (if (isDark) Color(0xFF261214) else Color(0xFFFFF5F5)) else (if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB)),
                                     disabledPlaceholderColor = textSecondary.copy(0.5f)
                                 )
+                            )
+                        }
+                        if (endDateError != null) {
+                            Text(
+                                text = endDateError!!,
+                                color = Color(0xFFEF4444),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.padding(top = 4.dp).testTag("end_date_error")
                             )
                         }
                     }
@@ -4889,19 +4873,40 @@ fun StudentLeavesTab(
                 Text(getTranslation("absence_reason_label", viewModel), color = textPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(bottom = 4.dp))
                 OutlinedTextField(
                     value = reason,
-                    onValueChange = { reason = it },
+                    onValueChange = { 
+                        reason = it 
+                        if (it.isNotBlank() && it.trim().length >= 10) {
+                            reasonError = null
+                        }
+                    },
+                    isError = reasonError != null,
                     placeholder = { Text(getTranslation("absence_reason_placeholder", viewModel), color = if (isDark) Color(0xFFFFB088).copy(0.6f) else Color(0xFF8C3E00).copy(0.6f), fontSize = 12.sp) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(115.dp),
+                        .height(115.dp)
+                        .testTag("leave_reason_input"),
                     singleLine = false,
-                    leadingIcon = { Icon(Icons.AutoMirrored.Filled.Notes, contentDescription = "Reason Icon", tint = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)) },
+                    leadingIcon = { Icon(Icons.AutoMirrored.Filled.Notes, contentDescription = "Reason Icon", tint = if (reasonError != null) Color(0xFFEF4444) else (if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00))) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = textPrimary, unfocusedTextColor = textPrimary,
                         focusedBorderColor = Color(0xFFFF7A00), unfocusedBorderColor = if (isDark) Color(0xFF422E1A) else Color(0xFFFFDFC6),
-                        focusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB), unfocusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB)
+                        focusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB), unfocusedContainerColor = if (isDark) Color(0xFF130A04) else Color(0xFFFFFDFB),
+                        errorBorderColor = Color(0xFFEF4444),
+                        errorContainerColor = if (isDark) Color(0xFF261214) else Color(0xFFFFF5F5),
+                        errorLabelColor = Color(0xFFEF4444),
+                        errorLeadingIconColor = Color(0xFFEF4444),
+                        errorTrailingIconColor = Color(0xFFEF4444)
                     )
                 )
+                if (reasonError != null) {
+                    Text(
+                        text = reasonError!!,
+                        color = Color(0xFFEF4444),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(top = 4.dp).testTag("reason_error")
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -4910,7 +4915,7 @@ fun StudentLeavesTab(
                     value = proofName,
                     onValueChange = { proofName = it },
                     placeholder = { Text(getTranslation("verification_proof_placeholder", viewModel), color = if (isDark) Color(0xFFFFB088).copy(0.6f) else Color(0xFF8C3E00).copy(0.6f), fontSize = 12.sp) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("leave_proof_input"),
                     leadingIcon = { Icon(Icons.Default.AttachFile, contentDescription = "", tint = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = textPrimary, unfocusedTextColor = textPrimary,
@@ -4937,15 +4942,50 @@ fun StudentLeavesTab(
 
                 Button(
                     onClick = {
-                        if (startDate.isNotBlank() && endDate.isNotBlank() && reason.isNotBlank()) {
+                        startDateError = null
+                        endDateError = null
+                        reasonError = null
+
+                        var isValid = true
+
+                        if (startDate.isBlank()) {
+                            startDateError = "Start date is required"
+                            isValid = false
+                        }
+                        if (endDate.isBlank()) {
+                            endDateError = "End date is required"
+                            isValid = false
+                        }
+
+                        if (startDate.isNotBlank() && endDate.isNotBlank()) {
+                            try {
+                                val startParsed = dateFormatter.parse(startDate)
+                                val endParsed = dateFormatter.parse(endDate)
+                                if (startParsed != null && endParsed != null && endParsed.before(startParsed)) {
+                                    endDateError = "End date cannot be before start date"
+                                    isValid = false
+                                }
+                            } catch (e: Exception) {}
+                        }
+
+                        if (reason.isBlank()) {
+                            reasonError = "Reason for absence is required"
+                            isValid = false
+                        } else if (reason.trim().length < 10) {
+                            reasonError = "Reason must be at least 10 characters long"
+                            isValid = false
+                        }
+
+                        if (isValid) {
                             showConfirmation = true
                         } else {
-                            android.widget.Toast.makeText(context, "Please configure dates and provide a reason/justification.", android.widget.Toast.LENGTH_SHORT).show()
+                            android.widget.Toast.makeText(context, "Please correct the form errors.", android.widget.Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
+                        .height(48.dp)
+                        .testTag("btn_submit_absence"),
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6F00))
                 ) {
@@ -5137,6 +5177,142 @@ fun StudentProfileTab(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6F00))
                     ) {
                         Text(getTranslation("save_btn", viewModel), fontWeight = FontWeight.Bold, color = Color.White)
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Premium Theme & Settings Card
+        Card(
+            colors = CardDefaults.cardColors(containerColor = cardBg),
+            border = BorderStroke(1.5.dp, cardBorder),
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier.fillMaxWidth().testTag("app_settings_card")
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(bottom = 12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = Color(0xFFFF7A00),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Text(
+                        text = "APP PREFERENCES",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = textPrimary,
+                        letterSpacing = 1.sp
+                    )
+                }
+
+                HorizontalDivider(
+                    color = cardBorder.copy(alpha = 0.3f),
+                    thickness = 1.dp,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                // Dark Theme Switch Row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Dark Mode Theme",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = textPrimary
+                        )
+                        Text(
+                            text = "Enable eye-safe pitch dark layout style",
+                            fontSize = 11.sp,
+                            color = textSecondary
+                        )
+                    }
+                    Switch(
+                        checked = isDark,
+                        onCheckedChange = { viewModel.toggleDarkMode() },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = Color(0xFFFF7A00),
+                            uncheckedThumbColor = if (isDark) Color(0xFFFF9E7D) else Color(0xFF8C3E00),
+                            uncheckedTrackColor = cardBorder.copy(alpha = 0.4f)
+                        ),
+                        modifier = Modifier.testTag("dark_mode_toggle_switch")
+                    )
+                }
+
+                // System Language Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "App Display Language",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = textPrimary
+                        )
+                        Text(
+                            text = "Current: ${viewModel.currentLanguage.collectAsState().value.displayName}",
+                            fontSize = 11.sp,
+                            color = textSecondary
+                        )
+                    }
+                    var showLocalLanguageDialog by remember { mutableStateOf(false) }
+                    Button(
+                        onClick = { showLocalLanguageDialog = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7A00)),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text("Change", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    }
+
+                    if (showLocalLanguageDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showLocalLanguageDialog = false },
+                            title = { Text(getTranslation("switch_lang_title", viewModel), fontWeight = FontWeight.Bold, color = textPrimary) },
+                            text = {
+                                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    Text(getTranslation("switch_lang_desc", viewModel), fontSize = 13.sp, color = textSecondary)
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    AppLanguage.values().forEach { lang ->
+                                        Button(
+                                            onClick = {
+                                                viewModel.setLanguage(lang)
+                                                showLocalLanguageDialog = false
+                                            },
+                                            modifier = Modifier.fillMaxWidth(),
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = if (viewModel.currentLanguage.collectAsState().value == lang) Color(0xFFFF7A00) else (if (isDark) Color(0xFF2E190A) else Color(0xFFFFDFC6))
+                                            )
+                                        ) {
+                                            Text(lang.displayName, color = if (viewModel.currentLanguage.collectAsState().value == lang) Color.White else textPrimary, fontWeight = FontWeight.Bold)
+                                        }
+                                    }
+                                }
+                            },
+                            confirmButton = {},
+                            dismissButton = {
+                                TextButton(onClick = { showLocalLanguageDialog = false }) {
+                                    Text(getTranslation("cancel", viewModel), color = Color(0xFFFF7A00))
+                                }
+                            },
+                            containerColor = cardBg,
+                            modifier = Modifier.border(1.5.dp, cardBorder, RoundedCornerShape(28.dp))
+                        )
                     }
                 }
             }
@@ -7012,7 +7188,7 @@ fun CoachDashboardLayout(
     var coachRemarks by remember { mutableStateOf("") }
     val currentLang by viewModel.currentLanguage.collectAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
-    var showLanguageDialog by remember { mutableStateOf(false) }
+    var showSettingsDialog by remember { mutableStateOf(false) }
 
     val coachAcademy = state.academyName
     val allOrgs by viewModel.allOrganizations.collectAsState()
@@ -7091,17 +7267,10 @@ fun CoachDashboardLayout(
                         Text(text = "Role: Staff Coach Dashboard", color = accentColor, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = { viewModel.toggleDarkMode() }) {
+                        IconButton(onClick = { showSettingsDialog = true }) {
                             Icon(
-                                imageVector = if (isDark) Icons.Default.LightMode else Icons.Default.DarkMode,
-                                contentDescription = "Toggle Theme",
-                                tint = accentColor
-                            )
-                        }
-                        IconButton(onClick = { showLanguageDialog = true }) {
-                            Icon(
-                                imageVector = Icons.Default.Language,
-                                contentDescription = "Change Language",
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "App Settings",
                                 tint = accentColor
                             )
                         }
@@ -7118,38 +7287,11 @@ fun CoachDashboardLayout(
                             Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Exit", tint = Color(0xFFEF4444))
                         }
 
-                        if (showLanguageDialog) {
-                            AlertDialog(
-                                onDismissRequest = { showLanguageDialog = false },
-                                title = { Text(getTranslation("switch_lang_title", viewModel), fontWeight = FontWeight.Bold, color = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)) },
-                                text = {
-                                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                        Text(getTranslation("switch_lang_desc", viewModel), fontSize = 13.sp, color = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00))
-                                        Spacer(modifier = Modifier.height(4.dp))
-                                        AppLanguage.values().forEach { lang ->
-                                            Button(
-                                                onClick = {
-                                                    viewModel.setLanguage(lang)
-                                                    showLanguageDialog = false
-                                                },
-                                                modifier = Modifier.fillMaxWidth(),
-                                                colors = ButtonDefaults.buttonColors(
-                                                    containerColor = if (currentLang == lang) Color(0xFFFF7A00) else (if (isDark) Color(0xFF2E190A) else Color(0xFFFFDFC6))
-                                                )
-                                            ) {
-                                                Text(lang.displayName, color = if (currentLang == lang) Color.White else (if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)), fontWeight = FontWeight.Bold)
-                                            }
-                                        }
-                                    }
-                                },
-                                confirmButton = {},
-                                dismissButton = {
-                                    TextButton(onClick = { showLanguageDialog = false }) {
-                                        Text(getTranslation("cancel", viewModel), color = Color(0xFFFF7A00))
-                                    }
-                                },
-                                containerColor = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC),
-                                modifier = Modifier.border(1.5.dp, if (isDark) Color(0xFFFF7A00).copy(0.7f) else Color(0xFFFF9E7D), RoundedCornerShape(28.dp))
+                        if (showSettingsDialog) {
+                            AppSettingsDialog(
+                                viewModel = viewModel,
+                                isDark = isDark,
+                                onDismiss = { showSettingsDialog = false }
                             )
                         }
 
@@ -8463,6 +8605,7 @@ fun AdminDashboardLayout(
     var studentPasswordVal by remember { mutableStateOf("password123") }
     var studentAcademyVal by remember { mutableStateOf(adminAcademy) }
     var successToast by remember { mutableStateOf("") }
+    var showSettingsDialog by remember { mutableStateOf(false) }
 
     // Coach and Subtab states
     val allAccounts by viewModel.allAccounts.collectAsState()
@@ -8495,10 +8638,10 @@ fun AdminDashboardLayout(
                             Text(text = "System Enrollment & Metric Auditing", color = accentColor, fontSize = 11.sp)
                         }
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(onClick = { viewModel.toggleDarkMode() }) {
+                            IconButton(onClick = { showSettingsDialog = true }) {
                                 Icon(
-                                    imageVector = if (isDark) Icons.Default.LightMode else Icons.Default.DarkMode,
-                                    contentDescription = "Toggle Theme",
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "App Settings",
                                     tint = accentColor
                                 )
                             }
@@ -8512,6 +8655,14 @@ fun AdminDashboardLayout(
                             }
                             IconButton(onClick = { viewModel.logout() }) {
                                 Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Exit", tint = Color(0xFFEF4444))
+                            }
+
+                            if (showSettingsDialog) {
+                                AppSettingsDialog(
+                                    viewModel = viewModel,
+                                    isDark = isDark,
+                                    onDismiss = { showSettingsDialog = false }
+                                )
                             }
 
                             if (showRoleMenu) {
@@ -13015,3 +13166,121 @@ fun StudentPersonalAttendanceBarChart(
         }
     }
 }
+
+@Composable
+fun AppSettingsDialog(
+    viewModel: AppViewModel,
+    isDark: Boolean,
+    onDismiss: () -> Unit
+) {
+    val currentLang by viewModel.currentLanguage.collectAsState()
+    val cardBg = if (isDark) Color(0xFF1A1009) else Color(0xFFFFF3EC)
+    val cardBorder = if (isDark) Color(0xFFFF7A00).copy(0.7f) else Color(0xFFFF9E7D)
+    val textPrimary = if (isDark) Color(0xFFFFF5F0) else Color(0xFF2E190A)
+    val textSecondary = if (isDark) Color(0xFFFFB088) else Color(0xFF8C3E00)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = null,
+                    tint = Color(0xFFFF7A00),
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = "App Settings & Preferences",
+                    fontWeight = FontWeight.Bold,
+                    color = textPrimary,
+                    fontSize = 16.sp
+                )
+            }
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                // Dark Mode Switch Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Dark Mode Theme",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = textPrimary
+                        )
+                        Text(
+                            text = "Enable modern dark layout",
+                            fontSize = 11.sp,
+                            color = textSecondary
+                        )
+                    }
+                    Switch(
+                        checked = isDark,
+                        onCheckedChange = { viewModel.toggleDarkMode() },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = Color(0xFFFF7A00),
+                            uncheckedThumbColor = if (isDark) Color(0xFFFF9E7D) else Color(0xFF8C3E00),
+                            uncheckedTrackColor = cardBorder.copy(alpha = 0.4f)
+                        ),
+                        modifier = Modifier.testTag("dialog_dark_mode_switch")
+                    )
+                }
+
+                HorizontalDivider(color = cardBorder.copy(alpha = 0.3f), thickness = 1.dp)
+
+                // Language selection
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "System Language",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = textPrimary
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        AppLanguage.values().forEach { lang ->
+                            val isSelected = currentLang == lang
+                            Button(
+                                onClick = { viewModel.setLanguage(lang) },
+                                modifier = Modifier.weight(1f),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isSelected) Color(0xFFFF7A00) else (if (isDark) Color(0xFF2E190A) else Color(0xFFFFDFC6))
+                                ),
+                                contentPadding = PaddingValues(vertical = 8.dp)
+                            ) {
+                                Text(
+                                    text = lang.displayName,
+                                    fontSize = 11.sp,
+                                    color = if (isSelected) Color.White else textPrimary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7A00)),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text("Done", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+            }
+        },
+        containerColor = cardBg,
+        modifier = Modifier.border(1.5.dp, cardBorder, RoundedCornerShape(24.dp))
+    )
+}
+
